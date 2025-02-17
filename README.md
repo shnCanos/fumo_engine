@@ -1,4 +1,4 @@
-# fourth_space_mining
+# gravity_sim_demo
 - create a build/ directory in the main folder
 - make an assets/ directory 
 - run "start_project.sh" from the root directory 'bash start_project.sh'
