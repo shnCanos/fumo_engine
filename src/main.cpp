@@ -4,8 +4,6 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 std::unique_ptr<GlobalState> global;
-// void ecs_test();
-// void add_an_entity();
 void register_all_to_ECS();
 int main(void) {
     InitWindow(screenWidth, screenHeight, "THIS... is a BUCKET.");

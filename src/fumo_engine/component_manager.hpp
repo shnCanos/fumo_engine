@@ -3,9 +3,9 @@
 #include "component_array.hpp"
 #include "constants.hpp"
 #include "engine_constants.hpp"
+#include "system_base.hpp"
 #include <iostream>
 #include <memory>
-#include "system_base.hpp"
 #endif
 
 class ComponentManager {
@@ -35,7 +35,8 @@ class ComponentManager {
     template<typename T>
     [[nodiscard]] ComponentId get_component_id() {
         std::string_view t_name = libassert::type_name<T>();
-        DEBUG_ASSERT(component_ids.contains(t_name), "forgot to register component",
+        DEBUG_ASSERT(component_ids.contains(t_name),
+                     "forgot to register component, or you asked for a system.",
                      component_ids, current_component_id);
         // we use this component id to make component bitmasks
         return component_ids[t_name];
@@ -90,7 +91,5 @@ class ComponentManager {
             component_array->entity_destroyed(entity_id);
         }
     }
-    void debug_print() {
-        PRINT(component_arrays);
-    }
+    void debug_print() { PRINT(component_arrays); }
 };

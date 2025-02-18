@@ -5,8 +5,6 @@
 #include "objects/components.hpp"
 #include "raylib.h"
 
-// TODO: BodyMovement shouldnt be registered? (undecided atm)
-// SOLVED: created an unscheduled option in Scheduler
 class BodyMovement : public System {
     // prefer making a body movement system, instead of
     // adding a move_towards() method to the Body component (follow ECS logic)
