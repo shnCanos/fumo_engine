@@ -2,6 +2,7 @@
 - create a build/ directory in the main folder
 - make an assets/ directory 
 - run "start_project.sh" from the root directory 'bash start_project.sh'
+- run 'bash run.sh'
 
 regarding dependencies:
 - raylib, libassert (and C++20)
