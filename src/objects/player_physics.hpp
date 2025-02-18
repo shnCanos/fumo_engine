@@ -1,9 +1,8 @@
-
 #ifndef PLAYER_PHYSICS_HPP
 #define PLAYER_PHYSICS_HPP
 
-#include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/system_base.hpp"
+#include "objects/components.hpp"
 class PlayerPhysicsRunner : System {
     // player physics runner for the player's relevant systems
     // it basically puts together the systems that concern
@@ -16,12 +15,12 @@ class PlayerPhysicsRunner : System {
 
 class CirclePhysicsHandler : System {
   public:
-    void update_gravity(EntityId entity_id);
+    void update_gravity(Body& entity_body);
 };
 
 class RectanglePhysicsHandler : System {
   public:
-    void update_gravity(EntityId entity_id);
+    void update_gravity(Body& entity_body);
 };
 
 #endif

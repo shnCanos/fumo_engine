@@ -1,4 +1,3 @@
-
 #ifndef PLAYER_COLLISIONS_HPP
 #define PLAYER_COLLISIONS_HPP
 #include "fumo_engine/engine_constants.hpp"
