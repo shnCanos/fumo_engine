@@ -1,6 +1,7 @@
 #include "fumo_engine/entity_query.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
+#include "objects/player_physics.hpp"
 #include "objects/systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -21,6 +22,8 @@ void register_components() {
     global->ECS.register_component<CircleShape>();
 }
 void register_systems() {
+    // NOTE: consider how you would stop systems from running based on
+    // conditions or the game state (unregister the system?)
     global->ECS.register_system_unscheduled<BodyMovement>(
         EntityQuery{.component_mask = 0, .component_filter = Filter::Only});
 
@@ -35,9 +38,12 @@ void register_systems() {
     global->ECS.register_system_unscheduled<PlanetFactory>(
         EntityQuery{.component_mask = 0, .component_filter = Filter::Only});
 
-    // global->ECS.register_system<CirclePhysicsUpdate, 2>(EntityQuery{
-    //     .component_mask = global->ECS.make_component_mask<Body, Render, CircleShape>(),
+    // global->ECS.register_system_unscheduled<CirclePhysicsHandler>(EntityQuery{
+    //     .component_mask = global->ECS.make_component_mask<Body, CircleShape>(),
+    //     .component_filter = Filter::Only});
+    //
+    // global->ECS.register_system_unscheduled<RectanglePhysicsHandler>(EntityQuery{
+    //     .component_mask = global->ECS.make_component_mask<Body, RectangleShape>(),
     //     .component_filter = Filter::Only});
 }
 void create_entities() {}
-

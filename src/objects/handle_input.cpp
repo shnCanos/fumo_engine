@@ -29,7 +29,10 @@ void InputHandlerLevelEditor::handle_input() {
     }
 }
 
-void InputHandlerLevelEditor::debug_print() { global->debug_prints(); }
+void InputHandlerLevelEditor::debug_print() {
+    auto debugger_ptr = global->ECS.get_system<Debugger>();
+    debugger_ptr->global_debug();
+}
 void InputHandlerLevelEditor::spawn_planet() {
     Vector2 mouse_position = GetMousePosition();
     DrawCircleLinesV(mouse_position, mouse_radius, GREEN);

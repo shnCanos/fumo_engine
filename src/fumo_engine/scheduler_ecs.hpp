@@ -112,7 +112,7 @@ class SchedulerECS {
     // --------------------------------------------------------------------------------------
     // system stuff
     template<typename T, Priority priority, typename... Types>
-    void register_system(EntityQuery entity_query, Types&... args) {
+    std::shared_ptr<T> register_system(EntityQuery entity_query, Types&... args) {
 
         DEBUG_ASSERT(system_scheduler[priority] == nullptr, "already used this priority.",
                      system_scheduler);
@@ -122,7 +122,7 @@ class SchedulerECS {
 
         system_scheduler[priority] = system_ptr;
         current_max_priority++;
-        // return system_ptr;
+        return system_ptr;
     }
 
     // WARNING: this system wont be called in run_systems() call
@@ -158,6 +158,7 @@ class SchedulerECS {
     void debug_print() {
         PRINT(all_entity_ids_debug);
         ecs->debug_print();
+        std::cerr << std::endl << std::endl;
     }
 
   private:

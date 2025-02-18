@@ -69,6 +69,7 @@ class Debugger : public System {
     // and common analysis of game state (like printing entities every 10 seconds)
     // (or like targetting specific parts of the ECS)
 
+  public:
     void sys_call() override { global_debug(); };
     void global_debug();
 };

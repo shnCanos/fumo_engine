@@ -8,19 +8,22 @@ class PlayerPhysicsRunner : System {
     // it basically puts together the systems that concern
     // the player, and uses them to get behavior specific
     // to the player entity
+
   public:
-    void sys_call() override { update_gravity(); };
-    void update_gravity();
+    void sys_call() override { run_physics(); }
+    void run_physics();
+    void update_gravity(Body& player_body, CircleShape& player_shape);
+    void update_position(Body& player_body);
 };
 
 class CirclePhysicsHandler : System {
   public:
-    void update_gravity(Body& entity_body);
+    void find_gravity_field(Body& entity_body, CircleShape& entity_shape);
+    void update_gravity(Body& circle_body, Body& entity_body);
 };
 
 class RectanglePhysicsHandler : System {
   public:
     void update_gravity(Body& entity_body);
 };
-
 #endif

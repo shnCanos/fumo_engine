@@ -11,7 +11,7 @@ int main(void) {
     global->initialize();
 
     register_all_to_ECS();
-    SetTargetFPS(144);
+    SetTargetFPS(60);
     while (!WindowShouldClose()) {
         ClearBackground(BLACK);
         BeginDrawing();

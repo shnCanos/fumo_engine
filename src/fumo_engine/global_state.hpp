@@ -14,10 +14,6 @@ class GlobalState {
                         // this isnt necessary, and can be removed completely later.
 
     void initialize() { ECS.initialize(); }
-    void debug_prints() {
-        ECS.debug_print();
-        std::cerr << std::endl << std::endl;
-    }
 };
 
 #endif
