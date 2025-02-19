@@ -1,9 +1,12 @@
-
 #ifndef SYSTEM_BASE_HPP
 #define SYSTEM_BASE_HPP
 #include "engine_constants.hpp"
 #include <set>
 // NOTE: all systems should inherit from this system
+
+
+// NOTE: DONT FORGET TO INHERIT PUBLICLY FROM THIS CLASS
+// and also override sys_call();
 class System {
   public:
     std::set<EntityId> sys_entities{};

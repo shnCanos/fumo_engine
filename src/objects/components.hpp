@@ -5,7 +5,21 @@
 struct Body {
     Vector2 position;
     Vector2 velocity;
-    float mass;
+    Vector2 gravity_direction = {0.0f, -1.0f};
+    bool touching_ground = false;
+};
+
+struct GravityField {
+
+    // WARNING: counted from the surface of the object we are on
+    // (need to add the radius if its a circular planet for example)
+    double gravity_radius;
+    float gravity_strength;
+
+    // NOTE: i dont think mass will be used in this game
+    // instead, we simply hard code the values we want on each planet for now
+
+    // float mass;
 };
 
 struct CircleShape {

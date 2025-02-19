@@ -1,7 +1,6 @@
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
-#include "raylib.h"
-#include "systems.hpp"
+#include "objects/renderers.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 

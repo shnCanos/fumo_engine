@@ -1,6 +1,5 @@
 #ifndef SYSTEMS_HPP
 #define SYSTEMS_HPP
-#include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
@@ -38,30 +37,7 @@ class InputHandlerLevelEditor : public InputHandler {
     void debug_print();
 };
 
-// NOTE: this is an interface for all factory spawner classes
-class EntityFactory : public System {
-    // this factory method will hold a bunch of functions for spawning various entities
-    // maybe we will give it some parameters so we can easily spawn many types of entities
-  public:
-    virtual ~EntityFactory() = default;
-};
-class PlanetFactory : public EntityFactory {
-  public:
-    void sys_call() override {};
-    EntityId create_default_planet(Vector2 position);
-    EntityId create_planet(float radius, float mass, Vector2 velocity, Vector2 position,
-                           Color color);
-};
 
-class Renderer : public System {
-  public:
-    virtual ~Renderer() = default;
-};
-class PlanetRenderer : public Renderer {
-  public:
-    void sys_call() override { draw_planet(); };
-    void draw_planet();
-};
 
 class Debugger : public System {
     // not very used for now

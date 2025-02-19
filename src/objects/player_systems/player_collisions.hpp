@@ -6,8 +6,9 @@
 
 // both used to check collisions for the player agaisnt the planets
 
-class CircleCollisionHandler : System {
+class CircleCollisionHandler : public System {
   public:
+    void sys_call() override {}
     void check_collisions_with_player();
     void check_collision_with_player(EntityId circle_entity_id, EntityId entity_id);
     // void check_collisions_with_rect(EntityId entity_id);
@@ -15,14 +16,15 @@ class CircleCollisionHandler : System {
                                 CircleShape& other_shape);
 };
 
-class RectangleCollisionHandler : System {
+class RectangleCollisionHandler : public System {
   public:
+    void sys_call() override {}
     void check_collisions_with_circle(EntityId entity_id);
     void check_collisions_with_rect(EntityId entity_id);
     void solve_collision(EntityId entity_id);
 };
 
-class PlayerCollisionRunner : System {
+class PlayerCollisionRunner : public System {
     // private:
     //   std::shared_ptr<CircleCollisionHandler> circle_collision_handler;
     //   std::shared_ptr<RectangleCollisionHandler> rect_collision_handler;
@@ -34,10 +36,9 @@ class PlayerCollisionRunner : System {
     // (its the equivalent of ordering them in the big global scheduler, but doing
     // it step by step by storing them inside these system "runners")
   public:
-    void sys_call() override {};
-
+    void sys_call() override { check_collisions(); }
     void check_collisions();
-    void update_position();
-    void update_velocity();
+    // void update_position();
+    // void update_velocity();
 };
 #endif

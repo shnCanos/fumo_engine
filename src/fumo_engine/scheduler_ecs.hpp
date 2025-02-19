@@ -112,23 +112,23 @@ class SchedulerECS {
     // --------------------------------------------------------------------------------------
     // system stuff
     template<typename T, Priority priority, typename... Types>
-    std::shared_ptr<T> register_system(EntityQuery entity_query, Types&... args) {
+    void register_system(EntityQuery entity_query, Types&... args) {
 
         DEBUG_ASSERT(system_scheduler[priority] == nullptr, "already used this priority.",
                      system_scheduler);
 
-        std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
+         std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->register_system<T>(entity_query, system_ptr);
 
         system_scheduler[priority] = system_ptr;
         current_max_priority++;
-        return system_ptr;
+        // return system_ptr;
     }
 
     // WARNING: this system wont be called in run_systems() call
     template<typename T, typename... Types>
     void register_system_unscheduled(EntityQuery entity_query, Types&... args) {
-        std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
+        const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->register_system<T>(entity_query, system_ptr);
         // return system_ptr;
     }

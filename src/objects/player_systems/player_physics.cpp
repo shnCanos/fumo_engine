@@ -1,8 +1,6 @@
 #include "player_physics.hpp"
 #include "fumo_engine/global_state.hpp"
-#include "objects/components.hpp"
 #include "raymath.h"
-#include <unistd.h>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -11,6 +9,7 @@ void PlayerPhysicsRunner::run_physics() {
     auto& player_body = global->ECS.get_component<Body>(global->player_id);
     auto& player_shape = global->ECS.get_component<CircleShape>(global->player_id);
     update_gravity(player_body, player_shape);
+    update_position(player_body);
 }
 
 void PlayerPhysicsRunner::update_gravity(Body& player_body, CircleShape& player_shape) {
@@ -27,45 +26,66 @@ void PlayerPhysicsRunner::update_position(Body& player_body) {
 void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
                                               CircleShape& entity_shape) {
     // NOTE: we should only let one planet affect the player at each time
-    // solution: check for being inside a planet's gravity field range
-    // if we are, then we get pulled by that, but if we get affected by another one
-    // after, we change to that one instead, only allowing one planet entity
-    // to affect the player position at a time b
-    // 
 
     for (auto circle_id : sys_entities) {
         // FIXME: check that "Only" filter will remove the player id from the array
-        
-        // FIXME: create a "gravity radius" variable to define the reach of each planet
-        // towards the player
-        
-        // FIXME: add a buffer that doesnt allow swapping orbits more than once a second too
 
+        // FIXME: add a buffer that doesnt allow swapping orbits more than once a second
 
         auto circle_body = global->ECS.get_component<Body>(circle_id);
         auto circle_shape = global->ECS.get_component<CircleShape>(circle_id);
+        auto circle_grav_field = global->ECS.get_component<GravityField>(circle_id);
 
         float distance = Vector2Distance(circle_body.position, entity_body.position);
         float radius_sum = entity_shape.radius + circle_shape.radius;
 
-        if (distance < radius_sum) {
-            update_gravity(circle_body, entity_body);
+        float gravity_radius_sum = radius_sum + circle_grav_field.gravity_radius;
+
+        //-------------------------------------------------------------------
+        // correction is the leeway i give to stop adding gravity to the body
+        bool touching_ground = distance < radius_sum;
+        bool inside_field = distance < gravity_radius_sum;
+        //-------------------------------------------------------------------
+
+        entity_body.touching_ground = touching_ground;
+
+        if (inside_field) {
+            update_gravity(circle_grav_field, circle_body, entity_body);
         }
     }
 }
 
-void CirclePhysicsHandler::update_gravity(Body& circle_body, Body& entity_body) {
-    // TODO: add the update gravity code here
-}
+void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
+                                          const Body& circle_body, Body& entity_body) {
 
-void RectanglePhysicsHandler::update_gravity(Body& entity_body) {
-    for (auto rectangle_id : sys_entities) {
-        auto rectangle_body = global->ECS.get_component<Body>(rectangle_id);
-        auto rect_shape = global->ECS.get_component<RectangleShape>(rectangle_id);
-        // TODO: change the Y axis of the body (player) to match
-        // the side of the rectangle we are on vertically
+    // points towards the planet's circle_body
+    Vector2 gravity_direction =
+        Vector2Normalize(circle_body.position - entity_body.position);
+    entity_body.gravity_direction = gravity_direction;
+
+    if (!entity_body.touching_ground) {
+        Vector2 acceleration = gravity_direction * circle_grav_field.gravity_strength;
+        entity_body.velocity += acceleration * global->frametime;
+    } else {
+        // remove the y component from the velocity
+        // by setting the velocity to its magnitude in the x direction
+        // some funky rotation matrix vector math going on here, check it on paper
+        // if you are confused
+        Vector2 x_direction = {-entity_body.gravity_direction.y,
+                               entity_body.gravity_direction.x};
+        entity_body.velocity =
+            x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
     }
 }
+
+// void RectanglePhysicsHandler::update_gravity(Body& entity_body) {
+//     for (auto rectangle_id : sys_entities) {
+//         auto rectangle_body = global->ECS.get_component<Body>(rectangle_id);
+//         auto rect_shape = global->ECS.get_component<RectangleShape>(rectangle_id);
+//         // TODO: change the Y axis of the body (player) to match
+//         // the side of the rectangle we are on vertically
+//     }
+// }
 // for (auto circle_id : sys_entities) {
 //     auto circle_body = global->ECS.get_component<Body>(circle_id);
 //     auto circle_shape = global->ECS.get_component<CircleShape>(circle_id);

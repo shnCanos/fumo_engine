@@ -1,13 +1,15 @@
-
 // clang-format off
 #include "../constants.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "systems.hpp"
+#include "objects/factory_systems.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <cmath>
 // clang-format on
+
 extern std::unique_ptr<GlobalState> global;
+
 
 void InputHandlerLevelEditor::handle_input() {
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -52,13 +54,13 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
             circle_shape.radius *= resize;
 
             // hard coded fixes for smoother interaction
-            resize = std::pow(resize, 8);
-            float max_resize = 900000000.0f;
-            float new_mass = body.mass * resize;
-            if (new_mass > max_resize)
-                new_mass = max_resize;
+            // resize = std::pow(resize, 8);
+            // float max_resize = 900000000.0f;
+            // float new_mass = body.mass * resize;
+            // if (new_mass > max_resize)
+            //     new_mass = max_resize;
 
-            body.mass = new_mass;
+            // body.mass = new_mass;
 
             return;
         }
