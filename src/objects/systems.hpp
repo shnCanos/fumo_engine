@@ -37,8 +37,6 @@ class InputHandlerLevelEditor : public InputHandler {
     void debug_print();
 };
 
-
-
 class Debugger : public System {
     // not very used for now
     // TODO: expand this class to allow for many kinds of debugging functions
@@ -48,6 +46,13 @@ class Debugger : public System {
   public:
     void sys_call() override { global_debug(); };
     void global_debug();
+};
+
+class Initializer : public System {
+    // used to awake systems at the start of the program
+  public:
+    void sys_call() override { awake_systems(); }
+    void awake_systems();
 };
 
 #endif

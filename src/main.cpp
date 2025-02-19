@@ -6,6 +6,7 @@
 std::unique_ptr<GlobalState> global;
 void register_all_to_ECS();
 int main(void) {
+
     InitWindow(screenWidth, screenHeight, "THIS... is a BUCKET.");
     global = std::make_unique<GlobalState>();
     global->initialize();

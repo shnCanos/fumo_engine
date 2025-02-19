@@ -71,6 +71,7 @@ class SystemManager {
             if (entity_query.filter(component_mask)) {
                 system->sys_entities.insert(entity_id);
             } else {
+                // test if this works later
                 system->sys_entities.erase(entity_id);
             }
         }
