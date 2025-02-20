@@ -1,3 +1,4 @@
+#include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
 #include "objects/factory_systems.hpp"
@@ -20,5 +21,23 @@ EntityId PlanetFactory::create_default_planet(Vector2 position) {
         entity_id, Body{.position = position, .velocity = Vector2Zero()});
     global->ECS.entity_add_component(entity_id, Render{.color = random_color});
     global->ECS.entity_add_component(entity_id, CircleShape{.radius = default_radius});
+
+    sys_entities.insert(entity_id);
+
     return entity_id;
+}
+
+void PlanetFactory::delete_planet(EntityId entity_id) {
+    // here to keep track of what this instance of planet factory
+    // has created so we can isolate these entities later
+    // useful for grouping up entities based on their used context
+    global->ECS.destroy_entity(entity_id);
+    sys_entities.erase(entity_id);
+}
+
+void PlanetFactory::delete_all_planets() {
+    for (EntityId entity_id : sys_entities) {
+        global->ECS.destroy_entity(entity_id);
+        sys_entities.erase(entity_id);
+    }
 }

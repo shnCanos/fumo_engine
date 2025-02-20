@@ -6,6 +6,9 @@
 
 // NOTE: DONT FORGET TO INHERIT PUBLICLY FROM THIS CLASS
 // and also override sys_call();
+using Priority = uint64_t;
+const Priority NO_PRIORITY = 42069;
+
 class System {
   public:
     std::set<EntityId> sys_entities{};
@@ -14,6 +17,21 @@ class System {
     virtual void sys_call() = 0;
     // NOTE: new variable, used to disable and enable systems
     bool awake;
+    Priority priority = NO_PRIORITY;
 };
+
+// class Group : public System {
+//     // solution to systems that want multiple groups of entities
+//     // i feel, for bigger systems, it is not viable to force them
+//     // to divide into parts just to have multiple groups of entities
+//     // and a lot of systems just simply dont work with specifying what they want
+//
+//     // a group is made from an entity query
+//     // - it can be requested by a system
+//   public:
+//     void sys_call() override {}
+//     EntityQuery query;
+// };
+
 
 #endif

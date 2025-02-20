@@ -1,6 +1,8 @@
 #ifndef GLOBAL_STATE_HPP
 #define GLOBAL_STATE_HPP
 #include "fumo_engine/engine_constants.hpp"
+#include "objects/factory_systems.hpp"
+#include "objects/player_systems/player_general_systems.hpp"
 #include "scheduler_ecs.hpp"
 
 class GlobalState {
@@ -14,6 +16,11 @@ class GlobalState {
                         // this isnt necessary, and can be removed completely later.
 
     void initialize() { ECS.initialize(); }
+
+    void setup_game_state() {
+        auto player_initializer_ptr = ECS.get_system<PlayerInitializer>();
+        player_id = player_initializer_ptr->initialize_player();
+    }
 };
 
 #endif

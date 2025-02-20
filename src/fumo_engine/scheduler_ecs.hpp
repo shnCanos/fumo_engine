@@ -5,13 +5,32 @@
 #include "entity_query.hpp"
 #include "fumo_engine/component_array.hpp"
 #include "fumo_engine/engine_constants.hpp"
+#include "fumo_engine/system_base.hpp"
 #include <memory>
-//
-//--------------------------------------------------------------------------------------
-//
-
-using Priority = uint64_t;
-
+#include <queue>
+#include <vector>
+// template <class T, class S, class C>
+// S& Container(std::priority_queue<T, S, C>& q) {
+//     struct HackedQueue : private std::priority_queue<T, S, C> {
+//         static S& Container(std::priority_queue<T, S, C>& q) {
+//             return q.*&HackedQueue::c;
+//         }
+//     };
+//     return HackedQueue::Container(q);
+// }
+// template<class T>
+// class PQV : public std::priority_queue<T> {
+//   public:
+//     typedef std::vector<T> TVec;
+//     TVec getVector() {
+//         TVec r(this->c.begin(), this->c.end());
+//         // c is already a heap
+//         sort_heap(r.begin(), r.end(), this->comp);
+//         // Put it into priority-queue order:
+//         reverse(r.begin(), r.end());
+//         return r;
+//     }
+// };
 // class Scheduler {
 //   public:
 
@@ -27,19 +46,28 @@ using Priority = uint64_t;
 // as we might want to create systems that depend on some of these changes
 // plus its not even necessarily more efficient as shared state is still required
 // };
+struct SystemCompare {
+    inline bool operator()(const std::shared_ptr<System>& sysA,
+                           const std::shared_ptr<System>& sysB) const {
+        return sysA->priority > sysB->priority;
+    }
+};
 
 class SchedulerECS {
-
-    // only missing separating systems from the entities and components
-    // and running all the systems at the end
-    // but i think as long as i dont touch the systems, they dont communicate with EC
-    // part so it should be trivials
-
   private:
-    std::array<std::shared_ptr<System>, MAX_SYSTEMS> system_scheduler{};
-    std::array<std::shared_ptr<System>, MAX_SYSTEMS> unscheduled_systems{};
+    //------------------------------------------------------------------------------
+    // std::array<std::shared_ptr<System>, MAX_SYSTEMS> system_scheduler{};
+    // index is the priority for this system
+    std::set<std::shared_ptr<System>, SystemCompare> system_scheduler{};
+
+    // NOTE: if the system is not awake, we put it in unscheduled_systems;
+    // (it is stored with the other systems that never want to be scheduled)
+    std::unordered_map<std::string_view, std::shared_ptr<System>> unscheduled_systems{};
+    //------------------------------------------------------------------------------
+    std::unordered_map<std::string_view, std::shared_ptr<System>> unregistered_systems{};
+
     std::unique_ptr<ECS> ecs;
-    Priority current_max_priority{};
+    // Priority current_max_priority{};
 
   public:
     std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug{};
@@ -88,10 +116,11 @@ class SchedulerECS {
     void register_component() {
         ecs->register_component<T>();
     }
+    // TODO: consider adding components in bulk when creating entities
+    // to minimize the number of update calls we make to systems (this really would help)
     template<typename T>
     void entity_add_component(EntityId entity_id, T component) {
         // scheduler.scheduled_entity_component_masks[entity_id] =
-
         ecs->entity_add_component(entity_id, component);
     }
     template<typename T> // remove from entity
@@ -112,17 +141,20 @@ class SchedulerECS {
     // --------------------------------------------------------------------------------------
     // system stuff
     template<typename T, Priority priority, typename... Types>
-    std::shared_ptr<T> register_system(EntityQuery entity_query, Types&... args) {
+    void register_system(EntityQuery entity_query, Types&... args) {
 
-        DEBUG_ASSERT(system_scheduler[priority] == nullptr, "already used this priority.",
-                     system_scheduler);
+        // DEBUG_ASSERT(system_scheduler[priority] == nullptr, "already used this
+        // priority.",
+        //              system_scheduler);
 
-         std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
+        std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->register_system<T>(entity_query, system_ptr);
+        system_ptr->priority = priority;
 
-        system_scheduler[priority] = system_ptr;
-        current_max_priority++;
-        return system_ptr;
+        system_scheduler.insert(system_ptr);
+        // system_scheduler[priority] = system_ptr;
+        // current_max_priority++;
+        // return system_ptr;
     }
 
     // WARNING: this system wont be called in run_systems() call
@@ -133,34 +165,64 @@ class SchedulerECS {
         // return system_ptr;
     }
 
-    void run_systems() {
-        for (Priority priority = 0; priority < current_max_priority; priority++) {
-            std::shared_ptr<System> system_ptr = system_scheduler[priority];
-            DEBUG_ASSERT(system_ptr != nullptr, "skipped a priority value.", priority,
-                         current_max_priority, system_scheduler);
+    //------------------------------------------------------------------
+    // WARNING: this system will get no updates to it's sys_entities
 
-            if (system_ptr->sys_entities.size() != 0) {
-                system_ptr->sys_call();
-            }
+    template<typename T, Priority priority, typename... Types>
+    void add_unregistered_system(Types&... args) {
+        std::string_view t_name = libassert::type_name<T>();
+
+        DEBUG_ASSERT(!unregistered_systems.contains(t_name),
+                     "added the unregistered system twice.", unregistered_systems);
+
+        const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
+        system_ptr->priority = priority;
+        // can be changed to be in the constructor or test this with initializer list
+
+        unregistered_systems.insert({t_name, system_ptr});
+
+        system_scheduler.insert(system_ptr);
+    }
+    // this system wont be called in run_systems() call
+    template<typename T, typename... Types>
+    void add_unregistered_system_unscheduled(Types&... args) {
+        const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
+
+        std::string_view t_name = libassert::type_name<T>();
+        DEBUG_ASSERT(!unregistered_systems.contains(t_name),
+                     "added the unregistered system twice.", unregistered_systems);
+
+        unregistered_systems.insert({t_name, system_ptr});
+    }
+
+    //------------------------------------------------------------------
+    void run_systems() {
+        for (auto system_ptr : system_scheduler) {
+            // std::shared_ptr<System> system_ptr = system_scheduler[priority];
+            // DEBUG_ASSERT(system_ptr != nullptr, "skipped a priority value.",
+            //              system_ptr->priority, current_max_priority, system_scheduler);
+            
+
+            system_ptr->sys_call();
         }
     }
     // returns the system **cast** from the System interface
     template<typename T>
     [[nodiscard]] std::shared_ptr<T> get_system() {
         std::string_view type_name = libassert::type_name<T>();
+
+        // added so we only need one method to find all systems even if not registered
+        if (unregistered_systems.contains(type_name)) {
+            return std::static_pointer_cast<T>(unregistered_systems[type_name]);
+        }
         return std::static_pointer_cast<T>(ecs->get_system(type_name));
     }
+
     template<typename... Types>
     [[nodiscard]] ComponentMask make_component_mask() {
         ComponentMask component_mask = 0;
         (add_id_to_component_mask<Types>(component_mask), ...);
         return component_mask;
-    }
-
-    void debug_print() {
-        PRINT(all_entity_ids_debug);
-        ecs->debug_print();
-        std::cerr << std::endl << std::endl;
     }
 
   private:
@@ -174,6 +236,18 @@ class SchedulerECS {
         component_mask |= 1 << get_component_id<T>();
     }
     // --------------------------------------------------------------------------------------
+  public:
+    // filtering methods for entity ids
+    [[nodiscard]] bool filter(EntityId entity_id, EntityQuery entity_query) {
+        return entity_query.filter(ecs->get_component_mask(entity_id));
+    }
+
+    void debug_print() {
+        PRINT(all_entity_ids_debug);
+        ecs->debug_print();
+        PRINT(unregistered_systems);
+        std::cerr << std::endl << std::endl;
+    }
 };
 
 #endif

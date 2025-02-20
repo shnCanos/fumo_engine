@@ -32,6 +32,8 @@ class InputHandlerLevelEditor : public InputHandler {
     void spawn_planet();
     void move_planet();
     void delete_planet();
+    void delete_created_planet();
+    void delete_all_created_planets();
     void delete_all_planets();
     void resize_planet(float resize);
     void debug_print();
@@ -48,11 +50,11 @@ class Debugger : public System {
     void global_debug();
 };
 
-class Initializer : public System {
-    // used to awake systems at the start of the program
-  public:
-    void sys_call() override { awake_systems(); }
-    void awake_systems();
-};
+// class Initializer : public System {
+//     // used to awake systems at the start of the program
+//   public:
+//     void sys_call() override { awake_systems(); }
+//     void awake_systems();
+// };
 
 #endif

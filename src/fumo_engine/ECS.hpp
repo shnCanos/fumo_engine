@@ -1,5 +1,5 @@
-#ifndef ECS_HPP 
-#define ECS_HPP 
+#ifndef ECS_HPP
+#define ECS_HPP
 #include "component_manager.hpp"
 #include "engine_constants.hpp"
 #include "entity_manager.hpp"
@@ -79,13 +79,18 @@ class ECS {
     [[nodiscard]] ComponentId get_component_id() {
         return component_manager->get_component_id<T>();
     }
+
+    [[nodiscard]] ComponentMask get_component_mask(EntityId entity_id) {
+        return entity_manager->get_component_mask(entity_id);
+    }
+
     // --------------------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------------------
     // system stuff
     template<typename T>
     void register_system(const EntityQuery& entity_query,
-                          const std::shared_ptr<T>& system_ptr) {
+                         const std::shared_ptr<T>& system_ptr) {
         system_manager->register_system<T>(entity_query, system_ptr);
     }
 
@@ -95,6 +100,7 @@ class ECS {
     }
 
     [[nodiscard]] std::shared_ptr<System> get_system(std::string_view type_name) {
+
         return system_manager->get_system(type_name);
     }
 

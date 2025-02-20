@@ -1,4 +1,6 @@
 #include "fumo_engine/global_state.hpp"
+#include "objects/components.hpp"
+#include "objects/player_systems/player_general_systems.hpp"
 // angular include so clang wont complain
 #include <include_systems.hpp>
 
@@ -21,6 +23,7 @@ void register_components() {
     global->ECS.register_component<Body>();
     global->ECS.register_component<Render>();
     global->ECS.register_component<CircleShape>();
+    global->ECS.register_component<PlayerFlag>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
@@ -31,20 +34,19 @@ void register_systems() {
 }
 void register_systems_scheduled() {
 
-    global->ECS.register_system<InputHandlerLevelEditor, 0>(EntityQuery{
+
+    global->ECS.register_system<InputHandlerLevelEditor, 1>(EntityQuery{
         .component_mask = global->ECS.make_component_mask<Body, Render, CircleShape>(),
         .component_filter = Filter::Only});
 
     // NOTE: might have issues with the order in which the position is updated
     // check this later
-    global->ECS.register_system<PlayerPhysicsRunner, 1>(
-        EntityQuery{.component_mask = 0, .component_filter = Filter::Only});
-    global->ECS.register_system<PlayerCollisionRunner, 2>(
-        EntityQuery{.component_mask = 0, .component_filter = Filter::Only});
+    global->ECS.add_unregistered_system<PlayerPhysicsRunner, 4>();
+    global->ECS.add_unregistered_system<PlayerCollisionRunner, 5>();
 
     global->ECS.register_system<PlanetRenderer, 3>(EntityQuery{
         .component_mask = global->ECS.make_component_mask<Body, Render, CircleShape>(),
-        .component_filter = Filter::Only});
+        .component_filter = Filter::All});
 }
 void register_systems_physics_collisions() {
     global->ECS.register_system_unscheduled<CircleCollisionHandler>(EntityQuery{
@@ -62,12 +64,10 @@ void register_systems_physics_collisions() {
     //     .component_filter = Filter::Only});
 }
 void register_agnostic_sytems() {
-    global->ECS.register_system_unscheduled<BodyMovement>(
-        EntityQuery{.component_mask = 0, .component_filter = Filter::Only});
-    global->ECS.register_system_unscheduled<PlanetFactory>(
-        EntityQuery{.component_mask = 0, .component_filter = Filter::Only});
-    global->ECS.register_system_unscheduled<Debugger>(
-        EntityQuery{.component_mask = 0, .component_filter = Filter::Only});
+    global->ECS.add_unregistered_system_unscheduled<PlayerInitializer>();
+    global->ECS.add_unregistered_system_unscheduled<BodyMovement>();
+    global->ECS.add_unregistered_system_unscheduled<PlanetFactory>();
+    global->ECS.add_unregistered_system_unscheduled<Debugger>();
 }
 
 void create_entities() {}

@@ -1,7 +1,7 @@
 #include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
 //------------------------------------------------------------------------------------
-// Program main entry point
+// :Program main entry point
 //------------------------------------------------------------------------------------
 std::unique_ptr<GlobalState> global;
 void register_all_to_ECS();
@@ -12,6 +12,9 @@ int main(void) {
     global->initialize();
 
     register_all_to_ECS();
+
+    global->setup_game_state();
+
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
         ClearBackground(BLACK);
@@ -24,5 +27,5 @@ int main(void) {
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
-   return 0;
+    return 0;
 }

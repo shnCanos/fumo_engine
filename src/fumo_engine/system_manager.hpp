@@ -41,6 +41,8 @@ class SystemManager {
     // TODO: maybe remove these extra public private later
 
     [[nodiscard]] std::shared_ptr<System> get_system(std::string_view t_name) {
+        DEBUG_ASSERT(all_systems.contains(t_name),
+                     "this system hasn't been added or registered.", all_systems);
         return all_systems[t_name];
     }
     // template<typename T> // will i use this? not sure (consider deleting)
