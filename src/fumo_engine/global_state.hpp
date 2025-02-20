@@ -1,7 +1,6 @@
 #ifndef GLOBAL_STATE_HPP
 #define GLOBAL_STATE_HPP
 #include "fumo_engine/engine_constants.hpp"
-#include "objects/factory_systems.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
 #include "scheduler_ecs.hpp"
 

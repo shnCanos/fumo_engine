@@ -7,8 +7,7 @@
 #include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/system_base.hpp"
 #include <memory>
-#include <queue>
-#include <vector>
+#include <ostream>
 // template <class T, class S, class C>
 // S& Container(std::priority_queue<T, S, C>& q) {
 //     struct HackedQueue : private std::priority_queue<T, S, C> {
@@ -49,7 +48,7 @@
 struct SystemCompare {
     inline bool operator()(const std::shared_ptr<System>& sysA,
                            const std::shared_ptr<System>& sysB) const {
-        return sysA->priority > sysB->priority;
+        return sysA->priority < sysB->priority;
     }
 };
 
@@ -64,13 +63,14 @@ class SchedulerECS {
     // (it is stored with the other systems that never want to be scheduled)
     std::unordered_map<std::string_view, std::shared_ptr<System>> unscheduled_systems{};
     //------------------------------------------------------------------------------
-    std::unordered_map<std::string_view, std::shared_ptr<System>> unregistered_systems{};
 
     std::unique_ptr<ECS> ecs;
     // Priority current_max_priority{};
 
-  public:
+    std::unordered_map<std::string_view, std::shared_ptr<System>> debug_scheduler{};
     std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug{};
+
+  public:
     void initialize() {
         ecs = std::make_unique<ECS>();
         ecs->initialize();
@@ -155,6 +155,9 @@ class SchedulerECS {
         // system_scheduler[priority] = system_ptr;
         // current_max_priority++;
         // return system_ptr;
+        // NOTE: remove later if not using debugger
+        std::string_view t_name = libassert::type_name<T>();
+        debug_scheduler.insert({t_name, system_ptr});
     }
 
     // WARNING: this system wont be called in run_systems() call
@@ -170,39 +173,31 @@ class SchedulerECS {
 
     template<typename T, Priority priority, typename... Types>
     void add_unregistered_system(Types&... args) {
-        std::string_view t_name = libassert::type_name<T>();
-
-        DEBUG_ASSERT(!unregistered_systems.contains(t_name),
-                     "added the unregistered system twice.", unregistered_systems);
 
         const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
+        ecs->add_unregistered_system(system_ptr);
         system_ptr->priority = priority;
         // can be changed to be in the constructor or test this with initializer list
 
-        unregistered_systems.insert({t_name, system_ptr});
-
         system_scheduler.insert(system_ptr);
+
+        // NOTE: remove later if not using debugger
+        std::string_view t_name = libassert::type_name<T>();
+        debug_scheduler.insert({t_name, system_ptr});
     }
     // this system wont be called in run_systems() call
     template<typename T, typename... Types>
     void add_unregistered_system_unscheduled(Types&... args) {
         const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
 
-        std::string_view t_name = libassert::type_name<T>();
-        DEBUG_ASSERT(!unregistered_systems.contains(t_name),
-                     "added the unregistered system twice.", unregistered_systems);
+        ecs->add_unregistered_system(system_ptr);
 
-        unregistered_systems.insert({t_name, system_ptr});
+        system_scheduler.insert(system_ptr);
     }
 
     //------------------------------------------------------------------
     void run_systems() {
         for (auto system_ptr : system_scheduler) {
-            // std::shared_ptr<System> system_ptr = system_scheduler[priority];
-            // DEBUG_ASSERT(system_ptr != nullptr, "skipped a priority value.",
-            //              system_ptr->priority, current_max_priority, system_scheduler);
-            
-
             system_ptr->sys_call();
         }
     }
@@ -212,9 +207,6 @@ class SchedulerECS {
         std::string_view type_name = libassert::type_name<T>();
 
         // added so we only need one method to find all systems even if not registered
-        if (unregistered_systems.contains(type_name)) {
-            return std::static_pointer_cast<T>(unregistered_systems[type_name]);
-        }
         return std::static_pointer_cast<T>(ecs->get_system(type_name));
     }
 
@@ -245,8 +237,18 @@ class SchedulerECS {
     void debug_print() {
         PRINT(all_entity_ids_debug);
         ecs->debug_print();
-        PRINT(unregistered_systems);
+        debug_print_scheduler();
         std::cerr << std::endl << std::endl;
+    }
+    void debug_print_scheduler() {
+        PRINT(system_scheduler);
+        PRINT(debug_scheduler);
+        for (auto const& pair : debug_scheduler) {
+            auto const& t_name = pair.first;
+            auto const& system = pair.second;
+            std::cout << libassert::highlight_stringify(t_name) << " -----> "
+                      << libassert::highlight_stringify(system->priority) << std::endl;
+        }
     }
 };
 

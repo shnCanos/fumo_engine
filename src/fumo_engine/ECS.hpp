@@ -93,6 +93,10 @@ class ECS {
                          const std::shared_ptr<T>& system_ptr) {
         system_manager->register_system<T>(entity_query, system_ptr);
     }
+    template<typename T>
+    void add_unregistered_system(const std::shared_ptr<T>& system_ptr) {
+        system_manager->add_unregistered_system<T>(system_ptr);
+    }
 
     template<typename T>
     void set_system_entity_query(ComponentMask component_mask) {

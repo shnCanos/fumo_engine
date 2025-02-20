@@ -2,10 +2,18 @@
 #define PLAYER_GENERAL_SYSTEMS_HPP
 #include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/system_base.hpp"
+
 class PlayerInitializer : public System {
   public:
-    void sys_call() override {
-    };
+    void sys_call() override {};
     EntityId initialize_player();
 };
+
+struct PlayerInputHandler : System {
+  public:
+    void sys_call() override { handle_input(); }
+
+    void handle_input();
+};
+
 #endif

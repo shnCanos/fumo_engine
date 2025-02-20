@@ -1,5 +1,6 @@
 #ifndef SYSTEMS_HPP
 #define SYSTEMS_HPP
+#include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
@@ -14,6 +15,10 @@ class BodyMovement : public System {
     void sys_call() override {};
     void move_towards(Body& body, Body& target);
     void move_towards_position(Body& body, Vector2 position);
+  // used for player
+    void move_vertically(Body& body, float amount);
+    void move_horizontally(Body& body, float amount);
+    void update_position(Body& body);
 };
 
 class InputHandler : public System {
@@ -28,6 +33,7 @@ class InputHandlerLevelEditor : public InputHandler {
     void sys_call() override { handle_input(); }
     void handle_input();
 
+    // TODO: rewrite this class so its split into more classwe
   private:
     void spawn_planet();
     void move_planet();

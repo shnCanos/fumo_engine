@@ -14,5 +14,6 @@ bool EntityQuery::filter(ComponentMask entity_mask) {
     default:
         PANIC("this shouldnt happen");
     }
+    PANIC("this shouldnt happen");
     return false;
 }

@@ -23,6 +23,7 @@ void register_components() {
     global->ECS.register_component<Body>();
     global->ECS.register_component<Render>();
     global->ECS.register_component<CircleShape>();
+    global->ECS.register_component<GravityField>();
     global->ECS.register_component<PlayerFlag>();
 }
 void register_systems() {
@@ -34,17 +35,17 @@ void register_systems() {
 }
 void register_systems_scheduled() {
 
-
+    global->ECS.add_unregistered_system<PlayerInputHandler, 0>();
     global->ECS.register_system<InputHandlerLevelEditor, 1>(EntityQuery{
         .component_mask = global->ECS.make_component_mask<Body, Render, CircleShape>(),
         .component_filter = Filter::Only});
 
     // NOTE: might have issues with the order in which the position is updated
     // check this later
-    global->ECS.add_unregistered_system<PlayerPhysicsRunner, 4>();
-    global->ECS.add_unregistered_system<PlayerCollisionRunner, 5>();
+    // global->ECS.add_unregistered_system<PlayerPhysicsRunner, 2>();
+    // global->ECS.add_unregistered_system<PlayerCollisionRunner, 3>();
 
-    global->ECS.register_system<PlanetRenderer, 3>(EntityQuery{
+    global->ECS.register_system<PlanetRenderer, 4>(EntityQuery{
         .component_mask = global->ECS.make_component_mask<Body, Render, CircleShape>(),
         .component_filter = Filter::All});
 }

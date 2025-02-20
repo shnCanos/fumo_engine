@@ -1,10 +1,11 @@
 #ifndef COMPONENTS_HPP
 #define COMPONENTS_HPP
+#include "constants.hpp"
 #include "raylib.h"
 
 struct Body {
-    Vector2 position;
-    Vector2 velocity;
+    Vector2 position = screenCenter;
+    Vector2 velocity{0.0f, 0.0f};
     Vector2 gravity_direction = {0.0f, -1.0f};
     bool touching_ground = false;
 };

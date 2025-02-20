@@ -15,6 +15,8 @@ class SystemManager {
     // t_name -> respective System pointer
     std::unordered_map<std::string_view, std::shared_ptr<System>> all_systems;
 
+    std::unordered_map<std::string_view, std::shared_ptr<System>> unregistered_systems;
+
   public:
     template<typename T>
     void register_system(const EntityQuery& entity_query,
@@ -26,6 +28,15 @@ class SystemManager {
         all_systems.insert({t_name, system_ptr});
 
         set_entity_query<T>(entity_query);
+    }
+    template<typename T>
+    void add_unregistered_system(const std::shared_ptr<System>& system_ptr) {
+        std::string_view t_name = libassert::type_name<T>();
+
+        DEBUG_ASSERT(!unregistered_systems.contains(t_name),
+                     "added the unregistered system twice.", unregistered_systems);
+
+        unregistered_systems.insert({t_name, system_ptr});
     }
 
   private:
@@ -41,8 +52,15 @@ class SystemManager {
     // TODO: maybe remove these extra public private later
 
     [[nodiscard]] std::shared_ptr<System> get_system(std::string_view t_name) {
-        DEBUG_ASSERT(all_systems.contains(t_name),
-                     "this system hasn't been added or registered.", all_systems);
+
+        DEBUG_ASSERT(all_systems.contains(t_name) ||
+                         unregistered_systems.contains(t_name),
+                     "this system hasn't been added or registered.", all_systems,
+                     unregistered_systems);
+
+        if (unregistered_systems.contains(t_name)) {
+            return unregistered_systems[t_name];
+        }
         return all_systems[t_name];
     }
     // template<typename T> // will i use this? not sure (consider deleting)
@@ -78,6 +96,9 @@ class SystemManager {
             }
         }
     }
-    void debug_print() { PRINT(all_systems); }
+    void debug_print() {
+        PRINT(all_systems);
+        PRINT(unregistered_systems);
+    }
 };
 #endif
