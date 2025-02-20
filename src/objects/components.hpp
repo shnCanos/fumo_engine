@@ -8,6 +8,8 @@ struct Body {
     Vector2 velocity{0.0f, 0.0f};
     Vector2 gravity_direction = {0.0f, -1.0f};
     bool touching_ground = false;
+    bool jumping = false;
+    float smooth_jump_buffer{};
 };
 
 struct GravityField {

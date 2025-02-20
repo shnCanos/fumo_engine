@@ -19,6 +19,7 @@ const float mouse_radius = 40.0f;
 const int color_count = 18;
 const float default_mass = 600000;
 const float default_radius = 50.0f;
+// const float default_grav_strength = 1000.0f;
 const Color player_color = ORANGE;
 // NOTE: add orange back to all colors after adding a sprite to the player
 const std::array<Color, 100> all_colors = {

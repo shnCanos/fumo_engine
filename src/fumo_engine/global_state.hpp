@@ -3,6 +3,7 @@
 #include "fumo_engine/engine_constants.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
 #include "scheduler_ecs.hpp"
+#include <memory>
 
 class GlobalState {
   public:
@@ -10,14 +11,17 @@ class GlobalState {
     // state i dont want to rewrite access functions so SchedulerECS is accessed directly
 
     float frametime;
-    SchedulerECS ECS;
+    std::shared_ptr<SchedulerECS> ECS;
     EntityId player_id; // NOTE: storing the player id globally for now for optimisation
                         // this isnt necessary, and can be removed completely later.
 
-    void initialize() { ECS.initialize(); }
+    void initialize() {
+        ECS = std::make_shared<SchedulerECS>();
+        ECS->initialize();
+    }
 
     void setup_game_state() {
-        auto player_initializer_ptr = ECS.get_system<PlayerInitializer>();
+        auto player_initializer_ptr = ECS->get_system<PlayerInitializer>();
         player_id = player_initializer_ptr->initialize_player();
     }
 };

@@ -20,7 +20,7 @@ int main(void) {
         ClearBackground(BLACK);
         BeginDrawing();
         global->frametime = GetFrameTime();
-        global->ECS.run_systems();
+        global->ECS->run_systems();
         EndDrawing();
     }
     //--------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 // and also override sys_call();
 using Priority = uint64_t;
 const Priority NO_PRIORITY = 42069;
+const Priority MAX_PRIORITY = MAX_SYSTEMS;
 
 class System {
   public:
@@ -16,7 +17,7 @@ class System {
     // it is necessary to work around this method if needed for subsequent function calls
     virtual void sys_call() = 0;
     // NOTE: new variable, used to disable and enable systems
-    bool awake;
+    bool awake = true;
     Priority priority = NO_PRIORITY;
 };
 

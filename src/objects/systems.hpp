@@ -1,6 +1,5 @@
 #ifndef SYSTEMS_HPP
 #define SYSTEMS_HPP
-#include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
@@ -15,10 +14,14 @@ class BodyMovement : public System {
     void sys_call() override {};
     void move_towards(Body& body, Body& target);
     void move_towards_position(Body& body, Vector2 position);
-  // used for player
+    // used for player
+    void move_vertically_fixed(Body& body, float amount);
+    void move_horizontally_fixed(Body& body, float amount);
     void move_vertically(Body& body, float amount);
+    void jump(Body& body);
     void move_horizontally(Body& body, float amount);
     void update_position(Body& body);
+    void reset_velocity(Body& body);
 };
 
 class InputHandler : public System {
@@ -56,11 +59,5 @@ class Debugger : public System {
     void global_debug();
 };
 
-// class Initializer : public System {
-//     // used to awake systems at the start of the program
-//   public:
-//     void sys_call() override { awake_systems(); }
-//     void awake_systems();
-// };
 
 #endif

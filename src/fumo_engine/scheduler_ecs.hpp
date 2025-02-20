@@ -54,6 +54,7 @@ struct SystemCompare {
 
 class SchedulerECS {
   private:
+    friend struct SystemInitializer;
     //------------------------------------------------------------------------------
     // std::array<std::shared_ptr<System>, MAX_SYSTEMS> system_scheduler{};
     // index is the priority for this system
@@ -236,7 +237,9 @@ class SchedulerECS {
 
     void debug_print() {
         PRINT(all_entity_ids_debug);
+        std::cerr << std::endl;
         ecs->debug_print();
+        std::cerr << std::endl;
         debug_print_scheduler();
         std::cerr << std::endl << std::endl;
     }
