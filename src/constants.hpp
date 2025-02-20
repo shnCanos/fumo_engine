@@ -2,6 +2,7 @@
 #define CONSTANTS_HPP_
 #include "array"
 #include "raylib.h"
+// NOTE: ignore clangd's warning, you need to include <iostream>
 #include <iostream>
 #include <libassert/assert.hpp>
 // const int particle_count = 50;

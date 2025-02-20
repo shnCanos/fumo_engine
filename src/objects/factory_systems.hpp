@@ -20,10 +20,9 @@ class PlanetFactory : public EntityFactory {
     void sys_call() override {};
     EntityId create_default_planet(Vector2 position);
     EntityId create_planet(float radius, float mass, Vector2 velocity, Vector2 position,
-                           Color color);
+                           Color color, float grav_radius, float grav_strength);
     void delete_planet(EntityId entity_id);
     void delete_all_planets();
 };
-
 
 #endif

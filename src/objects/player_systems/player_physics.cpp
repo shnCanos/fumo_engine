@@ -32,9 +32,10 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
 
         // FIXME: add a buffer that doesnt allow swapping orbits more than once a second
 
-        auto circle_body = global->ECS.get_component<Body>(circle_id);
-        auto circle_shape = global->ECS.get_component<CircleShape>(circle_id);
-        auto circle_grav_field = global->ECS.get_component<GravityField>(circle_id);
+        const auto& circle_body = global->ECS.get_component<Body>(circle_id);
+        const auto& circle_shape = global->ECS.get_component<CircleShape>(circle_id);
+        const auto& circle_grav_field =
+            global->ECS.get_component<GravityField>(circle_id);
 
         float distance = Vector2Distance(circle_body.position, entity_body.position);
         float radius_sum = entity_shape.radius + circle_shape.radius;

@@ -1,16 +1,26 @@
+#include "constants.hpp"
 #include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
 #include "objects/factory_systems.hpp"
 #include "raymath.h"
+const float default_grav_strength = 400.0f;
+
 extern std::unique_ptr<GlobalState> global;
+
 EntityId PlanetFactory::create_planet(float radius, float mass, Vector2 velocity,
-                                      Vector2 position, Color color) {
+                                      Vector2 position, Color color, float grav_radius,
+                                      float grav_strength) {
     EntityId entity_id = global->ECS.create_entity();
     global->ECS.entity_add_component(entity_id,
                                      Body{.position = position, .velocity = velocity});
     global->ECS.entity_add_component(entity_id, Render{.color = color});
     global->ECS.entity_add_component(entity_id, CircleShape{.radius = radius});
+
+    global->ECS.entity_add_component(
+        entity_id,
+        GravityField{.gravity_radius = grav_radius, .gravity_strength = grav_strength});
+
     return entity_id;
 }
 EntityId PlanetFactory::create_default_planet(Vector2 position) {
@@ -22,8 +32,11 @@ EntityId PlanetFactory::create_default_planet(Vector2 position) {
     global->ECS.entity_add_component(entity_id, Render{.color = random_color});
     global->ECS.entity_add_component(entity_id, CircleShape{.radius = default_radius});
 
-    sys_entities.insert(entity_id);
+    global->ECS.entity_add_component(
+        entity_id,
+        GravityField{.gravity_radius = default_radius * 10.0f, .gravity_strength = default_grav_strength});
 
+    sys_entities.insert(entity_id);
     return entity_id;
 }
 

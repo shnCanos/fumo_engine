@@ -51,7 +51,6 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
 
         if (mouse_radius + circle_shape.radius > distance) {
             circle_shape.radius *= resize;
-
             return;
         }
     }
