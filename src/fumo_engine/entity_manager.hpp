@@ -38,6 +38,21 @@ class EntityManager {
         available_entity_ids.push(entity_id);
         living_entity_count--;
     }
+// class Scheduler {
+//   public:
+
+// Array of component_masks where the index corresponds to the entity ID
+// used to delay updates to the end of each frame
+// std::set<EntityId> entities_to_create{};
+// std::set<EntityId> entities_to_destroy{};
+// each entityId corresponds to an index on this array
+// std::set<EntityId> entities_to_update_components{};
+// std::array<ComponentMask, MAX_ENTITY_IDS> scheduled_entity_component_masks{};
+// NOTE: i have concluded that there isnt a real need to schedule these changes
+// to the end of the frame. i can still do this, but i feel it adds little benefit
+// as we might want to create systems that depend on some of these changes
+// plus its not even necessarily more efficient as shared state is still required
+// };
     // TODO: decide if we want to implement getter methods or not
     //
     // [[nodiscard]] EntityId get_entities(ComponentMask component_mask) {

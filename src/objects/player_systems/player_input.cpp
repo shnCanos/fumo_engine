@@ -8,7 +8,7 @@ void PlayerInputHandler::handle_input() {
     const auto body_movement_ptr = global->ECS->get_system<BodyMovement>();
     const auto& player_id = global->player_id;
     auto& player_body = global->ECS->get_component<Body>(player_id);
-    if (IsKeyPressed(KEY_SPACE)) {
+    if (IsKeyDown(KEY_SPACE)) {
         if (player_body.touching_ground) {
             body_movement_ptr->jump(player_body);
         }
@@ -25,5 +25,5 @@ void PlayerInputHandler::handle_input() {
     if (IsKeyDown(KEY_RIGHT)) {
         body_movement_ptr->move_horizontally(player_body, 1.0f);
     }
-    // body_movement_ptr->update_position(player_body);
+    body_movement_ptr->update_position(player_body);
 }

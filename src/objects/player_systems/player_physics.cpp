@@ -2,7 +2,6 @@
 #include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "raymath.h"
-#include <numbers>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -53,7 +52,7 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
         //-------------------------------------------------------------------
 
         entity_body.touching_ground = touching_ground;
-        PRINT(entity_body.touching_ground);
+        // PRINT(entity_body.touching_ground);
 
         if (inside_field) {
             update_gravity(circle_grav_field, circle_body, entity_body);
@@ -69,9 +68,13 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
         Vector2Normalize(circle_body.position - entity_body.position);
     entity_body.gravity_direction = gravity_direction;
 
-    if (!entity_body.touching_ground && !entity_body.jumping) {
+    if (!entity_body.touching_ground) {
+        if (entity_body.get_dot_y_velocity() > max_fall_velocity) {
+            return;
+        }
         Vector2 acceleration = gravity_direction * circle_grav_field.gravity_strength;
         entity_body.velocity += acceleration * global->frametime;
+        // PRINT(entity_body.get_dot_y_velocity());
     } else {
 
         // remove the y component from the velocity
@@ -84,8 +87,8 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
             x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
     }
 
-    PRINT(entity_body.velocity.x);
-    PRINT(entity_body.velocity.y);
+    // PRINT(entity_body.velocity.x);
+    // PRINT(entity_body.velocity.y);
 }
 
 // void RectanglePhysicsHandler::update_gravity(Body& entity_body) {

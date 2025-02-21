@@ -14,7 +14,7 @@ EntityId PlayerInitializer::initialize_player() {
                                      CircleShape{.radius = default_radius / 2.0f});
     global->ECS->entity_add_component(player_id, Body{.position = screenCenter,
                                                      .velocity = {0.0f, 0.0f},
-                                                     .smooth_jump_buffer = 20.0f});
+                                                     .smooth_jump_buffer = 800.0f});
     return player_id;
 }
 

@@ -2,6 +2,7 @@
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
+#include "raylib.h"
 #include "systems.hpp"
 #include "raymath.h"
 #include <cerrno>
@@ -9,7 +10,7 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-const static float movement_scaling = 150.0f;
+const static float movement_scaling = 200.0f;
 
 void BodyMovement::move_towards(Body& body, Body& target) {
     Vector2 direction = Vector2Normalize(target.position - body.position);
@@ -38,12 +39,22 @@ void BodyMovement::move_horizontally(Body& body, float amount) {
     Vector2 x_direction = {body.gravity_direction.y, -body.gravity_direction.x};
     body.velocity += x_direction * amount * movement_scaling;
 }
-
 void BodyMovement::jump(Body& body) {
+
+    // TODO:
+    // Bonus Air Time
+    // Peak control
+    // Fast Falling
+    // Lerp the jump movement
+
+
     // body.velocity = Vector2Negate(body.gravity_direction * 2000.0f);
 
-    body.velocity += Vector2Negate(body.gravity_direction) * body.smooth_jump_buffer;
-    body.jumping = true;
+    body.velocity = Vector2Negate(body.gravity_direction) * body.smooth_jump_buffer;
+    // body.jumping = true;
+
+
+
 
     // NOTE: finally need the system awake thing naisu
 }

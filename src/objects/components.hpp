@@ -2,6 +2,7 @@
 #define COMPONENTS_HPP
 #include "constants.hpp"
 #include "raylib.h"
+#include "raymath.h"
 
 struct Body {
     Vector2 position = screenCenter;
@@ -10,6 +11,19 @@ struct Body {
     bool touching_ground = false;
     bool jumping = false;
     float smooth_jump_buffer{};
+    // NOTE: follows the gravity direction, not the vertical player direction
+    [[nodiscard]] Vector2 get_y_velocity() {
+        return gravity_direction * Vector2DotProduct(velocity, gravity_direction);
+    }
+    [[nodiscard]] float get_dot_y_velocity() {
+        return Vector2DotProduct(velocity, gravity_direction);
+    }
+    [[nodiscard]] float get_dot_x_velocity() {
+        return Vector2DotProduct(velocity, {gravity_direction.y, -gravity_direction.x});
+    }
+    void set_y_velocity(float new_y_velocity) {
+        gravity_direction* Vector2DotProduct(velocity, gravity_direction);
+    }
 };
 
 struct GravityField {
