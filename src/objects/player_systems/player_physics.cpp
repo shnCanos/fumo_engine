@@ -1,5 +1,6 @@
 #include "player_physics.hpp"
 #include "constants.hpp"
+#include "fumo_engine/entity_query.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "raymath.h"
 
@@ -32,7 +33,6 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
         // FIXME: check that "Only" filter will remove the player id from the array
 
         // FIXME: add a buffer that doesnt allow swapping orbits more than once a second
-
         const auto& circle_body = global->ECS->get_component<Body>(circle_id);
         const auto& circle_shape = global->ECS->get_component<CircleShape>(circle_id);
         const auto& circle_grav_field =

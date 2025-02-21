@@ -24,20 +24,20 @@ void BodyMovement::move_towards_position(Body& body, Vector2 position) {
     float sqr_distance = Vector2DistanceSqr(position, body.position);
     body.velocity = direction * sqr_distance;
 }
-inline void BodyMovement::update_position(Body& body) {
+ void BodyMovement::update_position(Body& body) {
     body.position += body.velocity * global->frametime;
 }
 
-inline void BodyMovement::reset_velocity(Body& body) { body.velocity = {0.0f, 0.0f}; }
+ void BodyMovement::reset_velocity(Body& body) { body.velocity = {0.0f, 0.0f}; }
 
 
 // NOTE: moves the body in a fixed way, regardless of
 // the velocity it had before this update
 // if you want it to interact with the world, use the non fixed method
-inline void BodyMovement::move_vertically(Body& body, float amount) {
+ void BodyMovement::move_vertically(Body& body, float amount) {
     body.velocity -= body.gravity_direction * amount * movement_scaling;
 }
-inline void BodyMovement::move_horizontally(Body& body, float amount) {
+ void BodyMovement::move_horizontally(Body& body, float amount) {
     Vector2 x_direction = {body.gravity_direction.y, -body.gravity_direction.x};
     body.velocity += x_direction * amount * movement_scaling;
 }
@@ -53,11 +53,7 @@ void BodyMovement::jump(Body& body) {
     // body.velocity = Vector2Negate(body.gravity_direction * 2000.0f);
 
     body.velocity = Vector2Negate(body.gravity_direction) * body.smooth_jump_buffer;
-    // body.jumping = true;
 
-    // EventManager dasd;
-    // dasd.notify_event(JUMP_EVENT);
-    // dasd.queue_event(JUMP_EVENT)
 
 
 

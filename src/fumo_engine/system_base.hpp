@@ -21,12 +21,12 @@ class System {
     Priority priority = NO_PRIORITY;
 };
 
-struct SystemListener : System {
-  // NOTE: same as a system, but also listens for events from EventManager
-  // and deals with the events inside of on_notify
-    virtual void sys_call() = 0;
-    virtual void on_notify() = 0;
-};
+// struct SystemListener : System {
+//   // NOTE: same as a system, but also listens for events from EventManager
+//   // and deals with the events inside of on_notify
+//     virtual void sys_call() = 0;
+//     virtual void on_notify() = 0;
+// };
 
 // class Group : public System {
 //     // solution to systems that want multiple groups of entities
