@@ -30,21 +30,6 @@
 //         return r;
 //     }
 // };
-// class Scheduler {
-//   public:
-
-// Array of component_masks where the index corresponds to the entity ID
-// used to delay updates to the end of each frame
-// std::set<EntityId> entities_to_create{};
-// std::set<EntityId> entities_to_destroy{};
-// each entityId corresponds to an index on this array
-// std::set<EntityId> entities_to_update_components{};
-// std::array<ComponentMask, MAX_ENTITY_IDS> scheduled_entity_component_masks{};
-// NOTE: i have concluded that there isnt a real need to schedule these changes
-// to the end of the frame. i can still do this, but i feel it adds little benefit
-// as we might want to create systems that depend on some of these changes
-// plus its not even necessarily more efficient as shared state is still required
-// };
 struct SystemCompare {
     inline bool operator()(const std::shared_ptr<System>& sysA,
                            const std::shared_ptr<System>& sysB) const {
@@ -54,19 +39,15 @@ struct SystemCompare {
 
 class SchedulerECS {
   private:
-    friend struct SystemInitializer;
+    friend struct HelperScheduler;
     //------------------------------------------------------------------------------
-    // std::array<std::shared_ptr<System>, MAX_SYSTEMS> system_scheduler{};
-    // index is the priority for this system
     std::set<std::shared_ptr<System>, SystemCompare> system_scheduler{};
 
     // NOTE: if the system is not awake, we put it in unscheduled_systems;
     // (it is stored with the other systems that never want to be scheduled)
     std::unordered_map<std::string_view, std::shared_ptr<System>> unscheduled_systems{};
     //------------------------------------------------------------------------------
-
     std::unique_ptr<ECS> ecs;
-    // Priority current_max_priority{};
 
     std::unordered_map<std::string_view, std::shared_ptr<System>> debug_scheduler{};
     std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug{};

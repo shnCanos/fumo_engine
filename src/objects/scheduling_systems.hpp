@@ -2,7 +2,7 @@
 #define SCHEDULING_SYSTEMS_HPP
 #include "fumo_engine/scheduler_ecs.hpp"
 
-struct SystemInitializer : System {
+struct HelperScheduler : System {
     // NOTE: this is an extension of the main SchedulerECS class
     // used to awake systems when necessary, and put them to sleep
 
@@ -12,7 +12,7 @@ struct SystemInitializer : System {
 
     std::shared_ptr<SchedulerECS> init_ECS;
 
-    SystemInitializer(std::shared_ptr<SchedulerECS> init_ECS) : init_ECS(init_ECS) {}
+    HelperScheduler(std::shared_ptr<SchedulerECS> init_ECS) : init_ECS(init_ECS) {}
 
     void sys_call() override {};
     template<typename T>
@@ -21,6 +21,7 @@ struct SystemInitializer : System {
     }
     template<typename T>
     void sleep_system();
-        // FIXME: finish writing these methods
+    // FIXME: finish writing these methods
 };
+
 #endif
