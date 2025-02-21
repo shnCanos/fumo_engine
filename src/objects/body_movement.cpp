@@ -1,4 +1,5 @@
 // clang-format off
+#include "fumo_engine/event_manager.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
@@ -23,19 +24,20 @@ void BodyMovement::move_towards_position(Body& body, Vector2 position) {
     float sqr_distance = Vector2DistanceSqr(position, body.position);
     body.velocity = direction * sqr_distance;
 }
-void BodyMovement::update_position(Body& body) {
+inline void BodyMovement::update_position(Body& body) {
     body.position += body.velocity * global->frametime;
 }
 
-void BodyMovement::reset_velocity(Body& body) { body.velocity = {0.0f, 0.0f}; }
+inline void BodyMovement::reset_velocity(Body& body) { body.velocity = {0.0f, 0.0f}; }
+
 
 // NOTE: moves the body in a fixed way, regardless of
 // the velocity it had before this update
 // if you want it to interact with the world, use the non fixed method
-void BodyMovement::move_vertically(Body& body, float amount) {
+inline void BodyMovement::move_vertically(Body& body, float amount) {
     body.velocity -= body.gravity_direction * amount * movement_scaling;
 }
-void BodyMovement::move_horizontally(Body& body, float amount) {
+inline void BodyMovement::move_horizontally(Body& body, float amount) {
     Vector2 x_direction = {body.gravity_direction.y, -body.gravity_direction.x};
     body.velocity += x_direction * amount * movement_scaling;
 }
@@ -53,6 +55,9 @@ void BodyMovement::jump(Body& body) {
     body.velocity = Vector2Negate(body.gravity_direction) * body.smooth_jump_buffer;
     // body.jumping = true;
 
+    // EventManager dasd;
+    // dasd.notify_event(JUMP_EVENT);
+    // dasd.queue_event(JUMP_EVENT)
 
 
 
