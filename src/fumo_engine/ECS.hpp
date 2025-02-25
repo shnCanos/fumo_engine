@@ -3,7 +3,6 @@
 #include "component_manager.hpp"
 #include "engine_constants.hpp"
 #include "entity_manager.hpp"
-#include "fumo_engine/component_array.hpp"
 #include "fumo_engine/entity_query.hpp"
 #include "system_manager.hpp"
 #include <memory>

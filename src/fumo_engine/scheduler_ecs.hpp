@@ -125,18 +125,12 @@ class SchedulerECS {
     template<typename T, Priority priority, typename... Types>
     void register_system(EntityQuery entity_query, Types&... args) {
 
-        // DEBUG_ASSERT(system_scheduler[priority] == nullptr, "already used this
-        // priority.",
-        //              system_scheduler);
-
         std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->register_system<T>(entity_query, system_ptr);
         system_ptr->priority = priority;
 
         system_scheduler.insert(system_ptr);
-        // system_scheduler[priority] = system_ptr;
-        // current_max_priority++;
-        // return system_ptr;
+
         // NOTE: remove later if not using debugger
         std::string_view t_name = libassert::type_name<T>();
         debug_scheduler.insert({t_name, system_ptr});

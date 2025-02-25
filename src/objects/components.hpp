@@ -5,11 +5,15 @@
 #include "raymath.h"
 
 struct Body {
+    int iterations{};
+    int count{};
     Vector2 position = screenCenter;
     Vector2 velocity{0.0f, 0.0f};
     Vector2 gravity_direction = {0.0f, -1.0f};
     bool touching_ground = false;
     bool jumping = false;
+    bool going_up;
+    bool going_down;
     float smooth_jump_buffer{};
     // NOTE: follows the gravity direction, not the vertical player direction
     [[nodiscard]] Vector2 get_y_velocity() {
@@ -21,9 +25,10 @@ struct Body {
     [[nodiscard]] float get_dot_x_velocity() {
         return Vector2DotProduct(velocity, {gravity_direction.y, -gravity_direction.x});
     }
-    void set_y_velocity(float new_y_velocity) {
-        gravity_direction* Vector2DotProduct(velocity, gravity_direction);
-    }
+    // void set_y_velocity(float new_y_velocity) {
+    //     gravity_direction* Vector2DotProduct(velocity, gravity_direction);
+    // }
+    void scale_velocity(float scale) { velocity += gravity_direction * scale; }
 };
 
 struct GravityField {

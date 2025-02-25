@@ -1,8 +1,9 @@
 #include "player_physics.hpp"
 #include "constants.hpp"
-#include "fumo_engine/entity_query.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "raymath.h"
+#include <cstdio>
+#include <system_error>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -60,6 +61,36 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
     }
 }
 
+bool dont_look_bad_hard_coded_physics(Body& entity_body) {
+
+    if (entity_body.jumping) {
+        // going up smoothing
+        if (entity_body.going_up) {
+            entity_body.iterations++;
+            // PRINT(entity_body.iterations);
+            entity_body.scale_velocity(-1000.0f / entity_body.iterations);
+            if (entity_body.iterations == 10) {
+                entity_body.going_up = false;
+                entity_body.going_down = true;
+                entity_body.iterations = 0;
+            }
+        }
+        // going down smoothing
+        if (entity_body.going_down) {
+            entity_body.iterations++;
+            // PRINT(entity_body.iterations);
+            entity_body.scale_velocity(1000.0f / entity_body.iterations);
+            if (entity_body.iterations == 10) {
+                entity_body.jumping = false;
+                entity_body.going_down = false;
+                entity_body.iterations = 0;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
 void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
                                           const Body& circle_body, Body& entity_body) {
 
@@ -68,11 +99,13 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
         Vector2Normalize(circle_body.position - entity_body.position);
     entity_body.gravity_direction = gravity_direction;
 
+    if (dont_look_bad_hard_coded_physics(entity_body)) {
+        return;
+    }
+
     if (!entity_body.touching_ground) {
-        if (entity_body.get_dot_y_velocity() > max_fall_velocity) {
-            return;
-        }
-        Vector2 acceleration = gravity_direction * circle_grav_field.gravity_strength;
+        Vector2 acceleration =
+            gravity_direction * circle_grav_field.gravity_strength * 1000.0f;
         entity_body.velocity += acceleration * global->frametime;
         // PRINT(entity_body.get_dot_y_velocity());
     } else {
@@ -116,4 +149,4 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
 //         force_direction * GRAVITATIONAL_CONSTANT * circle_body.mass / sqr_distance;
 //     // multiplied by direction to turn magnitude into vectorial change
 //     entity_body.velocity += acceleration * global->frametime;
-// }
+//

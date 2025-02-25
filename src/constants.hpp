@@ -7,8 +7,8 @@
 #include <libassert/assert.hpp>
 // const int particle_count = 50;
 
-const int screenWidth = 500;
-// const int screenWidth = 1025;
+// const int screenWidth = 500;
+const int screenWidth = 1025;
 const int screenHeight = 1000;
 const Vector2 screenCenter = {(float)screenWidth / 2, (float)screenHeight / 2};
 #define GRAVITY 9.81
@@ -19,6 +19,7 @@ const float mouse_radius = 40.0f;
 const int color_count = 18;
 const float default_mass = 600000;
 const float default_radius = 50.0f;
+const float default_planet_radius = 5000.0f;
 
 const float max_fall_velocity = 500.0f;
 // const float default_grav_strength = 1000.0f;

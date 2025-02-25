@@ -6,14 +6,14 @@
 #include "raymath.h"
 
 extern std::unique_ptr<GlobalState> global;
-const float default_grav_strength = 8000.0f;
+const float default_grav_strength = 9.8f;
 
 EntityId PlanetFactory::create_planet(float radius, float mass, Vector2 velocity,
                                       Vector2 position, Color color, float grav_radius,
                                       float grav_strength) {
     EntityId entity_id = global->ECS->create_entity();
     global->ECS->entity_add_component(entity_id,
-                                     Body{.position = position, .velocity = velocity});
+                                      Body{.position = position, .velocity = velocity});
     global->ECS->entity_add_component(entity_id, Render{.color = color});
     global->ECS->entity_add_component(entity_id, CircleShape{.radius = radius});
 
@@ -33,7 +33,7 @@ EntityId PlanetFactory::create_default_planet(Vector2 position) {
     global->ECS->entity_add_component(entity_id, CircleShape{.radius = default_radius});
 
     global->ECS->entity_add_component(
-        entity_id, GravityField{.gravity_radius = default_radius * 10.0f,
+        entity_id, GravityField{.gravity_radius = default_planet_radius,
                                 .gravity_strength = default_grav_strength});
 
     sys_entities.insert(entity_id);
