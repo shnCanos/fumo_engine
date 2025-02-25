@@ -2,7 +2,6 @@
 #include "fumo_engine/event_manager.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
-#include "objects/player_systems/player_general_systems.hpp"
 #include "raylib.h"
 #include "systems.hpp"
 #include "raymath.h"
@@ -12,7 +11,7 @@
 extern std::unique_ptr<GlobalState> global;
 
 const static float movement_scaling = 15000.0f;
-const static float jump_scaling = 50000.0f;
+const static float jump_scaling = 25000.0f;
 
 void BodyMovement::move_towards(Body& body, Body& target) {
     Vector2 direction = Vector2Normalize(target.position - body.position);
@@ -52,8 +51,8 @@ void BodyMovement::jump(Body& body) {
 
     // body.velocity = Vector2Negate(body.gravity_direction * 2000.0f);
 
-    // body.velocity +=
-    //     Vector2Negate(body.gravity_direction) * jump_scaling * global->frametime;
+    body.velocity +=
+        Vector2Negate(body.gravity_direction) * jump_scaling * global->frametime;
     body.jumping = true;
     body.going_up = true;
 

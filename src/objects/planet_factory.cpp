@@ -6,7 +6,7 @@
 #include "raymath.h"
 
 extern std::unique_ptr<GlobalState> global;
-const float default_grav_strength = 9.8f;
+const float default_grav_strength = 9.8f * 6;
 
 EntityId PlanetFactory::create_planet(float radius, float mass, Vector2 velocity,
                                       Vector2 position, Color color, float grav_radius,

@@ -1,9 +1,7 @@
 #include "player_physics.hpp"
-#include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "raymath.h"
 #include <cstdio>
-#include <system_error>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -68,7 +66,8 @@ bool dont_look_bad_hard_coded_physics(Body& entity_body) {
         if (entity_body.going_up) {
             entity_body.iterations++;
             // PRINT(entity_body.iterations);
-            entity_body.scale_velocity(-1000.0f / entity_body.iterations);
+            entity_body.scale_velocity(-20.0f / (entity_body.iterations *
+                                       global->frametime));
             if (entity_body.iterations == 10) {
                 entity_body.going_up = false;
                 entity_body.going_down = true;
@@ -77,9 +76,11 @@ bool dont_look_bad_hard_coded_physics(Body& entity_body) {
         }
         // going down smoothing
         if (entity_body.going_down) {
+            // 25000 at least downwards
             entity_body.iterations++;
             // PRINT(entity_body.iterations);
-            entity_body.scale_velocity(1000.0f / entity_body.iterations);
+            entity_body.scale_velocity(5000.0f * entity_body.iterations *
+                                       global->frametime);
             if (entity_body.iterations == 10) {
                 entity_body.jumping = false;
                 entity_body.going_down = false;
