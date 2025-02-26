@@ -8,6 +8,7 @@ class PlayerInitializer : public System {
   public:
     void sys_call() override {};
     EntityId initialize_player();
+    void load_player_textures();
 };
 
 struct PlayerInputHandler : System {

@@ -28,6 +28,6 @@ const Color player_color = ORANGE;
 const std::array<Color, 100> all_colors = {
     LIGHTGRAY, GRAY,    DARKGRAY, YELLOW, GOLD,   PINK,  RED,   MAROON,   GREEN,
     LIME,      SKYBLUE, BLUE,     PURPLE, VIOLET, BEIGE, BROWN, DARKBROWN};
-#define PRINT(x)                                                                         \
-    std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << std::endl;
+#define PRINT(x)                                                                        \
+    std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
 #endif

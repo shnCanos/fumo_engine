@@ -67,4 +67,20 @@ struct PlayerFlag {
     // to an entity id
 };
 
+struct Sprite2D {
+    Texture2D texture;
+    RectangleShape region_rect;
+};
+
+// NOTE: when making an animation, we created an EntityId for that animation,
+// which we then attribute to whatever entity should hold that animation
+
+struct SpriteSheet2D {
+    // used to animate entities
+    Texture2D texture_sheet;
+    RectangleShape sprite_region_rect; // delimits each frame inside the sheet
+    int sprite_frame_count;
+    int frame_speed; // number of frames to show per second
+};
+
 #endif

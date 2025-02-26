@@ -1,7 +1,5 @@
 #include "fumo_engine/global_state.hpp"
-#include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
-#include "objects/player_systems/player_general_systems.hpp"
 // angular include so clang wont complain
 #include <include_systems.hpp>
 
@@ -25,6 +23,12 @@ void register_components() {
     global->ECS->register_component<CircleShape>();
     global->ECS->register_component<GravityField>();
     global->ECS->register_component<PlayerFlag>();
+    // NOTE: using raylib's struct directly
+    global->ECS->register_component<Texture2D>();
+    global->ECS->register_component<SpriteSheet2D>();
+    // NOTE: we must name each individual container we want to have
+    // (this enforces stricter type checking and separates containers better by type)
+    global->ECS->register_component<NamedEntityIdContainer<SpriteSheet2D>>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
@@ -50,8 +54,9 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<Body, Render, CircleShape>(),
         .component_filter = Filter::All});
 
-    global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY>();
+    global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
 
+    global->ECS->add_unregistered_system<GlobalRenderer, MAX_PRIORITY>();
 }
 void register_systems_physics_collisions() {
     global->ECS->register_system_unscheduled<CircleCollisionHandler>(EntityQuery{
@@ -72,6 +77,7 @@ void register_systems_physics_collisions() {
 }
 void register_agnostic_sytems() {
     global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();
+    global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
     global->ECS->add_unregistered_system_unscheduled<BodyMovement>();
     global->ECS->add_unregistered_system_unscheduled<PlanetFactory>();
     global->ECS->add_unregistered_system_unscheduled<Debugger>();

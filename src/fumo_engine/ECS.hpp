@@ -75,6 +75,10 @@ class ECS {
     }
 
     template<typename T>
+    void check_for_component(EntityId entity_id) {
+        return component_manager->check_for_component<T>(entity_id);
+    }
+    template<typename T>
     [[nodiscard]] ComponentId get_component_id() {
         return component_manager->get_component_id<T>();
     }

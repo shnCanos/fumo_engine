@@ -1,6 +1,5 @@
 #include "fumo_engine/global_state.hpp"
-#include "objects/components.hpp"
-#include "objects/renderers.hpp"
+#include "renderers.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 

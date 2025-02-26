@@ -18,6 +18,11 @@ EntityId PlayerInitializer::initialize_player() {
     return player_id;
 }
 
+void PlayerInitializer::load_player_textures() {
+    Texture2D player_texture = LoadTexture("assets/scarfy.png");
+
+}
+
 void PlayerEndFrameUpdater::end_of_frame_update() { reset_state(); }
 
 void PlayerEndFrameUpdater::reset_state() {

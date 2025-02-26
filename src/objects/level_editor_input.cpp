@@ -28,6 +28,10 @@ void InputHandlerLevelEditor::handle_input() {
     } else if (IsKeyPressed(KEY_ONE)) {
         debug_print();
     }
+    // } else if (IsKeyPressed(KEY_THREE)) {
+    //     const auto& scheduler_ptr = global->ECS->get_system<SchedulerSystemECS>();
+    //     scheduler_ptr->sleep_system<PlanetRenderer>();
+    // }
 }
 
 void InputHandlerLevelEditor::debug_print() {

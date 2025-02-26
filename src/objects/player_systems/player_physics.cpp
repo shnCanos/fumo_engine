@@ -31,7 +31,8 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
     for (auto circle_id : sys_entities) {
         // FIXME: check that "Only" filter will remove the player id from the array
 
-        // FIXME: add a buffer that doesnt allow swapping orbits more than once a second
+        // FIXME: add a buffer that doesnt allow swapping orbits more
+        // than once a second
         const auto& circle_body = global->ECS->get_component<Body>(circle_id);
         const auto& circle_shape = global->ECS->get_component<CircleShape>(circle_id);
         const auto& circle_grav_field =
@@ -66,8 +67,8 @@ bool dont_look_bad_hard_coded_physics(Body& entity_body) {
         if (entity_body.going_up) {
             entity_body.iterations++;
             // PRINT(entity_body.iterations);
-            entity_body.scale_velocity(-20.0f / (entity_body.iterations *
-                                       global->frametime));
+            entity_body.scale_velocity(-20.0f /
+                                       (entity_body.iterations * global->frametime));
             if (entity_body.iterations == 10) {
                 entity_body.going_up = false;
                 entity_body.going_down = true;

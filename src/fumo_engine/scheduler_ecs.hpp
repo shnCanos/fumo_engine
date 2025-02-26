@@ -31,6 +31,8 @@
 //     }
 // };
 struct SystemCompare {
+    // FIXME: allow for repeated priorities (test the case where the priorities are equal
+    // and pick a random order)
     inline bool operator()(const std::shared_ptr<System>& sysA,
                            const std::shared_ptr<System>& sysB) const {
         return sysA->priority < sysB->priority;
@@ -39,17 +41,21 @@ struct SystemCompare {
 
 class SchedulerECS {
   private:
-    friend struct HelperScheduler;
+    friend struct SchedulerSystemECS;
     //------------------------------------------------------------------------------
     std::set<std::shared_ptr<System>, SystemCompare> system_scheduler{};
 
     // NOTE: if the system is not awake, we put it in unscheduled_systems;
     // (it is stored with the other systems that never want to be scheduled)
-    std::unordered_map<std::string_view, std::shared_ptr<System>> unscheduled_systems{};
+    // std::unordered_map<std::string_view, std::shared_ptr<System>>
+    // unscheduled_systems{};
     //------------------------------------------------------------------------------
     std::unique_ptr<ECS> ecs;
 
-    std::unordered_map<std::string_view, std::shared_ptr<System>> debug_scheduler{};
+    // TODO: check if you really need this extra map later (using it for printing rn)
+    // (i think it might be unnecessary overhead that slows down the ECS)
+    std::unordered_map<std::string_view, std::shared_ptr<System>>
+        all_scheduled_systems_debug{};
     std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug{};
 
   public:
@@ -115,6 +121,10 @@ class SchedulerECS {
         return ecs->get_component<T>(entity_id);
     }
     template<typename T>
+    void check_for_component(EntityId entity_id) {
+        return ecs->check_for_component<T>(entity_id);
+    }
+    template<typename T>
     [[nodiscard]] ComponentId get_component_id() {
         return ecs->get_component_id<T>();
     }
@@ -133,7 +143,7 @@ class SchedulerECS {
 
         // NOTE: remove later if not using debugger
         std::string_view t_name = libassert::type_name<T>();
-        debug_scheduler.insert({t_name, system_ptr});
+        all_scheduled_systems_debug.insert({t_name, system_ptr});
     }
 
     // WARNING: this system wont be called in run_systems() call
@@ -159,7 +169,7 @@ class SchedulerECS {
 
         // NOTE: remove later if not using debugger
         std::string_view t_name = libassert::type_name<T>();
-        debug_scheduler.insert({t_name, system_ptr});
+        all_scheduled_systems_debug.insert({t_name, system_ptr});
     }
     // this system wont be called in run_systems() call
     template<typename T, typename... Types>
@@ -212,19 +222,19 @@ class SchedulerECS {
 
     void debug_print() {
         PRINT(all_entity_ids_debug);
-        std::cerr << std::endl;
+        std::cerr << '\n';
         ecs->debug_print();
-        std::cerr << std::endl;
+        std::cerr << '\n';
         debug_print_scheduler();
-        std::cerr << std::endl << std::endl;
+        std::cerr << '\n' << '\n';
     }
     void debug_print_scheduler() {
         PRINT(system_scheduler);
-        PRINT(debug_scheduler);
-        for (auto const& pair : debug_scheduler) {
+        PRINT(all_scheduled_systems_debug);
+        for (auto const& pair : all_scheduled_systems_debug) {
             auto const& t_name = pair.first;
             auto const& system = pair.second;
-            std::cout << libassert::highlight_stringify(t_name) << " -----> "
+            std::cerr << libassert::highlight_stringify(t_name) << " -----> "
                       << libassert::highlight_stringify(system->priority) << std::endl;
         }
     }
