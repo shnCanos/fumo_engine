@@ -3,6 +3,7 @@
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
 #include "objects/systems.hpp"
+#include <string_view>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -11,17 +12,13 @@ EntityId PlayerInitializer::initialize_player() {
     global->ECS->entity_add_component(player_id, PlayerFlag{});
     global->ECS->entity_add_component(player_id, Render{.color = player_color});
     global->ECS->entity_add_component(player_id,
-                                     CircleShape{.radius = default_radius / 4.0f});
+                                      CircleShape{.radius = default_radius / 4.0f});
     global->ECS->entity_add_component(player_id, Body{.position = screenCenter,
-                                                     .velocity = {0.0f, 0.0f},
-                                                     .smooth_jump_buffer = 1.0f});
+                                                      .velocity = {0.0f, 0.0f},
+                                                      .smooth_jump_buffer = 1.0f});
     return player_id;
 }
 
-void PlayerInitializer::load_player_textures() {
-    Texture2D player_texture = LoadTexture("assets/scarfy.png");
-
-}
 
 void PlayerEndFrameUpdater::end_of_frame_update() { reset_state(); }
 

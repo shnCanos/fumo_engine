@@ -3,6 +3,7 @@
 #include "constants.hpp"
 #include "raylib.h"
 #include "raymath.h"
+#include <string_view>
 
 struct Body {
     int iterations{};
@@ -70,6 +71,7 @@ struct PlayerFlag {
 struct Sprite2D {
     Texture2D texture;
     RectangleShape region_rect;
+    std::string_view sprite_name;
 };
 
 // NOTE: when making an animation, we created an EntityId for that animation,
@@ -81,6 +83,7 @@ struct SpriteSheet2D {
     RectangleShape sprite_region_rect; // delimits each frame inside the sheet
     int sprite_frame_count;
     int frame_speed; // number of frames to show per second
+    int frame_progress; // progress along the frame
 };
 
 #endif

@@ -20,40 +20,42 @@ struct GlobalRenderer : System {
     // rendered
 
     void sys_call() override {}
-  // FIXME: implement all of the texture loading functions for initialization of the game
+    // FIXME: implement all of the texture loading functions for initialization of the
+    // game
     void global_texture_load();
     void unload_all_textures();
 };
 
 class PlayerRenderer : public System {
 
-    NamedEntityIdContainer<SpriteSheet2D> player_animations{};
-    Sprite2D player_sprite;
+  Sprite2DAnimations sprite_animations;
+  Sprite2D player_sprite;
 
   public:
     void sys_call() override {}
-  // FIXME: implement play_animation()
+    // FIXME: implement play_animation()
     void play_animation(std::string_view animation_name);
 
     void add_sprite_sheet(EntityId sprite_sheet_id, std::string_view animation_name) {
-        player_animations.add_entity_id<SpriteSheet2D>(sprite_sheet_id, animation_name);
+        // player_animations.add_entity_id<SpriteSheet2D>(sprite_sheet_id,
+        // animation_name);
     }
     void destroy_sprite_sheet_by_name(std::string_view animation_name) {
-        player_animations.destroy_entity_id_by_name(animation_name);
+        // player_animations.destroy_entity_id_by_name(animation_name);
     }
     void remove_sprite_sheet_by_name(std::string_view animation_name) {
-        player_animations.remove_entity_id_by_name(animation_name);
+        // player_animations.remove_entity_id_by_name(animation_name);
     }
 
   private:
-  // FIXME: implement loading player textures
+    // FIXME: implement loading player textures
     void load_player_textures();
 };
 
 class AnimationPlayer : public System {
   public:
     void sys_call() override {}
-  // FIXME: implement play_animation()
+    // FIXME: implement play_animation()
     void play_animation(SpriteSheet2D animation_sheet);
 };
 

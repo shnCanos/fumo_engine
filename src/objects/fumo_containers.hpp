@@ -3,15 +3,16 @@
 #define FUMO_CONTAINERS_HPP
 #include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/global_state.hpp"
+#include "objects/components.hpp"
 #include <libassert/assert.hpp>
 #include <string_view>
 #include <unordered_map>
 
-
 extern std::unique_ptr<GlobalState> global;
 
 template<typename T>
-class NamedEntityIdContainer {
+class NamedComponentContainer {
+    friend struct Sprite2DAnimations;
     // NOTE: Associative container used for naming entity_ids which own a component
     // Example: naming SpriteSheet2D like "player_jump" or "player_run"
   private:
@@ -20,6 +21,45 @@ class NamedEntityIdContainer {
 
   public:
     // enforce type checking on the added entity id
+
+    template<typename U>
+    void add_component_by_name(std::string_view entity_name) {
+
+        // NOTE: if performance is an issue consider turning this to strings
+
+        EntityId entity_id = global->ECS->create_entity();
+        global->ECS->entity_add_component(entity_id, U());
+
+        add_entity_id<U>(entity_id, entity_name);
+    }
+
+    // WARNING: this function wont destroy the associated entity_id!!!
+    void remove_component_by_name(std::string_view entity_name) {
+        size_t erased_count = named_entity_ids.erase(entity_name);
+        DEBUG_ASSERT(erased_count != 0, "this id wasn't in this container.",
+                     component_type_name);
+    }
+
+    // void destroy_component_by_name(std::string_view entity_name) {
+    //     EntityId entity_id = named_entity_ids[entity_name];
+    //
+    //     size_t erased_count = named_entity_ids.erase(entity_name);
+    //     DEBUG_ASSERT(erased_count != 0, "this id wasnt in this container.",
+    //                  component_type_name);
+    //
+    //     global->ECS->destroy_entity(entity_id);
+    // }
+
+    [[nodiscard]] T& get_component_by_name(std::string_view entity_name) {
+
+        DEBUG_ASSERT(named_entity_ids.contains(entity_name),
+                     "this component name hasn't been added to this container.",
+                     entity_name, named_entity_ids);
+
+        return global->ECS->get_component<T>(named_entity_ids[entity_name]);
+    }
+
+  private:
     template<typename U>
     void add_entity_id(EntityId entity_id, std::string_view entity_name) {
         auto val = std::is_same_v<T, U>;
@@ -33,22 +73,15 @@ class NamedEntityIdContainer {
 
         named_entity_ids.insert({entity_name, entity_id});
     }
+};
+struct Sprite2DAnimations : NamedComponentContainer<SpriteSheet2D> {
 
-    void destroy_entity_id_by_name(std::string_view entity_name) {
-        EntityId entity_id = named_entity_ids[entity_name];
+    // NOTE: currently has nothing new ?
 
-        size_t erased_count = named_entity_ids.erase(entity_name);
-        DEBUG_ASSERT(erased_count != 0, "this id wasnt in this container.",
-                     component_type_name);
+    std::string_view current_animation_name;
 
-        global->ECS->destroy_entity(entity_id);
-    }
-
-    // WARNING: this function wont destroy the associated entity_id!!!
-    void remove_entity_id_by_name(std::string_view entity_name) {
-        size_t erased_count = named_entity_ids.erase(entity_name);
-        DEBUG_ASSERT(erased_count != 0, "this id wasn't in this container.",
-                     component_type_name);
+    void some_func() {
+        SpriteSheet2D sprite_sheet = get_component_by_name("scarfy.png");
     }
 };
 
@@ -79,8 +112,8 @@ class NamedEntityIdContainer {
 //         auto val = std::is_same_v<T, U>;
 //         DEBUG_ASSERT(
 //             val,
-//             "cant remove an entity_id associated with a component of a different type.",
-//             component_type_name);
+//             "cant remove an entity_id associated with a component of a different
+//             type.", component_type_name);
 //         entity_id_vec.erase(
 //             std::find(entity_id_vec.begin(), entity_id_vec.end(), entity_id));
 //     }
