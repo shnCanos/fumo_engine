@@ -6,7 +6,6 @@
 #include <libassert/assert.hpp>
 #include <string_view>
 #include <unordered_map>
-#include <vector>
 
 
 extern std::unique_ptr<GlobalState> global;
@@ -53,38 +52,38 @@ class NamedEntityIdContainer {
     }
 };
 
-template<typename T>
-class EntityIdContainer {
-    // NOTE: no direct usecase yet for this container (its useful for storing generic
-    // repetitive components)
-    // Example: storing multiple bombs in one player_id
-    //
-    // a container to store multiple instances of one component,
-    // by associating it with an EntityId, and storing that ID here
-  public:
-    std::vector<EntityId> entity_id_vec{};
-    std::string_view component_type_name = libassert::type_name<T>();
-
-    template<typename U>
-    void add_entity_id(EntityId entity_id) {
-        auto val = std::is_same_v<T, U>;
-        DEBUG_ASSERT(
-            val,
-            "cant add an entity_id associated with a component of a different type.",
-            component_type_name);
-        entity_id_vec.push_back(entity_id);
-    }
-    // WARNING: this function wont destroy the associated entity_id!!!
-    template<typename U>
-    void remove_entity_id(EntityId entity_id) {
-        auto val = std::is_same_v<T, U>;
-        DEBUG_ASSERT(
-            val,
-            "cant remove an entity_id associated with a component of a different type.",
-            component_type_name);
-        entity_id_vec.erase(
-            std::find(entity_id_vec.begin(), entity_id_vec.end(), entity_id));
-    }
-};
+// template<typename T>
+// class EntityIdContainer {
+//     // NOTE: no direct usecase yet for this container (its useful for storing generic
+//     // repetitive components)
+//     // Example: storing multiple bombs in one player_id
+//     //
+//     // a container to store multiple instances of one component,
+//     // by associating it with an EntityId, and storing that ID here
+//   public:
+//     std::vector<EntityId> entity_id_vec{};
+//     std::string_view component_type_name = libassert::type_name<T>();
+//
+//     template<typename U>
+//     void add_entity_id(EntityId entity_id) {
+//         auto val = std::is_same_v<T, U>;
+//         DEBUG_ASSERT(
+//             val,
+//             "cant add an entity_id associated with a component of a different type.",
+//             component_type_name);
+//         entity_id_vec.push_back(entity_id);
+//     }
+//     // WARNING: this function wont destroy the associated entity_id!!!
+//     template<typename U>
+//     void remove_entity_id(EntityId entity_id) {
+//         auto val = std::is_same_v<T, U>;
+//         DEBUG_ASSERT(
+//             val,
+//             "cant remove an entity_id associated with a component of a different type.",
+//             component_type_name);
+//         entity_id_vec.erase(
+//             std::find(entity_id_vec.begin(), entity_id_vec.end(), entity_id));
+//     }
+// };
 
 #endif

@@ -17,6 +17,6 @@ void GlobalRenderer::global_texture_load() {
 
 
 
-void PlayerRenderer::draw_running_animation() {
 
-}
+
+
