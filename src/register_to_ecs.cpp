@@ -28,7 +28,7 @@ void register_components() {
     global->ECS->register_component<SpriteSheet2D>();
     // NOTE: we must name each individual container we want to have
     // (this enforces stricter type checking and separates containers better by type)
-    global->ECS->register_component<NamedEntityIdContainer<SpriteSheet2D>>();
+    // global->ECS->register_component<NamedEntityIdContainer<SpriteSheet2D>>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on

@@ -80,9 +80,6 @@ struct Sprite2DAnimations : NamedComponentContainer<SpriteSheet2D> {
 
     std::string_view current_animation_name;
 
-    void some_func() {
-        SpriteSheet2D sprite_sheet = get_component_by_name("scarfy.png");
-    }
 };
 
 // template<typename T>

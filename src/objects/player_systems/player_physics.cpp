@@ -1,7 +1,7 @@
 #include "player_physics.hpp"
 #include "fumo_engine/global_state.hpp"
+#include "raylib.h"
 #include "raymath.h"
-#include <cstdio>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -111,7 +111,6 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
         entity_body.velocity += acceleration * global->frametime;
         // PRINT(entity_body.get_dot_y_velocity());
     } else {
-
         // remove the y component from the velocity
         // by setting the velocity to its magnitude in the x direction
         // some funky rotation matrix vector math going on here, check it on paper

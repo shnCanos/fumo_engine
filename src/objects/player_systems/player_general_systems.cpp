@@ -3,7 +3,6 @@
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
 #include "objects/systems.hpp"
-#include <string_view>
 
 extern std::unique_ptr<GlobalState> global;
 

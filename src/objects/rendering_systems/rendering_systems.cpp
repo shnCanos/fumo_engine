@@ -8,7 +8,7 @@ void GlobalRenderer::global_texture_load() {
 
     const auto& player_initializer = global->ECS->get_system<PlayerInitializer>();
 
-    player_initializer->load_player_textures();
+    // player_initializer->load_player_textures();
 }
 
 void PlayerRenderer::load_player_textures() {
