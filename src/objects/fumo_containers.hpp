@@ -12,7 +12,7 @@ extern std::unique_ptr<GlobalState> global;
 
 template<typename T>
 class NamedComponentContainer {
-    friend struct Sprite2DAnimations;
+    // friend struct Sprite2DAnimations;
     // NOTE: Associative container used for naming entity_ids which own a component
     // Example: naming SpriteSheet2D like "player_jump" or "player_run"
   private:
@@ -23,12 +23,10 @@ class NamedComponentContainer {
     // enforce type checking on the added entity id
 
     template<typename U>
-    void add_component_by_name(std::string_view entity_name) {
-
-        // NOTE: if performance is an issue consider turning this to strings
+    void add_component_by_name(std::string_view entity_name, U component) {
 
         EntityId entity_id = global->ECS->create_entity();
-        global->ECS->entity_add_component(entity_id, U());
+        global->ECS->entity_add_component(entity_id, component);
 
         add_entity_id<U>(entity_id, entity_name);
     }
@@ -74,12 +72,14 @@ class NamedComponentContainer {
         named_entity_ids.insert({entity_name, entity_id});
     }
 };
-struct Sprite2DAnimations : NamedComponentContainer<SpriteSheet2D> {
+struct Sprite2DAnimation {
+    NamedComponentContainer<SpriteSheet2D> sprite_sheet_container;
 
     // NOTE: currently has nothing new ?
 
     std::string_view current_animation_name;
 
+    void add_animation(std::string_view animation_name) {}
 };
 
 // template<typename T>

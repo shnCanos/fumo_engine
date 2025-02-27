@@ -1,9 +1,12 @@
 #include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/sprite_manager/sprite_and_texture_systems.hpp"
 //------------------------------------------------------------------------------------
 // :Program main entry point
 //------------------------------------------------------------------------------------
 std::unique_ptr<GlobalState> global;
+std::unique_ptr<SpriteManager> sprite_manager;
+// NOTE: NEW GLOBAL VARIABLE ADDED
 
 void register_all_to_ECS();
 

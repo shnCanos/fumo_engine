@@ -1,5 +1,6 @@
 #include "fumo_engine/global_state.hpp"
 #include "objects/components.hpp"
+#include "objects/fumo_containers.hpp"
 // angular include so clang wont complain
 #include <include_systems.hpp>
 
@@ -28,7 +29,7 @@ void register_components() {
     global->ECS->register_component<SpriteSheet2D>();
     // NOTE: we must name each individual container we want to have
     // (this enforces stricter type checking and separates containers better by type)
-    // global->ECS->register_component<NamedEntityIdContainer<SpriteSheet2D>>();
+    global->ECS->register_component<Sprite2DAnimations>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on

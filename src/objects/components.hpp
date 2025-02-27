@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <string_view>
+#include <utility>
 
 struct Body {
     int iterations{};
@@ -70,8 +71,8 @@ struct PlayerFlag {
 
 struct Sprite2D {
     Texture2D texture;
-    RectangleShape region_rect;
     std::string_view sprite_name;
+    RectangleShape region_rect;
 };
 
 // NOTE: when making an animation, we created an EntityId for that animation,
@@ -80,10 +81,26 @@ struct Sprite2D {
 struct SpriteSheet2D {
     // used to animate entities
     Texture2D texture_sheet;
-    RectangleShape sprite_region_rect; // delimits each frame inside the sheet
+    std::string_view sprite_sheet_name;
     int sprite_frame_count;
-    int frame_speed; // number of frames to show per second
-    int frame_progress; // progress along the frame
+
+    // base rect that defines how we go through each animation frame
+    const RectangleShape base_region_rect; // delimits each frame inside the sheet
+};
+
+struct AnimationInfo {
+
+    // keeps track of an entity's animation
+    // so we can update that entity's SpriteSheet2D
+
+    // a vector to hold the animations we want to play for the entity
+    std::vector<std::pair<std::string_view, RectangleShape>> sheet_rect_vector{};
+    // NOTE: it is a bit of overhead, but i am following godot's implementation
+    // for this. for now i do not need this kind of behavior, but i will for stuff
+    // like a landing animation being queue after a jump.
+    // we also want to be able to replace the head element
+    int frame_speed{};    // number of frames to show per second
+    int frame_progress{}; // progress along the frame
 };
 
 #endif

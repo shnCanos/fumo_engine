@@ -10,6 +10,7 @@ class GlobalState {
 
     float frametime;
     std::shared_ptr<SchedulerECS> ECS;
+
     EntityId player_id; // NOTE: storing the player id globally for now for optimisation
                         // this isnt necessary, and can be removed completely later.
 
