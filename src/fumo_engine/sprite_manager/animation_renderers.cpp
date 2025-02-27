@@ -1,9 +1,8 @@
-
 #include "fumo_engine/global_state.hpp"
-#include "fumo_engine/sprite_manager/sprite_and_texture_systems.hpp"
+#include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/components.hpp"
+#include "sprite_and_animation_systems.hpp"
 #include "raylib.h"
-#include "renderers.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
