@@ -3,7 +3,6 @@
 #define FUMO_CONTAINERS_HPP
 #include "fumo_engine/engine_constants.hpp"
 #include "fumo_engine/global_state.hpp"
-#include "objects/components.hpp"
 #include <libassert/assert.hpp>
 #include <string_view>
 #include <unordered_map>
@@ -71,15 +70,6 @@ class NamedComponentContainer {
 
         named_entity_ids.insert({entity_name, entity_id});
     }
-};
-struct Sprite2DAnimation {
-    NamedComponentContainer<SpriteSheet2D> sprite_sheet_container;
-
-    // NOTE: currently has nothing new ?
-
-    std::string_view current_animation_name;
-
-    void add_animation(std::string_view animation_name) {}
 };
 
 // template<typename T>
