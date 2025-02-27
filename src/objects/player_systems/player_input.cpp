@@ -1,4 +1,6 @@
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/sprite_manager/sprite_and_texture_systems.hpp"
+#include "objects/components.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
 #include "objects/systems.hpp"
 #include "raylib.h"
@@ -9,6 +11,11 @@ void PlayerInputHandler::handle_input() {
     const auto body_movement_ptr = global->ECS->get_system<BodyMovement>();
     const auto& player_id = global->player_id;
     auto& player_body = global->ECS->get_component<Body>(player_id);
+    auto& player_animation = global->ECS->get_component<AnimationInfo>(player_id);
+
+    const auto& animation_player = global->ECS->get_system<AnimationPlayer>();
+    animation_player->play(player_animation, "scarfy");
+
     if (IsKeyDown(KEY_SPACE)) {
         if (player_body.touching_ground) {
             body_movement_ptr->jump(player_body);

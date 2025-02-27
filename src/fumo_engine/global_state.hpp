@@ -1,7 +1,9 @@
 #ifndef GLOBAL_STATE_HPP
 #define GLOBAL_STATE_HPP
 #include "fumo_engine/engine_constants.hpp"
+#include "fumo_engine/sprite_manager/sprite_and_texture_systems.hpp"
 #include "scheduler_ecs.hpp"
+#include <memory>
 
 class GlobalState {
   public:
@@ -11,12 +13,15 @@ class GlobalState {
     float frametime;
     std::shared_ptr<SchedulerECS> ECS;
 
+    std::unique_ptr<SpriteManager> sprite_manager;
+
     EntityId player_id; // NOTE: storing the player id globally for now for optimisation
                         // this isnt necessary, and can be removed completely later.
 
     void initialize() {
         ECS = std::make_shared<SchedulerECS>();
         ECS->initialize();
+        sprite_manager = std::make_unique<SpriteManager>();
     }
 
     void setup_game_state();
