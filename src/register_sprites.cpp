@@ -12,32 +12,45 @@ void initialize_all_textures() { load_player_textures(); }
 
 void load_player_textures() {
     global->sprite_manager->register_sprite(
-        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Jump.png"),
-                      .sprite_sheet_name = "jump",
-                      .sprite_frame_count = 5,
-                      .base_frame_speed = 2});
-    global->sprite_manager->register_sprite(
-        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Idle.png"),
-                      .sprite_sheet_name = "idle",
-                      .sprite_frame_count = 4,
-                      .base_frame_speed = 8,
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/dash.png"),
+                      .sprite_sheet_name = "dash",
+                      .sprite_frame_count = 9,
+                      .base_frame_speed = 6,
                       .looping = true});
     global->sprite_manager->register_sprite(
-        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Land.png"),
-                      .sprite_sheet_name = "land",
-                      .sprite_frame_count = 4,
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/jump.png"),
+                      .sprite_sheet_name = "jump",
+                      .sprite_frame_count = 6,
+                      .base_frame_speed = 5});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/jump_short.png"),
+                      .sprite_sheet_name = "jump_short",
+                      .sprite_frame_count = 8,
                       .base_frame_speed = 6});
     global->sprite_manager->register_sprite(
-        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Sprint.png"),
-                      .sprite_sheet_name = "sprint",
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/idle.png"),
+                      .sprite_sheet_name = "idle",
+                      .sprite_frame_count = 7,
+                      .base_frame_speed = 8,
+                      .looping = true});
+
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/run.png"),
+                      .sprite_sheet_name = "run",
                       .sprite_frame_count = 8,
                       .base_frame_speed = 5,
                       .looping = true});
+    auto back_sheet = LoadTexture("assets/test_player/run.png");
+
     global->sprite_manager->register_sprite(
-        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Walk.png"),
-                      .sprite_sheet_name = "walk",
+        SpriteSheet2D{.texture_sheet = back_sheet,
+                      .sprite_sheet_name = "run_backwards",
                       .sprite_frame_count = 8,
-                      .base_frame_speed = 6,
+                      .base_frame_speed = 5,
+                      .base_region_rect = {.x = 0.0f,
+                                           .y = 0.0f,
+                                           .width = (float)back_sheet.width / -8.0f,
+                                           .height = (float)back_sheet.height},
                       .looping = true});
 }
 

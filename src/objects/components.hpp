@@ -89,7 +89,7 @@ struct AnimationInfo {
     int sprite_frame_count{};
     std::string_view current_sheet_name = "NO_SHEET";
     Rectangle current_region_rect{};
-    int sub_counter{};
+    int sub_counter{1};
     bool is_running = false;
 };
 // ------------------------------------------------------------------------

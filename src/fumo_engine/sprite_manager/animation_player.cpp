@@ -30,7 +30,7 @@ void AnimationPlayer::advance_animation(AnimationInfo& animation_info,
 
     animation_info.sub_counter++;
     if (animation_info.sub_counter >= animation_info.frame_speed) {
-        animation_info.sub_counter = 0;
+        animation_info.sub_counter = 1;
         animation_info.frame_progress++;
         animation_info.current_region_rect.x += animation_info.current_region_rect.width;
         // debug_print_animation_info(animation_info);

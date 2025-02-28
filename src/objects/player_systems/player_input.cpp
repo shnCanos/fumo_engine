@@ -31,8 +31,6 @@ void PlayerInputHandler::handle_input() {
             global->ECS->get_system<EntireAnimationPlayer>();
         entire_anim_player->play_entire_animation(player_animation, "jump");
 
-        // animation_player->play(player_animation, "jump");
-        // animation_player->queue(player_animation, "land");
         body_movement_ptr->jump(player_body);
         idle = false;
     }
@@ -45,15 +43,15 @@ void PlayerInputHandler::handle_input() {
         idle = false;
     }
     if (IsKeyDown(KEY_LEFT)) {
-        if (!player_body.jumping) {
-            animation_player_ptr->play(player_animation, "sprint");
+        if (player_body.touching_ground) {
+            animation_player_ptr->play(player_animation, "run_backwards");
         }
-        body_movement_ptr->move_horizontally(player_body, -1.0f);
         idle = false;
+        body_movement_ptr->move_horizontally(player_body, -1.0f);
     }
     if (IsKeyDown(KEY_RIGHT)) {
-        if (!player_body.jumping) {
-            animation_player_ptr->play(player_animation, "sprint");
+        if (player_body.touching_ground) {
+            animation_player_ptr->play(player_animation, "run");
         }
         body_movement_ptr->move_horizontally(player_body, 1.0f);
         idle = false;

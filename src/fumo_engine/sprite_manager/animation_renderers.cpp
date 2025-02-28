@@ -3,6 +3,7 @@
 #include "objects/components.hpp"
 #include "raylib.h"
 #include "sprite_and_animation_systems.hpp"
+#include <cstdlib>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -30,7 +31,7 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
     // origin is relative to the destination rectangle
     // width and height provide the scaling of our texture
 
-    float sprite_scaling = 2.5f;
+    float sprite_scaling = 3.0f;
 
     // PRINT("GAMING");
     // debug_print_animation_info(animation_info);
@@ -40,7 +41,7 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
                              animation_info.current_region_rect.width * sprite_scaling,
                              animation_info.current_region_rect.height * sprite_scaling};
 
-    Vector2 origin = {destination.width / 2, destination.height / 2};
+    Vector2 origin = {abs(destination.width / 2), 3 *destination.height/4};
 
     DrawTexturePro(sheet_texture, animation_info.current_region_rect, destination,
                    origin, body.rotation, WHITE);
