@@ -1,5 +1,5 @@
-#ifndef SPRITE_AND_TEXTURE_SYSTEMS_HPP
-#define SPRITE_AND_TEXTURE_SYSTEMS_HPP
+#ifndef SPRITE_AND_ANIMATION_SYSTEMS_HPP
+#define SPRITE_AND_ANIMATION_SYSTEMS_HPP
 #include "constants.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
@@ -59,7 +59,8 @@ class AnimationPlayer : public System {
 
     // NOTE: ALWAYS replaces the current animation with the new one
     void play(AnimationInfo& animation_info, std::string_view animation_name);
-
+    void queue(AnimationInfo& animation_info,
+                            std::string_view animation_name);
     // FIXME: do these later
     // ---------------------------------------------------------------------------
 
@@ -67,7 +68,6 @@ class AnimationPlayer : public System {
     void pause(AnimationInfo& animation_info);
     void resume(AnimationInfo& animation_info);
     void stop(AnimationInfo& animation_info);
-    void queue(std::string_view animation_name, AnimationInfo& animation_info);
     // void play_after(std::string_view play_after_animation,
     //                 std::string_view target_animation);
 

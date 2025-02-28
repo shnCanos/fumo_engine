@@ -18,6 +18,9 @@ struct Body {
     bool going_up;
     bool going_down;
     float smooth_jump_buffer{};
+
+    float rotation{}; // NOTE: in degrees?
+
     // NOTE: follows the gravity direction, not the vertical player direction
     [[nodiscard]] Vector2 get_y_velocity() {
         return gravity_direction * Vector2DotProduct(velocity, gravity_direction);
@@ -77,7 +80,8 @@ struct AnimationInfo {
     // keeps track of an entity's animation
     // so we can update that entity's SpriteSheet2D
     // a vector to hold the animations we want to play for the entity
-    std::vector<std::pair<std::string_view, Rectangle>> sheet_rect_vector{};
+    std::vector<std::pair<std::string_view, Rectangle>> sheet_rect_vector{
+        std::pair<std::string_view, Rectangle>("NO_SHEET", Rectangle{0, 0, 0, 0})};
     // NOTE: it is a bit of overhead, but i am following godot's implementation
     // for this. for now i do not need this kind of behavior, but i will for stuff
     // like a landing animation being queued after a jump.
@@ -88,20 +92,10 @@ struct AnimationInfo {
     std::string_view current_sheet_name = "NO_SHEET";
     Rectangle current_region_rect{};
     int sub_counter{};
-
-    AnimationInfo() {
-        sheet_rect_vector.push_back(
-            std::pair<std::string_view, Rectangle>("NO_SHEET", Rectangle{0, 0, 0, 0}));
-    }
 };
 // ------------------------------------------------------------------------
 // NOTE: not used as components
 // ------------------------------------------------------------------------
-struct Sprite2D {
-    Texture2D texture;
-    std::string_view sprite_name;
-    Rectangle region_rect;
-};
 
 // NOTE: when making an animation, we created an EntityId for that animation,
 // which we then attribute to whatever entity should hold that animation
@@ -112,9 +106,16 @@ struct SpriteSheet2D {
     std::string_view sprite_sheet_name;
     int sprite_frame_count;
     int base_frame_speed{}; // number of frames to show per second
-    Rectangle base_region_rect{.width = (float)texture_sheet.width / sprite_frame_count,
+    Rectangle base_region_rect{.x = 0.0f,
+                               .y = 0.0f,
+                               .width = (float)texture_sheet.width / sprite_frame_count,
                                .height = (float)texture_sheet.height};
     // base rect that defines how we go through each animation frame
 };
 
+struct Sprite2D {
+    Texture2D texture;
+    std::string_view sprite_name;
+    Rectangle region_rect;
+};
 #endif

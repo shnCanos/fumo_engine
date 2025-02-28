@@ -11,12 +11,12 @@ EntityId PlayerInitializer::initialize_player() {
     global->ECS->entity_add_component(player_id, PlayerFlag{});
     global->ECS->entity_add_component(player_id, Render{.color = {50, 50, 50, 100}});
     global->ECS->entity_add_component(player_id,
-                                      CircleShape{.radius = default_radius / 4.0f});
+                                      CircleShape{.radius = 66.0f});
     global->ECS->entity_add_component(player_id, Body{.position = screenCenter,
                                                       .velocity = {0.0f, 0.0f},
                                                       .smooth_jump_buffer = 1.0f});
     global->ECS->entity_add_component(player_id,
-                                      AnimationInfo());
+                                      AnimationInfo{});
     return player_id;
 }
 

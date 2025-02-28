@@ -1,6 +1,7 @@
 #ifndef INCLUDE_SYSTEMS_HPP
 #define INCLUDE_SYSTEMS_HPP
 
+#include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
 #include "objects/player_systems/player_collisions.hpp"
 #include "objects/player_systems/player_physics.hpp"

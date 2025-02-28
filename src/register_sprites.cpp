@@ -1,5 +1,5 @@
 #include "fumo_engine/global_state.hpp"
-#include "fumo_engine/sprite_manager/sprite_and_texture_systems.hpp"
+#include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
 
@@ -12,9 +12,29 @@ void initialize_all_textures() { load_player_textures(); }
 
 void load_player_textures() {
     global->sprite_manager->register_sprite(
-        SpriteSheet2D{.texture_sheet = LoadTexture("assets/scarfy.png"),
-                      .sprite_sheet_name = "scarfy",
-                      .sprite_frame_count = 6,
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Jump.png"),
+                      .sprite_sheet_name = "jump",
+                      .sprite_frame_count = 5,
+                      .base_frame_speed = 6});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Idle.png"),
+                      .sprite_sheet_name = "idle",
+                      .sprite_frame_count = 4,
+                      .base_frame_speed = 8});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Land.png"),
+                      .sprite_sheet_name = "land",
+                      .sprite_frame_count = 4,
+                      .base_frame_speed = 6});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Sprint.png"),
+                      .sprite_sheet_name = "sprint",
+                      .sprite_frame_count = 8,
+                      .base_frame_speed = 6});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Walk.png"),
+                      .sprite_sheet_name = "walk",
+                      .sprite_frame_count = 8,
                       .base_frame_speed = 6});
 }
 

@@ -1,5 +1,7 @@
 #include "player_physics.hpp"
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
+#include "objects/components.hpp"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -101,6 +103,15 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
         Vector2Normalize(circle_body.position - entity_body.position);
     entity_body.gravity_direction = gravity_direction;
 
+    // remove the y component from the velocity
+    // by setting the velocity to its magnitude in the x direction
+    // some funky rotation matrix vector math going on here, check it on paper
+    // if you are confused
+    Vector2 x_direction = {entity_body.gravity_direction.y,
+                           -entity_body.gravity_direction.x};
+    entity_body.rotation =
+        std::atan2(x_direction.y, x_direction.x) * RAD2DEG;
+
     if (dont_look_bad_hard_coded_physics(entity_body)) {
         return;
     }
@@ -111,14 +122,10 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
         entity_body.velocity += acceleration * global->frametime;
         // PRINT(entity_body.get_dot_y_velocity());
     } else {
-        // remove the y component from the velocity
-        // by setting the velocity to its magnitude in the x direction
-        // some funky rotation matrix vector math going on here, check it on paper
-        // if you are confused
-        Vector2 x_direction = {entity_body.gravity_direction.y,
-                               -entity_body.gravity_direction.x};
         entity_body.velocity =
             x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
+        const auto& animation_player = global->ECS->get_system<AnimationPlayer>();
+        auto& animation_info = global->ECS->get_component<AnimationInfo>(global->player_id);
     }
 
     // PRINT(entity_body.velocity.x);

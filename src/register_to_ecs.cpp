@@ -1,8 +1,6 @@
 #include "fumo_engine/global_state.hpp"
-#include "fumo_engine/sprite_manager/sprite_and_texture_systems.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
-#include "objects/fumo_containers.hpp"
 // angular include so clang wont complain
 #include <include_systems.hpp>
 
