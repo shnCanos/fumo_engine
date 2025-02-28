@@ -14,7 +14,8 @@ void AnimationPlayer::play(AnimationInfo& animation_info,
 
     const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(animation_name);
 
-    if (animation_info.current_sheet_name == animation_name && animation_info.is_running) [[likely]] {
+    if (animation_info.current_sheet_name == animation_name && animation_info.is_running)
+        [[likely]] {
         // DEBUG_ASSERT(1 > 2, animation_info.current_sheet_name);
         advance_animation(animation_info, sprite_sheet);
         return;
@@ -53,8 +54,6 @@ void AnimationPlayer::advance_animation(AnimationInfo& animation_info,
         //     animation_info.current_region_rect = sprite_sheet.base_region_rect;
         // }
         if (sprite_sheet.looping) {
-            PRINT(sprite_sheet.sprite_sheet_name)
-            PRINT("i am loooping")
             animation_info.frame_progress = 1;
             animation_info.current_region_rect.x = 0;
             return;
@@ -107,11 +106,6 @@ void EntireAnimationPlayer::play_full_animation() {
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
         scheduler_system->sleep_system<EntireAnimationPlayer>();
 
-        // animation_info_ptr->current_region_rect.x =
-        //     animation_info_ptr->current_region_rect.width *
-        //     (animation_info_ptr->sprite_frame_count - 1);
-        // animation_info_ptr->current_sheet_name = "NO_SHEET";
-        // animation_info_ptr->frame_progress = animation_info_ptr->sprite_frame_count;
         // animation_info_ptr = new AnimationInfo{};
     }
 }
