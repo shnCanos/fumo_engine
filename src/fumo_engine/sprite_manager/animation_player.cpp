@@ -1,3 +1,4 @@
+#include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
 #include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/components.hpp"
@@ -5,20 +6,18 @@
 #include <utility>
 
 extern std::unique_ptr<GlobalState> global;
+void debug_print_animation_info(const AnimationInfo& animation_info);
 
 // TODO: add system for drawing static Sprite2D
 void AnimationPlayer::play(AnimationInfo& animation_info,
                            std::string_view animation_name) {
 
     const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(animation_name);
+
     if (animation_info.current_sheet_name == animation_name) [[likely]] {
         advance_animation(animation_info);
         return;
     }
-    // FIXME: SIGV error is here
-    PRINT(animation_name);
-    PRINT(animation_info.sheet_rect_vector.size());
-    PRINT(animation_info.sheet_rect_vector);
     // if we play a different animation from the current one
     // then we update our animation info
     replace_animation(animation_info, sprite_sheet);
@@ -27,7 +26,8 @@ void AnimationPlayer::play(AnimationInfo& animation_info,
 void AnimationPlayer::advance_animation(AnimationInfo& animation_info) {
 
     animation_info.sub_counter++;
-    if (animation_info.sub_counter == animation_info.frame_speed) {
+    if (animation_info.sub_counter >= animation_info.frame_speed) {
+        debug_print_animation_info(animation_info);
         animation_info.sub_counter = 0;
         animation_info.frame_progress++;
         animation_info.current_region_rect.x += animation_info.current_region_rect.width;
@@ -36,6 +36,7 @@ void AnimationPlayer::advance_animation(AnimationInfo& animation_info) {
     // if the animation ends we remove it from the queue instead
     if (animation_info.sprite_frame_count == animation_info.frame_progress) {
         animation_info.frame_progress = 0;
+        animation_info.current_region_rect.x = 0;
 
         if (animation_info.sheet_rect_vector.size() > 1) [[unlikely]] {
             // play the next animation smoothly
@@ -66,9 +67,8 @@ void AnimationPlayer::replace_animation(AnimationInfo& animation_info,
 
 void AnimationPlayer::pause(AnimationInfo& animation_info) {
     // NOTE: not gonna implement for now unless i need it
-
-    // const auto& sprite = global->sprite_manager->get_sprite("scarfy");
 }
+
 void AnimationPlayer::queue(AnimationInfo& animation_info,
                             std::string_view animation_name) {
     const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(animation_name);
@@ -78,4 +78,14 @@ void AnimationPlayer::queue(AnimationInfo& animation_info,
     }
     animation_info.sheet_rect_vector.push_back(std::pair<std::string_view, Rectangle>(
         animation_name, sprite_sheet.base_region_rect));
+}
+
+void debug_print_animation_info(const AnimationInfo& animation_info) {
+    PRINT(animation_info.current_region_rect.x);
+    PRINT(animation_info.current_region_rect.y);
+    PRINT(animation_info.current_region_rect.width);
+    PRINT(animation_info.current_region_rect.height);
+    PRINT(animation_info.current_sheet_name);
+    PRINT(animation_info.frame_progress);
+    std::cerr << '\n';
 }
