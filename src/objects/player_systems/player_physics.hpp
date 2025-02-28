@@ -14,6 +14,8 @@ class PlayerPhysicsRunner : public System {
     void run_physics();
 
   private:
+    // NOTE: might have issues with the order in which the position is updated
+    // check this later
     void update_gravity(Body& player_body, CircleShape& player_shape);
     void update_position(Body& player_body);
 };

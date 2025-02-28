@@ -2,8 +2,8 @@
 #include "fumo_engine/global_state.hpp"
 #include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/components.hpp"
+#include "objects/scheduling_systems.hpp"
 #include <string_view>
-#include <utility>
 
 extern std::unique_ptr<GlobalState> global;
 void debug_print_animation_info(const AnimationInfo& animation_info);
@@ -14,8 +14,9 @@ void AnimationPlayer::play(AnimationInfo& animation_info,
 
     const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(animation_name);
 
-    if (animation_info.current_sheet_name == animation_name) [[likely]] {
-        advance_animation(animation_info);
+    if (animation_info.current_sheet_name == animation_name && animation_info.is_running) [[likely]] {
+        // DEBUG_ASSERT(1 > 2, animation_info.current_sheet_name);
+        advance_animation(animation_info, sprite_sheet);
         return;
     }
     // if we play a different animation from the current one
@@ -23,46 +24,56 @@ void AnimationPlayer::play(AnimationInfo& animation_info,
     replace_animation(animation_info, sprite_sheet);
 }
 
-void AnimationPlayer::advance_animation(AnimationInfo& animation_info) {
+void AnimationPlayer::advance_animation(AnimationInfo& animation_info,
+                                        const SpriteSheet2D& sprite_sheet) {
 
     animation_info.sub_counter++;
     if (animation_info.sub_counter >= animation_info.frame_speed) {
-        debug_print_animation_info(animation_info);
         animation_info.sub_counter = 0;
         animation_info.frame_progress++;
         animation_info.current_region_rect.x += animation_info.current_region_rect.width;
+        // debug_print_animation_info(animation_info);
     }
 
     // if the animation ends we remove it from the queue instead
-    if (animation_info.sprite_frame_count == animation_info.frame_progress) {
-        animation_info.frame_progress = 0;
-        animation_info.current_region_rect.x = 0;
+    // NOTE: if animations freeze change this to >=
+    if (animation_info.frame_progress >= animation_info.sprite_frame_count) {
 
-        if (animation_info.sheet_rect_vector.size() > 1) [[unlikely]] {
-            // play the next animation smoothly
-            animation_info.sheet_rect_vector.erase(
-                animation_info.sheet_rect_vector.begin());
-            const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(
-                animation_info.sheet_rect_vector.front().first);
-            animation_info.frame_speed = sprite_sheet.base_frame_speed;
-            animation_info.sprite_frame_count = sprite_sheet.sprite_frame_count;
-            animation_info.current_sheet_name = sprite_sheet.sprite_sheet_name;
-            animation_info.current_region_rect = sprite_sheet.base_region_rect;
+        // if (animation_info.sheet_vector.size() > 1) [[unlikely]] {
+        //     // play the next animation smoothly
+        //     animation_info.sheet_vector.erase(
+        //         animation_info.sheet_vector.begin());
+        //
+        //     const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(
+        //         animation_info.sheet_vector.front());
+        //
+        //     animation_info.frame_speed = sprite_sheet.base_frame_speed;
+        //     animation_info.sprite_frame_count = sprite_sheet.sprite_frame_count;
+        //     animation_info.current_sheet_name = sprite_sheet.sprite_sheet_name;
+        //     animation_info.current_region_rect = sprite_sheet.base_region_rect;
+        // }
+        if (sprite_sheet.looping) {
+            PRINT(sprite_sheet.sprite_sheet_name)
+            PRINT("i am loooping")
+            animation_info.frame_progress = 1;
+            animation_info.current_region_rect.x = 0;
+            return;
         }
+        animation_info.is_running = false;
     }
 }
 
 void AnimationPlayer::replace_animation(AnimationInfo& animation_info,
                                         const SpriteSheet2D& sprite_sheet) {
 
-    animation_info.sheet_rect_vector.front() = std::pair<std::string_view, Rectangle>(
-        sprite_sheet.sprite_sheet_name, sprite_sheet.base_region_rect);
+    animation_info.sheet_vector.front() = sprite_sheet.sprite_sheet_name;
 
-    animation_info.frame_progress = 0;
+    animation_info.frame_progress = 1;
     animation_info.frame_speed = sprite_sheet.base_frame_speed;
     animation_info.sprite_frame_count = sprite_sheet.sprite_frame_count;
     animation_info.current_sheet_name = sprite_sheet.sprite_sheet_name;
     animation_info.current_region_rect = sprite_sheet.base_region_rect;
+    animation_info.is_running = true;
 }
 
 void AnimationPlayer::pause(AnimationInfo& animation_info) {
@@ -72,20 +83,35 @@ void AnimationPlayer::pause(AnimationInfo& animation_info) {
 void AnimationPlayer::queue(AnimationInfo& animation_info,
                             std::string_view animation_name) {
     const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(animation_name);
-    if (animation_info.sheet_rect_vector.size() == 1 &&
+    if (animation_info.sheet_vector.size() == 1 &&
         animation_info.current_sheet_name == "NO_SHEET") [[unlikely]] {
         replace_animation(animation_info, sprite_sheet);
     }
-    animation_info.sheet_rect_vector.push_back(std::pair<std::string_view, Rectangle>(
-        animation_name, sprite_sheet.base_region_rect));
+    animation_info.sheet_vector.push_back(animation_name);
 }
 
-void debug_print_animation_info(const AnimationInfo& animation_info) {
-    PRINT(animation_info.current_region_rect.x);
-    PRINT(animation_info.current_region_rect.y);
-    PRINT(animation_info.current_region_rect.width);
-    PRINT(animation_info.current_region_rect.height);
-    PRINT(animation_info.current_sheet_name);
-    PRINT(animation_info.frame_progress);
-    std::cerr << '\n';
+// FIXME: cant get the sprite to stop at the last part of the sprite sheet
+// without reseting back to the first frame
+void EntireAnimationPlayer::play_full_animation() {
+
+    DEBUG_ASSERT(animation_name != "NO_NAME",
+                 "forgot to add an animation before awaking this system.");
+
+    const auto& animation_player = global->ECS->get_system<AnimationPlayer>();
+
+    animation_player->play(*animation_info_ptr, animation_name);
+
+    if (!animation_info_ptr->is_running) {
+        animation_name = "NO_NAME";
+
+        const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+        scheduler_system->sleep_system<EntireAnimationPlayer>();
+
+        // animation_info_ptr->current_region_rect.x =
+        //     animation_info_ptr->current_region_rect.width *
+        //     (animation_info_ptr->sprite_frame_count - 1);
+        // animation_info_ptr->current_sheet_name = "NO_SHEET";
+        // animation_info_ptr->frame_progress = animation_info_ptr->sprite_frame_count;
+        // animation_info_ptr = new AnimationInfo{};
+    }
 }

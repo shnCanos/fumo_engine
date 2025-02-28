@@ -15,12 +15,13 @@ void load_player_textures() {
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Jump.png"),
                       .sprite_sheet_name = "jump",
                       .sprite_frame_count = 5,
-                      .base_frame_speed = 6});
+                      .base_frame_speed = 2});
     global->sprite_manager->register_sprite(
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Idle.png"),
                       .sprite_sheet_name = "idle",
                       .sprite_frame_count = 4,
-                      .base_frame_speed = 8});
+                      .base_frame_speed = 8,
+                      .looping = true});
     global->sprite_manager->register_sprite(
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Land.png"),
                       .sprite_sheet_name = "land",
@@ -30,12 +31,14 @@ void load_player_textures() {
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Sprint.png"),
                       .sprite_sheet_name = "sprint",
                       .sprite_frame_count = 8,
-                      .base_frame_speed = 6});
+                      .base_frame_speed = 5,
+                      .looping = true});
     global->sprite_manager->register_sprite(
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/The_Dude_Free/Walk.png"),
                       .sprite_sheet_name = "walk",
                       .sprite_frame_count = 8,
-                      .base_frame_speed = 6});
+                      .base_frame_speed = 6,
+                      .looping = true});
 }
 
 // void func() {

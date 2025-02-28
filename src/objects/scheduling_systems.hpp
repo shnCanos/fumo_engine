@@ -2,6 +2,7 @@
 #define SCHEDULING_SYSTEMS_HPP
 #include "constants.hpp"
 #include "fumo_engine/scheduler_ecs.hpp"
+#include "fumo_engine/system_base.hpp"
 #include <memory>
 
 struct SchedulerSystemECS : System {
@@ -28,6 +29,15 @@ struct SchedulerSystemECS : System {
         const auto& system_ptr = parent_ptr->ecs->get_system(t_name);
         parent_ptr->system_scheduler.insert(system_ptr);
     }
+    template<typename T, Priority priority>
+    void awake_system_priority() {
+        std::string_view t_name = libassert::type_name<T>();
+        const auto& parent_ptr = parent_ECS.lock();
+        auto& system_ptr = parent_ptr->ecs->get_system(t_name);
+        system_ptr->priority = priority;
+        parent_ptr->system_scheduler.insert(system_ptr);
+        parent_ptr->all_scheduled_systems_debug.insert({t_name, system_ptr});
+    }
 
     template<typename T>
     void sleep_system() {
@@ -35,6 +45,7 @@ struct SchedulerSystemECS : System {
         const auto& parent_ptr = parent_ECS.lock();
         const auto& system_ptr = parent_ptr->ecs->get_system(t_name);
         size_t erased_count = parent_ptr->system_scheduler.erase(system_ptr);
+        parent_ptr->all_scheduled_systems_debug.erase(t_name);
         DEBUG_ASSERT(erased_count != 0, "this system wasnt awake/scheduled.", t_name);
     }
 };

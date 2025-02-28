@@ -106,7 +106,7 @@ class ECS {
         system_manager->set_entity_query<T>(component_mask);
     }
 
-    [[nodiscard]] std::shared_ptr<System> get_system(std::string_view type_name) {
+    [[nodiscard]] std::shared_ptr<System>& get_system(std::string_view type_name) {
 
         return system_manager->get_system(type_name);
     }

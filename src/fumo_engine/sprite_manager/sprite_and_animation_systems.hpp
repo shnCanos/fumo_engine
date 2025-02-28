@@ -3,6 +3,7 @@
 #include "constants.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
+#include <memory>
 #include <string_view>
 #include <unordered_map>
 
@@ -59,8 +60,9 @@ class AnimationPlayer : public System {
 
     // NOTE: ALWAYS replaces the current animation with the new one
     void play(AnimationInfo& animation_info, std::string_view animation_name);
-    void queue(AnimationInfo& animation_info,
-                            std::string_view animation_name);
+    // void play(AnimationInfo& animation_info, std::string_view animation_name,
+    //           bool looping);
+    void queue(AnimationInfo& animation_info, std::string_view animation_name);
     // FIXME: do these later
     // ---------------------------------------------------------------------------
 
@@ -77,7 +79,8 @@ class AnimationPlayer : public System {
     // ---------------------------------------------------------------------------
 
   private:
-    void advance_animation(AnimationInfo& animation_info);
+    void advance_animation(AnimationInfo& animation_info,
+                           const SpriteSheet2D& sprite_sheet);
     void replace_animation(AnimationInfo& animation_info,
                            const SpriteSheet2D& sprite_sheet);
 };
@@ -91,4 +94,20 @@ struct AnimationRenderer : System {
     void draw_animation(const AnimationInfo& animation_info,
                         const Texture2D& sheet_texture, const Body& body);
 };
+
+struct EntireAnimationPlayer : System {
+
+    AnimationInfo* animation_info_ptr;
+    std::string_view animation_name = "NO_NAME";
+    void sys_call() override { play_full_animation(); }
+    void play_entire_animation(AnimationInfo& _animation_info,
+                               std::string_view _animation_name) {
+        animation_info_ptr = &_animation_info;
+        animation_name = _animation_name;
+    };
+
+  private:
+    void play_full_animation();
+};
+
 #endif

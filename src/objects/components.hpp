@@ -4,7 +4,6 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <string_view>
-#include <utility>
 struct Rectangle;
 
 struct Body {
@@ -13,7 +12,7 @@ struct Body {
     Vector2 position = screenCenter;
     Vector2 velocity{0.0f, 0.0f};
     Vector2 gravity_direction = {0.0f, -1.0f};
-    bool touching_ground = false;
+    bool touching_ground = true;
     bool jumping = false;
     bool going_up;
     bool going_down;
@@ -80,18 +79,18 @@ struct AnimationInfo {
     // keeps track of an entity's animation
     // so we can update that entity's SpriteSheet2D
     // a vector to hold the animations we want to play for the entity
-    std::vector<std::pair<std::string_view, Rectangle>> sheet_rect_vector{
-        std::pair<std::string_view, Rectangle>("NO_SHEET", Rectangle{0, 0, 0, 0})};
+    std::vector<std::string_view> sheet_vector{std::string_view("NO_SHEET")};
     // NOTE: it is a bit of overhead, but i am following godot's implementation
     // for this. for now i do not need this kind of behavior, but i will for stuff
     // like a landing animation being queued after a jump.
     // we also want to be able to replace the head element
-    int frame_progress{}; // progress along the frame
+    int frame_progress{1}; // progress along the frame
     int frame_speed{};    // number of frames to show per second
     int sprite_frame_count{};
     std::string_view current_sheet_name = "NO_SHEET";
     Rectangle current_region_rect{};
     int sub_counter{};
+    bool is_running = false;
 };
 // ------------------------------------------------------------------------
 // NOTE: not used as components
@@ -111,6 +110,7 @@ struct SpriteSheet2D {
                                .width = (float)texture_sheet.width / sprite_frame_count,
                                .height = (float)texture_sheet.height};
     // base rect that defines how we go through each animation frame
+    bool looping = false;
 };
 
 struct Sprite2D {

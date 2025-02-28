@@ -1,4 +1,5 @@
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
 // angular include so clang wont complain
@@ -37,9 +38,6 @@ void register_systems() {
     register_systems_scheduled();
 }
 void register_systems_scheduled() {
-    global->ECS->register_system<AnimationRenderer, 69>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
-        .component_filter = Filter::All});
 
     global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
     global->ECS->register_system<InputHandlerLevelEditor, 1>(EntityQuery{
@@ -47,8 +45,6 @@ void register_systems_scheduled() {
             global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
         .component_filter = Filter::Only});
 
-    // NOTE: might have issues with the order in which the position is updated
-    // check this later
     global->ECS->add_unregistered_system<PlayerPhysicsRunner, 2>();
     global->ECS->add_unregistered_system<PlayerCollisionRunner, 3>();
 
@@ -56,6 +52,9 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<Body, Render, CircleShape>(),
         .component_filter = Filter::All});
 
+    global->ECS->register_system<AnimationRenderer, 60>(EntityQuery{
+        .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
+        .component_filter = Filter::All});
     global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
 
 }
@@ -71,6 +70,7 @@ void register_systems_physics_collisions() {
 }
 void register_agnostic_sytems() {
     global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();
+    global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<AnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
     global->ECS->add_unregistered_system_unscheduled<BodyMovement>();

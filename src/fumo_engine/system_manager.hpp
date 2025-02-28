@@ -51,7 +51,7 @@ class SystemManager {
   public:
     // TODO: maybe remove these extra public private later
 
-    [[nodiscard]] std::shared_ptr<System> get_system(std::string_view t_name) {
+    [[nodiscard]] std::shared_ptr<System>& get_system(std::string_view t_name) {
 
         DEBUG_ASSERT(all_systems.contains(t_name) ||
                          unregistered_systems.contains(t_name),

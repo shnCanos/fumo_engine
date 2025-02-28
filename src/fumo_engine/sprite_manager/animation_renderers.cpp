@@ -32,6 +32,9 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
 
     float sprite_scaling = 2.5f;
 
+    // PRINT("GAMING");
+    // debug_print_animation_info(animation_info);
+
 
     Rectangle destination = {body.position.x, body.position.y,
                              animation_info.current_region_rect.width * sprite_scaling,

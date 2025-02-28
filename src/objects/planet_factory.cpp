@@ -30,7 +30,7 @@ EntityId PlanetFactory::create_default_planet(Vector2 position) {
     global->ECS->entity_add_component(
         entity_id, Body{.position = position, .velocity = Vector2Zero()});
     global->ECS->entity_add_component(entity_id, Render{.color = random_color});
-    global->ECS->entity_add_component(entity_id, CircleShape{.radius = default_radius});
+    global->ECS->entity_add_component(entity_id, CircleShape{.radius = default_radius * 5});
 
     global->ECS->entity_add_component(
         entity_id, GravityField{.gravity_radius = default_planet_radius,

@@ -2,6 +2,7 @@
 #include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/components.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
+#include "objects/scheduling_systems.hpp"
 #include "objects/systems.hpp"
 #include "raylib.h"
 
@@ -13,17 +14,27 @@ void PlayerInputHandler::handle_input() {
     auto& player_body = global->ECS->get_component<Body>(player_id);
     auto& player_animation = global->ECS->get_component<AnimationInfo>(player_id);
 
-    const auto& animation_player = global->ECS->get_system<AnimationPlayer>();
+    const auto& animation_player_ptr = global->ECS->get_system<AnimationPlayer>();
 
     bool idle = true;
+    //  FIXME:
+    //  ---------------------------------------------------------------------------
+    //  turn all these if checks into an event class separate from this class
+    //  ---------------------------------------------------------------------------
 
-    if (IsKeyDown(KEY_SPACE)) {
-        if (player_body.touching_ground) {
-            // animation_player->play(player_animation, "jump");
-            // animation_player->queue(player_animation, "land");
-            body_movement_ptr->jump(player_body);
-            idle = false;
-        }
+    if (IsKeyDown(KEY_SPACE) && player_body.touching_ground) {
+
+        const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+        scheduler_system->awake_system_priority<EntireAnimationPlayer, 58>();
+
+        const auto& entire_anim_player =
+            global->ECS->get_system<EntireAnimationPlayer>();
+        entire_anim_player->play_entire_animation(player_animation, "jump");
+
+        // animation_player->play(player_animation, "jump");
+        // animation_player->queue(player_animation, "land");
+        body_movement_ptr->jump(player_body);
+        idle = false;
     }
     if (IsKeyDown(KEY_DOWN)) {
         body_movement_ptr->move_vertically(player_body, -1.0f);
@@ -34,18 +45,22 @@ void PlayerInputHandler::handle_input() {
         idle = false;
     }
     if (IsKeyDown(KEY_LEFT)) {
-        animation_player->play(player_animation, "sprint");
+        if (!player_body.jumping) {
+            animation_player_ptr->play(player_animation, "sprint");
+        }
         body_movement_ptr->move_horizontally(player_body, -1.0f);
         idle = false;
     }
     if (IsKeyDown(KEY_RIGHT)) {
-        animation_player->play(player_animation, "sprint");
+        if (!player_body.jumping) {
+            animation_player_ptr->play(player_animation, "sprint");
+        }
         body_movement_ptr->move_horizontally(player_body, 1.0f);
         idle = false;
     }
 
-    if (idle) {
-        animation_player->play(player_animation, "idle");
+    if (idle && player_body.touching_ground) {
+        animation_player_ptr->play(player_animation, "idle");
     }
     body_movement_ptr->update_position(player_body);
 }
