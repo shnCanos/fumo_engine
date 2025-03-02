@@ -28,11 +28,7 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
                                               CircleShape& entity_shape) {
     // NOTE: we should only let one planet affect the player at each time
 
-    for (auto circle_id : sys_entities) {
-        // FIXME: check that "Only" filter will remove the player id from the array
-
-        // FIXME: add a buffer that doesnt allow swapping orbits more
-        // than once a second
+    for (const auto& circle_id : sys_entities) {
         const auto& circle_body = global->ECS->get_component<Body>(circle_id);
         const auto& circle_shape = global->ECS->get_component<CircleShape>(circle_id);
         auto& circle_grav_field = global->ECS->get_component<GravityField>(circle_id);

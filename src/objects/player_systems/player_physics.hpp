@@ -23,10 +23,11 @@ class PlayerPhysicsRunner : public System {
 struct GravityHandler : System {
 
   public:
-    void sys_call() override {};
+    void sys_call() override { find_candidate_gravity_field(); }
+
+    void find_candidate_gravity_field();
     void find_player_owning_gravity_field(
-        std::vector<std::tuple<Body, GravityField, CircleShape>>& candidate_planets);
-    void find_candidate_gravity_field(Body& entity_body, CircleShape& entity_shape);
+        std::vector<std::tuple<Body, GravityField, CircleShape>>& candidate_planets, Body& player_body);
     void find_final_candidate_gravity_field(
         std::vector<std::tuple<Body, GravityField, CircleShape>>&
             final_candidate_planets,

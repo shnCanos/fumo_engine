@@ -8,20 +8,22 @@
 extern std::unique_ptr<GlobalState> global;
 bool dont_look_bad_hard_coded_physics(Body& entity_body);
 
-void GravityHandler::find_candidate_gravity_field(Body& entity_body,
-                                                  CircleShape& entity_shape) {
+void GravityHandler::find_candidate_gravity_field() {
     // NOTE: we should only let one planet affect the player at each time
 
     std::vector<std::tuple<Body, GravityField, CircleShape>> candidate_planets;
     candidate_planets.reserve(sys_entities.size());
 
-    for (auto circle_id : sys_entities) {
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    auto& player_shape = global->ECS->get_component<CircleShape>(global->player_id);
+
+    for (const auto& circle_id : sys_entities) {
         const auto& circle_body = global->ECS->get_component<Body>(circle_id);
         const auto& circle_shape = global->ECS->get_component<CircleShape>(circle_id);
         auto& circle_grav_field = global->ECS->get_component<GravityField>(circle_id);
 
-        float distance = Vector2Distance(circle_body.position, entity_body.position);
-        float radius_sum = entity_shape.radius + circle_shape.radius;
+        float distance = Vector2Distance(circle_body.position, player_body.position);
+        float radius_sum = player_shape.radius + circle_shape.radius;
 
         float gravity_radius_sum = radius_sum + circle_grav_field.gravity_radius;
 
@@ -33,23 +35,35 @@ void GravityHandler::find_candidate_gravity_field(Body& entity_body,
         bool inside_field = distance < gravity_radius_sum;
         //-------------------------------------------------------------------
 
-        entity_body.touching_ground = touching_ground;
+        player_body.touching_ground = touching_ground;
 
         if (inside_field) {
             candidate_planets.emplace_back(std::tuple<Body, GravityField, CircleShape>(
                 circle_body, circle_grav_field, circle_shape));
         }
     }
-    find_player_owning_gravity_field(candidate_planets);
+    DrawLineV(player_body.position, player_body.position + player_body.velocity, PURPLE);
+
+    if (candidate_planets.size() == 1) {
+        auto& planet_tuple = candidate_planets.front();
+        auto& planet_body = std::get<0>(planet_tuple);
+        auto& gravity_field = std::get<1>(planet_tuple);
+        auto& planet_shape = std::get<2>(planet_tuple);
+        update_gravity(gravity_field, planet_body, player_body);
+        update_position(player_body);
+
+        return;
+    }
+    // FIXME: fix this function
+    find_player_owning_gravity_field(candidate_planets, player_body);
+    update_position(player_body);
 }
 void GravityHandler::find_player_owning_gravity_field(
-    std::vector<std::tuple<Body, GravityField, CircleShape>>& candidate_planets) {
+    std::vector<std::tuple<Body, GravityField, CircleShape>>& candidate_planets,
+    Body& player_body) {
 
     std::vector<std::tuple<Body, GravityField, CircleShape>> final_candidate_planets;
     final_candidate_planets.reserve(candidate_planets.size());
-
-    const auto& player_id = global->player_id;
-    auto& player_body = global->ECS->get_component<Body>(player_id);
 
     for (auto& planet_tuple : candidate_planets) {
 
@@ -67,7 +81,7 @@ void GravityHandler::find_player_owning_gravity_field(
 
         // WARNING: this variable decides how far we check for planets to swap
         // our gravity. it is important to pick a good value
-        double gravity_reach = 1000.0f;
+        double gravity_reach = 500.0f;
 
         // TODO: draw this line with raylib to check how far we might want to draw it in
         // the future
@@ -75,6 +89,8 @@ void GravityHandler::find_player_owning_gravity_field(
         Vector2 normalized_velocity = Vector2Normalize(player_body.velocity);
 
         Vector2 line_end = player_body.position + normalized_velocity * gravity_reach;
+
+        DrawLineV(player_body.position, line_end, YELLOW);
 
         float distance =
             PointToLineDistance(planet_body.position, player_body.position, line_end);
@@ -90,9 +106,9 @@ void GravityHandler::find_player_owning_gravity_field(
 
 void GravityHandler::find_final_candidate_gravity_field(
     std::vector<std::tuple<Body, GravityField, CircleShape>>& final_candidate_planets,
-     Body& player_body) {
+    Body& player_body) {
 
-    float min_distance = 0;
+    float min_distance = 6969.0f;
     std::tuple<Body, GravityField, CircleShape> final_planet;
 
     for (const auto& planet_tuple : final_candidate_planets) {
@@ -100,8 +116,7 @@ void GravityHandler::find_final_candidate_gravity_field(
         const auto& gravity_field = std::get<1>(planet_tuple);
         const auto& circle_shape = std::get<2>(planet_tuple);
 
-        float distance = Vector2Distance(player_body.position, player_body.position);
-        min_distance = distance < min_distance ? distance : min_distance;
+        float distance = Vector2Distance(player_body.position, planet_body.position);
         if (distance < min_distance) {
             min_distance = distance;
             final_planet = planet_tuple;
