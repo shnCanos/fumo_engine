@@ -39,16 +39,17 @@ void InputHandlerLevelEditor::debug_print() {
     debugger_ptr->global_debug();
 }
 void InputHandlerLevelEditor::spawn_planet() {
-    Vector2 mouse_position = GetMousePosition();
-    DrawCircleLinesV(mouse_position, mouse_radius, GREEN);
+    Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
+
+    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     auto planet_factory_ptr = global->ECS->get_system<PlanetFactory>();
     // FIXME: remove the hardcoded camera relative spawning
-    planet_factory_ptr->create_default_planet(global->camera->target - screenCenter + mouse_position);
+    planet_factory_ptr->create_default_planet(mouse_position);
 }
 
 void InputHandlerLevelEditor::resize_planet(float resize) {
-    Vector2 mouse_position = GetMousePosition();
-    DrawCircleLinesV(mouse_position, mouse_radius, GREEN);
+    Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
+    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     for (auto entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
         auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
@@ -63,8 +64,8 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
 
 void InputHandlerLevelEditor::delete_created_planet() {
     auto planet_factory_ptr = global->ECS->get_system<PlanetFactory>();
-    Vector2 mouse_position = GetMousePosition();
-    DrawCircleLinesV(mouse_position, mouse_radius, GREEN);
+    Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
+    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     for (auto entity_id : planet_factory_ptr->sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
         auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
@@ -82,15 +83,15 @@ void InputHandlerLevelEditor::delete_all_created_planets() {
 }
 
 void InputHandlerLevelEditor::move_planet() {
-    Vector2 mouse_position = GetMousePosition();
-    DrawCircleLinesV(mouse_position, mouse_radius, GREEN);
+    Vector2 mouse_position = global->camera->target - screenCenter + GetMousePosition();
+    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     for (auto entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
         auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
         float distance = Vector2Distance(mouse_position, body.position);
         if (mouse_radius + circle_shape.radius > distance) {
             auto body_movement_ptr = global->ECS->get_system<BodyMovement>();
-            body_movement_ptr->move_towards_position(body, GetMousePosition());
+            body_movement_ptr->move_towards_position(body, mouse_position);
             // FIXME: think if its okay to update position here
             body.position += body.velocity * global->frametime;
             return;
