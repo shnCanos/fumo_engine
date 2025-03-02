@@ -25,6 +25,7 @@ void AnimationRenderer::draw_animations() {
 void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
                                        const Texture2D& sheet_texture,
                                        const Body& body) {
+    BeginMode2D(*global->camera);
     // NOTE:
     // destination.x/y -> where to draw on the screen
     // origin -> where do we center the rectangle itself according to destination.x/y
@@ -36,13 +37,13 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
     // PRINT("GAMING");
     // debug_print_animation_info(animation_info);
 
-
     Rectangle destination = {body.position.x, body.position.y,
                              animation_info.current_region_rect.width * sprite_scaling,
                              animation_info.current_region_rect.height * sprite_scaling};
 
-    Vector2 origin = {abs(destination.width / 2), 3 *destination.height/4};
+    Vector2 origin = {abs(destination.width / 2), 3 * destination.height / 4};
 
     DrawTexturePro(sheet_texture, animation_info.current_region_rect, destination,
                    origin, body.rotation, WHITE);
+    EndMode2D();
 }

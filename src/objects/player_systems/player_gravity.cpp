@@ -52,7 +52,9 @@ void GravityHandler::find_candidate_gravity_field() {
         }
     }
 
+    BeginMode2D(*global->camera);
     DrawLineV(player_body.position, player_body.position + player_body.velocity, PURPLE);
+    EndMode2D();
 
     if (candidate_planets.size() == 1) {
 

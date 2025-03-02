@@ -18,6 +18,7 @@ struct SchedulerSystemECS : System {
     // (this being shared meant that this reference wouldnt get deleted once
     // global_state variable get deleted)
     std::weak_ptr<SchedulerECS> parent_ECS;
+    // FIXME: make this a raw pointer and make the SchedulerECS a unique_ptr
 
     SchedulerSystemECS(std::shared_ptr<SchedulerECS> parent_ECS)
         : parent_ECS(parent_ECS) {}

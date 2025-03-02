@@ -67,9 +67,7 @@ class ComponentManager {
 
         DEBUG_ASSERT(component_ids.contains(t_name), "forgot to register component",
                      component_ids);
-        // we now cast away from our interface into our **known** type conversion
-        // much better than when i was using dynamic_cast<> to find out what the type of
-        // the interface was
+
         std::shared_ptr<ComponentArray<T>> cast_component_array =
             std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
 

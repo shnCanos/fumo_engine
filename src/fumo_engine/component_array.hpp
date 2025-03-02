@@ -1,9 +1,8 @@
 #ifndef COMPONENT_ARRAY_HPP
 #define COMPONENT_ARRAY_HPP
+#include "engine_constants.hpp"
 #include <libassert/assert.hpp>
 #include <unordered_map>
-#include "engine_constants.hpp"
-
 
 // const uint64_t MAX_ELEMENTS = 100;
 //
@@ -57,13 +56,12 @@ class ComponentArray : public IComponentArray {
 
         all_components[new_index] = component;
 
-
         // move forward current pointer
         component_count++;
     };
     void remove_component_data(EntityId entity_id) {
-        DEBUG_ASSERT(entity_to_index.contains(entity_id), "Removing non-existent component.",
-                     entity_to_index);
+        DEBUG_ASSERT(entity_to_index.contains(entity_id),
+                     "Removing non-existent component.", entity_to_index);
         // removing components means we want to:
         //  -> place the last component in the new empty spot to keep our array packed
         //  -> update our unordered_maps to account for this removal
@@ -83,11 +81,12 @@ class ComponentArray : public IComponentArray {
 
         component_count--;
     }
-    T &get_component_data(EntityId entity_id) {
-        DEBUG_ASSERT(entity_to_index.contains(entity_id), "this entity does not have this component.",
-                     entity_to_index, entity_id);
-        // notice that there is an overhead from the non-contiguous unordered_map access on this
-        // method possibly replace this with something else later
+    T& get_component_data(EntityId entity_id) {
+        DEBUG_ASSERT(entity_to_index.contains(entity_id),
+                     "this entity does not have this component.", entity_to_index,
+                     entity_id);
+        // notice that there is an overhead from the non-contiguous unordered_map access
+        // on this method possibly replace this with something else later
         return all_components[entity_to_index[entity_id]];
     }
 

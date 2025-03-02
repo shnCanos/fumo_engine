@@ -27,5 +27,9 @@ void PlayerEndFrameUpdater::reset_state() {
     auto& player_body = global->ECS->get_component<Body>(player_id);
     const auto& body_movement_ptr = global->ECS->get_system<BodyMovement>();
 
+
     body_movement_ptr->reset_velocity(player_body);
+
+    global->camera->target = player_body.position;
+
 }

@@ -15,6 +15,8 @@ class GlobalState {
 
     std::unique_ptr<SpriteManager> sprite_manager;
 
+    std::unique_ptr<Camera2D> camera;
+
     EntityId player_id; // NOTE: storing the player id globally for now for optimisation
                         // this isnt necessary, and can be removed completely later.
 

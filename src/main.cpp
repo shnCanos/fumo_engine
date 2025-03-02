@@ -6,7 +6,6 @@
 // :Program main entry point
 //------------------------------------------------------------------------------------
 std::unique_ptr<GlobalState> global;
-// NOTE: NEW GLOBAL VARIABLE ADDED
 
 void register_all_to_ECS();
 void initialize_all_textures();
@@ -23,18 +22,38 @@ int main(void) {
 
     global->setup_game_state();
 
+    Camera2D camera = {{0}};
+    const auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    camera.target = player_body.position;
+    camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
         ClearBackground(BLACK);
-
-        DrawFPS(10, 10);
-
-
         BeginDrawing();
+
+
+        global->camera->zoom += ((float)GetMouseWheelMove() * 0.05f);
+        // PRINT(camera.target.x)
+        // PRINT(camera.target.y)
+        // PRINT(player_body.position.x)
+        // PRINT(player_body.position.y)
+
+        // BeginMode2D(*global->camera);
+        // DrawLine((int)global->camera->target.x, -screenHeight * 10,
+        //          (int)global->camera->target.x, screenHeight * 10, GREEN);
+        // DrawLine(-screenWidth * 10, (int)global->camera->target.y, screenWidth * 10,
+        //          (int)global->camera->target.y, GREEN);
+        // EndMode2D();
+
         global->frametime = GetFrameTime();
 
         global->ECS->run_systems();
+
+        DrawFPS(10, 10);
         EndDrawing();
     }
     //--------------------------------------------------------------------------------------
