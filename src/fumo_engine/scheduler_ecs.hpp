@@ -31,8 +31,7 @@
 //     }
 // };
 struct SystemCompare {
-    // FIXME: allow for repeated priorities (test the case where the priorities are equal
-    // and pick a random order)
+    // TODO: allow for repeated priorities
     inline bool operator()(const std::shared_ptr<System>& sysA,
                            const std::shared_ptr<System>& sysB) const {
         return sysA->priority < sysB->priority;
@@ -107,21 +106,21 @@ class SchedulerECS {
     // TODO: consider adding components in bulk when creating entities
     // to minimize the number of update calls we make to systems (this really would help)
     template<typename T>
-    void entity_add_component(EntityId entity_id, T component) {
+    void entity_add_component(const EntityId& entity_id, T component) {
         // scheduler.scheduled_entity_component_masks[entity_id] =
         ecs->entity_add_component(entity_id, component);
     }
     template<typename T> // remove from entity
-    void entity_remove_component(EntityId entity_id) {
+    void entity_remove_component(const EntityId& entity_id) {
         // scheduler.scheduled_entity_component_masks[entity_id] =
         ecs->entity_remove_component<T>(entity_id);
     }
     template<typename T>
-    [[nodiscard]] T& get_component(EntityId entity_id) {
+    [[nodiscard]] T& get_component(const EntityId& entity_id) {
         return ecs->get_component<T>(entity_id);
     }
     template<typename T>
-    void check_for_component(EntityId entity_id) {
+    void check_for_component(const EntityId& entity_id) {
         return ecs->check_for_component<T>(entity_id);
     }
     template<typename T>

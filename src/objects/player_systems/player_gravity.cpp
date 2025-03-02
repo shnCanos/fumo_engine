@@ -1,4 +1,5 @@
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/scheduling_systems.hpp"
 #include "main_functions.hpp"
 #include "objects/components.hpp"
 #include "objects/player_systems/player_physics.hpp"
@@ -54,22 +55,14 @@ void GravityHandler::find_candidate_gravity_field() {
     DrawLineV(player_body.position, player_body.position + player_body.velocity, PURPLE);
 
     if (candidate_planets.size() == 1) {
-        // auto& planet_tuple = candidate_planets.front();
-        // auto& planet_body = std::get<0>(planet_tuple);
-        // auto& gravity_field = std::get<1>(planet_tuple);
-        // auto& planet_shape = std::get<2>(planet_tuple);
-
-        // update_gravity(gravity_field, planet_body, player_body);
-        // update_position(player_body);
 
         const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
         gravity_updater->player_owning_planet = std::get<3>(candidate_planets[0]);
         return;
     }
     find_player_owning_gravity_field(candidate_planets, player_body);
-    // FIXME: fix this function
-    // update_position(player_body);
 }
+
 void GravityHandler::find_player_owning_gravity_field(
     std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>&
         candidate_planets,
@@ -108,8 +101,9 @@ void GravityHandler::find_player_owning_gravity_field(
 
         float distance =
             PointToLineDistance(planet_body.position, player_body.position, line_end);
+        float correction = 2.0f;
 
-        if (distance < gravity_field.gravity_radius + planet_shape.radius) {
+        if (distance < gravity_field.gravity_radius + planet_shape.radius + correction) {
             // this means that we found a collision with our cast ray
             // so we move onto the last phase of checking for gravity
             final_candidate_planets.push_back(planet_tuple);
@@ -124,6 +118,7 @@ void GravityHandler::find_final_candidate_gravity_field(
     Body& player_body) {
 
     float min_distance = 6969.0f;
+
     std::tuple<Body, GravityField, CircleShape, EntityId> final_planet;
 
     for (const auto& planet_tuple : final_candidate_planets) {
@@ -139,6 +134,13 @@ void GravityHandler::find_final_candidate_gravity_field(
     }
     const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
     gravity_updater->player_owning_planet = std::get<3>(final_planet);
+
+    if (gravity_updater->player_owning_planet != std::get<3>(final_planet)) {
+        // FIXME: test and debug these functions and check if it really
+        // sleeps this system for 2 seconds
+        const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+        scheduler_system->sleep_system_for<GravityHandler>(2.0f);
+    }
 }
 
 void GravityUpdater::update_gravity(Body& body) {
@@ -147,7 +149,6 @@ void GravityUpdater::update_gravity(Body& body) {
     if (player_owning_planet == NO_ENTITY_FOUND || player_owning_planet == 0) {
         return;
     }
-    PRINT(player_owning_planet)
     EntityId planet_id = player_owning_planet;
 
     const auto& planet_body = global->ECS->get_component<Body>(planet_id);
@@ -182,6 +183,13 @@ void GravityUpdater::update_gravity(Body& body) {
         entity_body.velocity =
             x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
     }
+
+    PRINT(entity_body.position.x)
+    PRINT(entity_body.position.y)
+    PRINT(entity_body.touching_ground)
+    // PRINT(entity_body.position.x)
+    // PRINT(entity_body.position.x)
+    // PRINT(entity_body.position.x)
 }
 
 void GravityUpdater::update_position(Body& player_body) {

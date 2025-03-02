@@ -42,7 +42,6 @@ struct GravityField {
     // (need to add the radius if its a circular planet for example)
     double gravity_radius;
     float gravity_strength;
-
 };
 
 struct PlanetHasPlayer {
@@ -72,6 +71,38 @@ struct Render {
 struct PlayerFlag {
     // used to identify the player uniquely by associating this struct
     // to an entity id
+};
+
+// NOTE: to make a really modular and reusable timer class,
+// consider using std::function to send in a function call
+// after the timer ends
+
+struct Timer {
+    friend struct TimerHandler;
+
+    float seconds_duration;
+    std::string_view system_name = "NO_NAME";
+
+    void make_timer(float _duration_seconds, std::string_view _system_name) {
+        seconds_duration = _duration_seconds;
+        system_name = _system_name;
+
+        starting_time = GetTime();
+        ending_time = starting_time + seconds_duration;
+    }
+
+    // another templated constructor we might wanna use in the future
+    // template<typename T>
+    // Timer(float duration_seconds) : duration_seconds(duration_seconds) {
+    //     system_name = libassert::type_name<T>();
+    //
+    //     starting_time = GetTime();
+    //     ending_time = starting_time + duration_seconds;
+    // }
+
+  private:
+    float starting_time;
+    float ending_time;
 };
 
 struct AnimationInfo {

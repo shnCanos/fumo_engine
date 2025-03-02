@@ -2,7 +2,7 @@
 #include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/components.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
-#include "objects/scheduling_systems.hpp"
+#include "fumo_engine/scheduling_systems.hpp"
 #include "objects/systems.hpp"
 #include "raylib.h"
 

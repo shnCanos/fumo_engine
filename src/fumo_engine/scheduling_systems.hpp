@@ -3,6 +3,7 @@
 #include "constants.hpp"
 #include "fumo_engine/scheduler_ecs.hpp"
 #include "fumo_engine/system_base.hpp"
+#include "objects/components.hpp"
 #include <memory>
 
 struct SchedulerSystemECS : System {
@@ -27,14 +28,23 @@ struct SchedulerSystemECS : System {
         std::string_view t_name = libassert::type_name<T>();
         const auto& parent_ptr = parent_ECS.lock();
         const auto& system_ptr = parent_ptr->ecs->get_system(t_name);
+
+        DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
+                     "can't awake a system that isn't asleep.");
+
         parent_ptr->system_scheduler.insert(system_ptr);
     }
+
     template<typename T, Priority priority>
     void awake_system_priority() {
         std::string_view t_name = libassert::type_name<T>();
         const auto& parent_ptr = parent_ECS.lock();
         auto& system_ptr = parent_ptr->ecs->get_system(t_name);
         system_ptr->priority = priority;
+
+        DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
+                     "can't awake a system that isn't asleep.", t_name);
+
         parent_ptr->system_scheduler.insert(system_ptr);
         parent_ptr->all_scheduled_systems_debug.insert({t_name, system_ptr});
     }
@@ -49,15 +59,38 @@ struct SchedulerSystemECS : System {
         DEBUG_ASSERT(erased_count != 0, "this system wasnt awake/scheduled.", t_name);
     }
     template<typename T>
-    // FIXME: FINISH THIS FUNCTION
-    void sleep_system_for(float seconds) {
+    void sleep_system_for(float seconds_duration) {
         std::string_view t_name = libassert::type_name<T>();
         const auto& parent_ptr = parent_ECS.lock();
         const auto& system_ptr = parent_ptr->ecs->get_system(t_name);
         size_t erased_count = parent_ptr->system_scheduler.erase(system_ptr);
         parent_ptr->all_scheduled_systems_debug.erase(t_name);
         DEBUG_ASSERT(erased_count != 0, "this system wasnt awake/scheduled.", t_name);
+
+        EntityId timer_id = parent_ptr->create_entity();
+
+        Timer timer;
+        timer.make_timer(seconds_duration, t_name);
+
+        parent_ptr->entity_add_component(timer_id, timer);
     }
+
+    void awake_system_from_name(std::string_view t_name) {
+        const auto& parent_ptr = parent_ECS.lock();
+        const auto& system_ptr = parent_ptr->ecs->get_system(t_name);
+
+        DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
+                     "can't awake a system that isn't asleep.");
+
+        parent_ptr->system_scheduler.insert(system_ptr);
+    }
+};
+
+struct TimerHandler : System {
+
+    void sys_call() override { update_timers(); }
+
+    void update_timers();
 };
 
 // scheduling systems are systems that coordinate the starting and ending of systems

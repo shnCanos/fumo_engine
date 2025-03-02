@@ -29,6 +29,7 @@ void register_components() {
     // (this enforces stricter type checking and separates containers better by type)
     global->ECS->register_component<AnimationInfo>();
     global->ECS->register_component<PlanetHasPlayer>();
+    global->ECS->register_component<Timer>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
@@ -55,7 +56,7 @@ void register_systems_scheduled() {
     global->ECS->add_unregistered_system<PlayerCollisionRunner, 4>();
 
     global->ECS->register_system<PlanetRenderer, 5>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<Body, Render, CircleShape>(),
+        .component_mask = global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
         .component_filter = Filter::All});
 
     global->ECS->register_system<AnimationRenderer, 60>(EntityQuery{
