@@ -20,6 +20,18 @@ class PlayerPhysicsRunner : public System {
     void update_position(Body& player_body);
 };
 
+struct GravityUpdater : System {
+
+
+    EntityId player_owning_planet = NO_ENTITY_FOUND;
+
+
+    void sys_call() override { gravity_update(); }
+    void gravity_update();
+    void update_gravity(Body& player_body);
+    void update_position(Body& player_body);
+};
+
 struct GravityHandler : System {
 
   public:
@@ -27,15 +39,13 @@ struct GravityHandler : System {
 
     void find_candidate_gravity_field();
     void find_player_owning_gravity_field(
-        std::vector<std::tuple<Body, GravityField, CircleShape>>& candidate_planets, Body& player_body);
-    void find_final_candidate_gravity_field(
-        std::vector<std::tuple<Body, GravityField, CircleShape>>&
+        std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>&
             final_candidate_planets,
         Body& player_body);
-
-    void update_gravity(const GravityField& circle_grav_field, const Body& circle_body,
-                        Body& entity_body);
-    void update_position(Body& player_body);
+    void find_final_candidate_gravity_field(
+        std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>&
+            final_candidate_planets,
+        Body& player_body);
 };
 
 class CirclePhysicsHandler : public System {
