@@ -30,7 +30,7 @@ void AnimationPlayer::advance_animation(AnimationInfo& animation_info,
 
     animation_info.sub_counter++;
     if (animation_info.sub_counter >= animation_info.frame_speed) {
-        animation_info.sub_counter = 1;
+        animation_info.sub_counter = 0;
         animation_info.frame_progress++;
         animation_info.current_region_rect.x += animation_info.current_region_rect.width;
         // debug_print_animation_info(animation_info);
@@ -40,19 +40,19 @@ void AnimationPlayer::advance_animation(AnimationInfo& animation_info,
     // NOTE: if animations freeze change this to >=
     if (animation_info.frame_progress >= animation_info.sprite_frame_count) {
 
-        // if (animation_info.sheet_vector.size() > 1) [[unlikely]] {
-        //     // play the next animation smoothly
-        //     animation_info.sheet_vector.erase(
-        //         animation_info.sheet_vector.begin());
-        //
-        //     const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(
-        //         animation_info.sheet_vector.front());
-        //
-        //     animation_info.frame_speed = sprite_sheet.base_frame_speed;
-        //     animation_info.sprite_frame_count = sprite_sheet.sprite_frame_count;
-        //     animation_info.current_sheet_name = sprite_sheet.sprite_sheet_name;
-        //     animation_info.current_region_rect = sprite_sheet.base_region_rect;
-        // }
+        if (animation_info.sheet_vector.size() > 1) [[unlikely]] {
+            // play the next animation smoothly
+            animation_info.sheet_vector.erase(
+                animation_info.sheet_vector.begin());
+
+            const auto& sprite_sheet = global->sprite_manager->get_sprite_sheet(
+                animation_info.sheet_vector.front());
+
+            animation_info.frame_speed = sprite_sheet.base_frame_speed;
+            animation_info.sprite_frame_count = sprite_sheet.sprite_frame_count;
+            animation_info.current_sheet_name = sprite_sheet.sprite_sheet_name;
+            animation_info.current_region_rect = sprite_sheet.base_region_rect;
+        }
         if (sprite_sheet.looping) {
             animation_info.frame_progress = 1;
             animation_info.current_region_rect.x = 0;
@@ -89,8 +89,6 @@ void AnimationPlayer::queue(AnimationInfo& animation_info,
     animation_info.sheet_vector.push_back(animation_name);
 }
 
-// FIXME: cant get the sprite to stop at the last part of the sprite sheet
-// without reseting back to the first frame
 void EntireAnimationPlayer::play_full_animation() {
 
     DEBUG_ASSERT(animation_name != "NO_NAME",

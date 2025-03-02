@@ -20,13 +20,15 @@ void load_player_textures() {
     global->sprite_manager->register_sprite(
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/jump.png"),
                       .sprite_sheet_name = "jump",
-                      .sprite_frame_count = 6,
-                      .base_frame_speed = 5});
+                      .sprite_frame_count = 4,
+                      .base_frame_speed = 7});
+
     global->sprite_manager->register_sprite(
-        SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/jump_short.png"),
-                      .sprite_sheet_name = "jump_short",
-                      .sprite_frame_count = 8,
-                      .base_frame_speed = 6});
+        SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/landing.png"),
+                      .sprite_sheet_name = "landing",
+                      .sprite_frame_count = 2,
+                      .base_frame_speed = 8});
+
     global->sprite_manager->register_sprite(
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/idle.png"),
                       .sprite_sheet_name = "idle",
@@ -38,8 +40,9 @@ void load_player_textures() {
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/run.png"),
                       .sprite_sheet_name = "run",
                       .sprite_frame_count = 8,
-                      .base_frame_speed = 5,
+                      .base_frame_speed = 6,
                       .looping = true});
+
     auto back_sheet = LoadTexture("assets/test_player/run.png");
 
     global->sprite_manager->register_sprite(

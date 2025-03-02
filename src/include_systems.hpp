@@ -11,5 +11,6 @@
 #include "objects/scheduling_systems.hpp"
 #include "objects/fumo_containers.hpp"
 #include "objects/rendering_systems/renderers.hpp"
+#include "objects/player_systems/player_physics.hpp"
 
 #endif

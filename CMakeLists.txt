@@ -139,8 +139,8 @@ if(NOT ${PLATFORM} STREQUAL "Web")
 
         # dont forget to set  "cmake.configureSettings": { "CMAKE_BUILD_TYPE": "${buildType}" } in settings.json for vs code
         if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-            message("-- console enabled")
-            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
+            # message("-- console enabled")
+            # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
         else()
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")  
         endif()
@@ -177,16 +177,12 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     if(NOT WIN32)
         SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG -fsanitize=address -Werror -g -march=native")
     endif()
-    if(NOT USE_NO_ASSETS AND NOT ${PLATFORM} STREQUAL "Web")
         # Set the asset path macro to the absolute path on the dev machine
         target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")   
-    endif()
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-    if(NOT USE_NO_ASSETS AND NOT ${PLATFORM} STREQUAL "Web")
         # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
         target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="./assets/")
-    endif()
     if(WIN32)
       if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows") 
@@ -198,19 +194,19 @@ if(NOT WIN32)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unused-variable")
 endif()
 # Set common compiler flags
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
-if (${PLATFORM} STREQUAL "Web")
-    # Tell Emscripten to build an .html file.
-    set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
-    set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
-    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-    if(NOT USE_NO_ASSETS)
-        # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --preload-file assets/ --shell-file ../src/minshell.html")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --preload-file assets/ --shell-file ../vendor/minshell.html")
-        target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="/assets/") # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
-    else()
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --shell-file ../vendor/minshell.html")
-    endif()
-endif()
-
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+# if (${PLATFORM} STREQUAL "Web")
+#     # Tell Emscripten to build an .html file.
+#     set(CMAKE_EXECUTABLE_SUFFIX ".html")
+#     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
+#     set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
+#     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+#     # if(NOT USE_NO_ASSETS)
+#         # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --preload-file assets/ --shell-file ../src/minshell.html")
+#         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --preload-file assets/ --shell-file ../vendor/minshell.html")
+#         target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="/assets/") # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
+#     # else()
+#     #     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --shell-file ../vendor/minshell.html")
+#     endif()
+# endif()
+#

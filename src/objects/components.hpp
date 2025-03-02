@@ -43,10 +43,10 @@ struct GravityField {
     double gravity_radius;
     float gravity_strength;
 
-    // NOTE: i dont think mass will be used in this game
-    // instead, we simply hard code the values we want on each planet for now
+};
 
-    // float mass;
+struct PlanetHasPlayer {
+    // used to flag planets for orbit swap checking
 };
 
 struct CircleShape {
@@ -85,11 +85,11 @@ struct AnimationInfo {
     // like a landing animation being queued after a jump.
     // we also want to be able to replace the head element
     int frame_progress{1}; // progress along the frame
-    int frame_speed{};    // number of frames to show per second
+    int frame_speed{};     // number of frames to show per second
     int sprite_frame_count{};
     std::string_view current_sheet_name = "NO_SHEET";
     Rectangle current_region_rect{};
-    int sub_counter{1};
+    int sub_counter{};
     bool is_running = false;
 };
 // ------------------------------------------------------------------------

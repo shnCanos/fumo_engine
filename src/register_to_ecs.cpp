@@ -29,6 +29,7 @@ void register_components() {
     // NOTE: we must name each individual container we want to have
     // (this enforces stricter type checking and separates containers better by type)
     global->ECS->register_component<AnimationInfo>();
+    global->ECS->register_component<PlanetHasPlayer>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
@@ -45,7 +46,12 @@ void register_systems_scheduled() {
             global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
         .component_filter = Filter::Only});
 
-    global->ECS->add_unregistered_system<PlayerPhysicsRunner, 2>();
+    // global->ECS->add_unregistered_system<PlayerPhysicsRunner, 2>();
+    global->ECS->register_system<GravityHandler, 2>(EntityQuery{
+        .component_mask =
+            global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
+        .component_filter = Filter::All});
+
     global->ECS->add_unregistered_system<PlayerCollisionRunner, 3>();
 
     global->ECS->register_system<PlanetRenderer, 4>(EntityQuery{
@@ -56,7 +62,6 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
         .component_filter = Filter::All});
     global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
-
 }
 void register_systems_physics_collisions() {
     global->ECS->register_system_unscheduled<CircleCollisionHandler>(EntityQuery{

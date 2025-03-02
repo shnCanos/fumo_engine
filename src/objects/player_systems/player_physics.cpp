@@ -1,6 +1,5 @@
 #include "player_physics.hpp"
 #include "fumo_engine/global_state.hpp"
-#include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -17,7 +16,6 @@ void PlayerPhysicsRunner::run_physics() {
 
 void PlayerPhysicsRunner::update_gravity(Body& player_body, CircleShape& player_shape) {
     auto circle_physics_ptr = global->ECS->get_system<CirclePhysicsHandler>();
-    // auto rect_physics_ptr = global->ECS->get_system<RectanglePhysicsHandler>();
 
     circle_physics_ptr->find_gravity_field(player_body, player_shape);
 }
@@ -37,8 +35,7 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
         // than once a second
         const auto& circle_body = global->ECS->get_component<Body>(circle_id);
         const auto& circle_shape = global->ECS->get_component<CircleShape>(circle_id);
-        const auto& circle_grav_field =
-            global->ECS->get_component<GravityField>(circle_id);
+        auto& circle_grav_field = global->ECS->get_component<GravityField>(circle_id);
 
         float distance = Vector2Distance(circle_body.position, entity_body.position);
         float radius_sum = entity_shape.radius + circle_shape.radius;
@@ -62,38 +59,6 @@ void CirclePhysicsHandler::find_gravity_field(Body& entity_body,
     }
 }
 
-bool dont_look_bad_hard_coded_physics(Body& entity_body) {
-
-    if (entity_body.jumping) {
-        // going up smoothing
-        if (entity_body.going_up) {
-            entity_body.iterations++;
-            // PRINT(entity_body.iterations);
-            entity_body.scale_velocity(-50.0f /
-                                       (entity_body.iterations * global->frametime));
-            if (entity_body.iterations == 10) {
-                entity_body.going_up = false;
-                entity_body.going_down = true;
-                entity_body.iterations = 0;
-            }
-        }
-        // going down smoothing
-        if (entity_body.going_down) {
-            // 25000 at least downwards
-            entity_body.iterations++;
-            // PRINT(entity_body.iterations);
-            entity_body.scale_velocity(3000.0f * entity_body.iterations *
-                                       global->frametime);
-            if (entity_body.iterations == 10) {
-                entity_body.jumping = false;
-                entity_body.going_down = false;
-                entity_body.iterations = 0;
-            }
-        }
-        return true;
-    }
-    return false;
-}
 
 void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
                                           const Body& circle_body, Body& entity_body) {
@@ -109,12 +74,11 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
     // if you are confused
     Vector2 x_direction = {entity_body.gravity_direction.y,
                            -entity_body.gravity_direction.x};
-    entity_body.rotation =
-        std::atan2(x_direction.y, x_direction.x) * RAD2DEG;
+    entity_body.rotation = std::atan2(x_direction.y, x_direction.x) * RAD2DEG;
 
-    if (dont_look_bad_hard_coded_physics(entity_body)) {
-        return;
-    }
+    // if (dont_look_bad_hard_coded_physics(entity_body)) {
+    //     return;
+    // }
 
     if (!entity_body.touching_ground) {
         Vector2 acceleration =
@@ -124,8 +88,6 @@ void CirclePhysicsHandler::update_gravity(const GravityField& circle_grav_field,
     } else {
         entity_body.velocity =
             x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
-        const auto& animation_player = global->ECS->get_system<AnimationPlayer>();
-        auto& animation_info = global->ECS->get_component<AnimationInfo>(global->player_id);
     }
 
     // PRINT(entity_body.velocity.x);

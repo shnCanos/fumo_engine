@@ -1,3 +1,5 @@
+#include "raylib.h"
+#define CUTE_C2_IMPLEMENTATION
 #include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
 //------------------------------------------------------------------------------------
@@ -21,11 +23,14 @@ int main(void) {
 
     global->setup_game_state();
 
-
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
         ClearBackground(BLACK);
+
+        DrawFPS(10, 10);
+
+
         BeginDrawing();
         global->frametime = GetFrameTime();
 
