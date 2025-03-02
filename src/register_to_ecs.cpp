@@ -1,4 +1,5 @@
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/scheduling_systems.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
 // angular include so clang wont complain
@@ -41,6 +42,7 @@ void register_systems() {
 void register_systems_scheduled() {
 
     global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
+
     global->ECS->register_system<InputHandlerLevelEditor, 1>(EntityQuery{
         .component_mask =
             global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
@@ -51,20 +53,24 @@ void register_systems_scheduled() {
         .component_mask =
             global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
         .component_filter = Filter::All});
+
     global->ECS->add_unregistered_system<GravityUpdater, 3>();
 
     global->ECS->add_unregistered_system<PlayerCollisionRunner, 4>();
 
     global->ECS->register_system<PlanetRenderer, 5>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
+        .component_mask =
+            global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
         .component_filter = Filter::All});
+
+    global->ECS->add_unregistered_system<TimerHandler, 6>();
 
     global->ECS->register_system<AnimationRenderer, 60>(EntityQuery{
         .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
         .component_filter = Filter::All});
+
     global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
 }
-
 
 void register_systems_physics_collisions() {
     global->ECS->register_system_unscheduled<CircleCollisionHandler>(EntityQuery{

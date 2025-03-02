@@ -139,7 +139,7 @@ void GravityHandler::find_final_candidate_gravity_field(
         // FIXME: test and debug these functions and check if it really
         // sleeps this system for 2 seconds
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        scheduler_system->sleep_system_for<GravityHandler>(2.0f);
+        scheduler_system->sleep_system_for<GravityHandler>(5.0f);
     }
 }
 
@@ -184,9 +184,9 @@ void GravityUpdater::update_gravity(Body& body) {
             x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
     }
 
-    PRINT(entity_body.position.x)
-    PRINT(entity_body.position.y)
-    PRINT(entity_body.touching_ground)
+    // PRINT(entity_body.position.x)
+    // PRINT(entity_body.position.y)
+    // PRINT(entity_body.touching_ground)
     // PRINT(entity_body.position.x)
     // PRINT(entity_body.position.x)
     // PRINT(entity_body.position.x)

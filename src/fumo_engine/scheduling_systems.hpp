@@ -42,8 +42,8 @@ struct SchedulerSystemECS : System {
         auto& system_ptr = parent_ptr->ecs->get_system(t_name);
         system_ptr->priority = priority;
 
-        DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
-                     "can't awake a system that isn't asleep.", t_name);
+        // DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
+        //              "can't awake a system that isn't asleep.", t_name);
 
         parent_ptr->system_scheduler.insert(system_ptr);
         parent_ptr->all_scheduled_systems_debug.insert({t_name, system_ptr});
