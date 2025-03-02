@@ -42,7 +42,8 @@ void InputHandlerLevelEditor::spawn_planet() {
     Vector2 mouse_position = GetMousePosition();
     DrawCircleLinesV(mouse_position, mouse_radius, GREEN);
     auto planet_factory_ptr = global->ECS->get_system<PlanetFactory>();
-    planet_factory_ptr->create_default_planet(mouse_position);
+    // FIXME: remove the hardcoded camera relative spawning
+    planet_factory_ptr->create_default_planet(global->camera->target - screenCenter + mouse_position);
 }
 
 void InputHandlerLevelEditor::resize_planet(float resize) {
