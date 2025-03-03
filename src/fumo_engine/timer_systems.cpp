@@ -12,8 +12,8 @@ void TimerHandler::update_timers() {
 
         auto& timer = global->ECS->get_component<Timer>(timer_entity_id);
 
-        PRINT(timer.starting_time)
-        PRINT(timer.ending_time)
+        // PRINT(timer.starting_time)
+        // PRINT(timer.ending_time)
 
 
         if (elapsed_time >= timer.ending_time) {

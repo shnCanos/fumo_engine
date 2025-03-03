@@ -63,7 +63,9 @@ void register_systems_scheduled() {
             global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
         .component_filter = Filter::All});
 
-    global->ECS->add_unregistered_system<TimerHandler, 6>();
+    global->ECS->register_system<TimerHandler, 6>(
+        EntityQuery{.component_mask = global->ECS->make_component_mask<Timer>(),
+                    .component_filter = Filter::Only});
 
     global->ECS->register_system<AnimationRenderer, 60>(EntityQuery{
         .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),

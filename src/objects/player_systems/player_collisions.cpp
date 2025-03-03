@@ -37,6 +37,13 @@ void CircleCollisionHandler::check_collision_with_player(EntityId circle_entity_
     float distance = Vector2Distance(circle_body.position, player_body.position);
     float radius_sum = player_shape.radius + circle_shape.radius;
 
+    double gravity_reach = 600.0f;
+    BeginMode2D(*global->camera);
+    DrawLineV(player_body.position,
+              player_body.position + Vector2Normalize(player_body.velocity) * gravity_reach,
+              YELLOW);
+    EndMode2D();
+
     if (distance < radius_sum) {
         solve_collision_player(circle_body, player_body, circle_shape, player_shape);
     }

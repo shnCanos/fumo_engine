@@ -20,6 +20,6 @@ void GlobalState::setup_game_state() {
     const auto& player_body = ECS->get_component<Body>(player_id);
     camera->target = player_body.position;
     camera->rotation = 0.0f;
-    camera->zoom = 1.0f;
+    camera->zoom = 0.5f;
     camera->offset = screenCenter;
 }

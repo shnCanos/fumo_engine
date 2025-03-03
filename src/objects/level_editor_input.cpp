@@ -53,10 +53,12 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
     for (auto entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
         auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
+        auto& gravity_field = global->ECS->get_component<GravityField>(entity_id);
         float distance = Vector2Distance(mouse_position, body.position);
 
         if (mouse_radius + circle_shape.radius > distance) {
             circle_shape.radius *= resize;
+            gravity_field.gravity_radius *= resize;
             return;
         }
     }
@@ -83,17 +85,20 @@ void InputHandlerLevelEditor::delete_all_created_planets() {
 }
 
 void InputHandlerLevelEditor::move_planet() {
-    Vector2 mouse_position = global->camera->target - screenCenter + GetMousePosition();
+    Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     for (auto entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
         auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
         float distance = Vector2Distance(mouse_position, body.position);
         if (mouse_radius + circle_shape.radius > distance) {
-            auto body_movement_ptr = global->ECS->get_system<BodyMovement>();
-            body_movement_ptr->move_towards_position(body, mouse_position);
-            // FIXME: think if its okay to update position here
-            body.position += body.velocity * global->frametime;
+            // auto body_movement_ptr = global->ECS->get_system<BodyMovement>();
+            // body_movement_ptr->move_towards_position(body, mouse_position);
+            // // FIXME: think if its okay to update position here
+            // body.position += body.velocity * global->frametime;
+
+
+            body.position = mouse_position;
             return;
         }
     }

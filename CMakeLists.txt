@@ -195,6 +195,7 @@ if(NOT WIN32)
 endif()
 # Set common compiler flags
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CMAKE_C_STANDARD 99)
 # if (${PLATFORM} STREQUAL "Web")
 #     # Tell Emscripten to build an .html file.
 #     set(CMAKE_EXECUTABLE_SUFFIX ".html")
