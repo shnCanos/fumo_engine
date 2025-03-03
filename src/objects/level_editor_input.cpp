@@ -1,6 +1,7 @@
 // clang-format off
 #include "../constants.hpp"
 #include "fumo_engine/global_state.hpp"
+#include "objects/components.hpp"
 #include "systems.hpp"
 #include "objects/factory_systems.hpp"
 #include "raylib.h"
@@ -19,14 +20,17 @@ void InputHandlerLevelEditor::handle_input() {
         if (IsKeyPressed(KEY_D)) {
             delete_all_created_planets();
         } else if (IsKeyPressed(KEY_R)) {
-            resize_planet(0.6666f);
+            resize_planet(0.80f);
         }
     } else if (IsKeyPressed(KEY_D)) {
         delete_created_planet();
     } else if (IsKeyPressed(KEY_R)) {
-        resize_planet(1.5f);
+        resize_planet(1.25f);
     } else if (IsKeyPressed(KEY_ONE)) {
         debug_print();
+    } else if (IsKeyPressed(KEY_V)) {
+        auto& body = global->ECS->get_component<Body>(global->player_id);
+        body.touching_ground = true;
     }
     // } else if (IsKeyPressed(KEY_THREE)) {
     //     const auto& scheduler_ptr = global->ECS->get_system<SchedulerSystemECS>();
@@ -58,7 +62,7 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
 
         if (mouse_radius + circle_shape.radius > distance) {
             circle_shape.radius *= resize;
-            gravity_field.gravity_radius *= resize;
+            gravity_field.gravity_radius *= resize * resize * resize;
             return;
         }
     }
@@ -96,7 +100,6 @@ void InputHandlerLevelEditor::move_planet() {
             // body_movement_ptr->move_towards_position(body, mouse_position);
             // // FIXME: think if its okay to update position here
             // body.position += body.velocity * global->frametime;
-
 
             body.position = mouse_position;
             return;

@@ -1,9 +1,10 @@
+#include "objects/factory_systems.hpp"
+#include "objects/player_systems/player_physics.hpp"
 #include "raylib.h"
 #define CUTE_C2_IMPLEMENTATION
 #include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
 // #include "clay_stuff.c"
-
 
 std::unique_ptr<GlobalState> global;
 
@@ -23,6 +24,7 @@ int main(void) {
     global->setup_game_state();
 
     SetTargetFPS(60);
+    int count = 0;
 
     while (!WindowShouldClose()) {
         ClearBackground(BLACK);
@@ -33,6 +35,16 @@ int main(void) {
         global->frametime = GetFrameTime();
 
         global->ECS->run_systems();
+
+        if (!count) {
+            const auto& planet_factory = global->ECS->get_system<PlanetFactory>();
+            EntityId planet_id = planet_factory->create_default_planet(
+                {screenCenter.x / 2.0f, screenCenter.y});
+
+            const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
+            gravity_updater->player_owning_planet = planet_id;
+            count++;
+        }
 
         DrawFPS(10, 10);
         EndDrawing();

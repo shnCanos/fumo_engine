@@ -17,14 +17,42 @@ EntityId PlayerInitializer::initialize_player() {
     return player_id;
 }
 
-void PlayerEndFrameUpdater::end_of_frame_update() { reset_state(); }
+void PlayerEndFrameUpdater::end_of_frame_update() {
+
+    BeginMode2D(*global->camera);
+    const auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    const auto& circle_shape =
+        global->ECS->get_component<CircleShape>(global->player_id);
+    const auto& render = global->ECS->get_component<Render>(global->player_id);
+    DrawCircleV(player_body.position, circle_shape.radius, render.color);
+
+    //-----------------------------------------------------------------
+    // extra visualization code
+    double gravity_reach = 300.0f;
+    Vector2 normalized_velocity = Vector2Normalize(player_body.velocity);
+    Vector2 line_end = player_body.position + normalized_velocity * gravity_reach;
+
+    if (player_body.jumping) {
+
+        line_end =
+            player_body.position - (player_body.gravity_direction) * gravity_reach;
+    }
+
+    DrawLineV(player_body.position, line_end, YELLOW);
+    //-----------------------------------------------------------------
+
+    EndMode2D();
+
+
+    reset_state();
+}
 
 void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
     static float minSpeed = 30;
     static float minEffectLength = 10;
     static float fractionSpeed = 0.8f;
 
-    camera->offset = (Vector2){screenWidth / 2.0f, screenHeight/ 2.0f};
+    camera->offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
     Vector2 diff = Vector2Subtract(player.position, camera->target);
     float length = Vector2Length(diff);
 
@@ -33,14 +61,14 @@ void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
     if (length > minEffectLength) {
         float speed = fmaxf(fractionSpeed * length, minSpeed);
         camera->target =
-            Vector2Add(camera->target, Vector2Scale(diff, speed * global->frametime / length) * scaling);
+            Vector2Add(camera->target,
+                       Vector2Scale(diff, speed * global->frametime / length) * scaling);
     }
 }
 void PlayerEndFrameUpdater::reset_state() {
     const auto& player_id = global->player_id;
     auto& player_body = global->ECS->get_component<Body>(player_id);
     const auto& body_movement_ptr = global->ECS->get_system<BodyMovement>();
-
 
     // global->camera->target = player_body.position - player_body.velocity;
     UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);

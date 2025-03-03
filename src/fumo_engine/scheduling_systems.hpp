@@ -7,6 +7,10 @@
 #include <memory>
 
 struct SchedulerSystemECS : System {
+    // FIXME: make a copy of the systems and change that,
+    // and overwrite the system_scheduler once the for loop ends
+    //
+    //
     // NOTE: this is an extension of the main SchedulerECS class
     // used to awake systems when necessary, and put them to sleep
 

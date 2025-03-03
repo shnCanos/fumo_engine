@@ -2,6 +2,7 @@
 #include "fumo_engine/scheduling_systems.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
+#include "objects/player_systems/player_physics.hpp"
 // angular include so clang wont complain
 #include <include_systems.hpp>
 
@@ -56,14 +57,14 @@ void register_systems_scheduled() {
 
     global->ECS->add_unregistered_system<GravityUpdater, 3>();
 
-    global->ECS->add_unregistered_system<PlayerCollisionRunner, 4>();
+    global->ECS->add_unregistered_system<PlayerCollisionRunner, 5>();
 
-    global->ECS->register_system<PlanetRenderer, 5>(EntityQuery{
+    global->ECS->register_system<PlanetRenderer, 6>(EntityQuery{
         .component_mask =
             global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system<TimerHandler, 6>(
+    global->ECS->register_system<TimerHandler, 7>(
         EntityQuery{.component_mask = global->ECS->make_component_mask<Timer>(),
                     .component_filter = Filter::Only});
 
@@ -85,6 +86,7 @@ void register_systems_physics_collisions() {
         .component_filter = Filter::All});
 }
 void register_agnostic_sytems() {
+    global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
     global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();
     global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<AnimationPlayer>();

@@ -20,6 +20,14 @@ class PlayerPhysicsRunner : public System {
     void update_position(Body& player_body);
 };
 
+struct GravityBufferHandler : System {
+
+    void sys_call() override { wait_for_touching_ground(); }
+
+    void wait_for_touching_ground();
+
+};
+
 struct GravityUpdater : System {
 
     EntityId player_owning_planet = NO_ENTITY_FOUND;

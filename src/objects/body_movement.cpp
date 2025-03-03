@@ -55,6 +55,7 @@ void BodyMovement::jump(Body& body) {
         Vector2Negate(body.gravity_direction) * jump_scaling * global->frametime;
     body.jumping = true;
     body.going_up = true;
+    // body.touching_ground = false;
 
     // NOTE: finally need the system awake thing naisu
 }
