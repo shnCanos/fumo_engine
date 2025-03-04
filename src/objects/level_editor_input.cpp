@@ -17,6 +17,10 @@ void InputHandlerLevelEditor::handle_input() {
         move_planet();
     } else if (IsKeyPressed(KEY_S)) {
         spawn_planet();
+    } else if (IsKeyPressed(KEY_Q)) {
+        spawn_planet_no_gravity();
+    } else if (IsKeyPressed(KEY_A)) {
+        spawn_aggregate_field_planet();
     } else if (IsKeyDown(KEY_LEFT_SHIFT)) {
         if (IsKeyPressed(KEY_D)) {
             delete_all_created_planets();
@@ -37,7 +41,6 @@ void InputHandlerLevelEditor::handle_input() {
     //     const auto& scheduler_ptr = global->ECS->get_system<SchedulerSystemECS>();
     //     scheduler_ptr->sleep_system<PlanetRenderer>();
     // }
-
 }
 
 void InputHandlerLevelEditor::debug_print() {
@@ -52,7 +55,29 @@ void InputHandlerLevelEditor::spawn_planet() {
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     auto planet_factory_ptr = global->ECS->get_system<PlanetFactory>();
     // FIXME: remove the hardcoded camera relative spawning
-    planet_factory_ptr->create_default_planet(mouse_position);
+    planet_factory_ptr->create_default_planet(mouse_position, BLUE);
+}
+
+void InputHandlerLevelEditor::spawn_aggregate_field_planet() {
+    const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
+    Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
+
+    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
+    auto planet_factory_ptr = global->ECS->get_system<PlanetFactory>();
+    // FIXME: remove the hardcoded camera relative spawning
+    planet_factory_ptr->create_default_aggregate_field_planet(mouse_position, GREEN);
+}
+
+void InputHandlerLevelEditor::spawn_planet_no_gravity() {
+    const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
+    Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
+
+    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
+
+    auto planet_factory_ptr = global->ECS->get_system<PlanetFactory>();
+    planet_factory_ptr->create_planet_no_gravity(mouse_position, YELLOW);
 }
 
 void InputHandlerLevelEditor::resize_planet(float resize) {
@@ -60,15 +85,24 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
     scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
+
+    EntityQuery query{.component_mask = global->ECS->make_component_mask<GravityField>(),
+                      .component_filter = Filter::All};
+
     for (auto entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
         auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
-        auto& gravity_field = global->ECS->get_component<GravityField>(entity_id);
         float distance = Vector2Distance(mouse_position, body.position);
 
         if (mouse_radius + circle_shape.radius > distance) {
             circle_shape.radius *= resize;
-            gravity_field.gravity_radius *= resize * resize * resize;
+
+            if (global->ECS->filter(entity_id, query)) {
+                auto& gravity_field =
+                    global->ECS->get_component<GravityField>(entity_id);
+                gravity_field.gravity_radius *= resize * resize * resize;
+            }
+
             return;
         }
     }

@@ -7,7 +7,8 @@
 // NOTE: this is an interface for all factory spawner classes
 class EntityFactory : public System {
     // this factory method will hold a bunch of functions for spawning various entities
-    // maybe we will give it some parameters so we can easily spawn many types of entities
+    // maybe we will give it some parameters so we can easily spawn many types of
+    // entities
   public:
     virtual ~EntityFactory() = default;
 };
@@ -18,11 +19,15 @@ class PlanetFactory : public EntityFactory {
     // the rest of the planets already on screen)
   public:
     void sys_call() override {};
-    EntityId create_default_planet(Vector2 position);
+    EntityId create_default_planet(Vector2 position, Color color);
+    EntityId create_default_aggregate_field_planet(Vector2 position, Color color);
+
     EntityId create_planet(float radius, float mass, Vector2 velocity, Vector2 position,
                            Color color, float grav_radius, float grav_strength);
     void delete_planet(EntityId entity_id);
     void delete_all_planets();
+
+    EntityId create_planet_no_gravity(Vector2 position, Color color);
 };
 
 #endif

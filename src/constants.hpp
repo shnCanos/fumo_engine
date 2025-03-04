@@ -18,7 +18,7 @@ const Vector2 screenCenter = {(float)screenWidth / 2, (float)screenHeight / 2};
 #define GRAVITATIONAL_CONSTANT 0.6
 #define SCALING_FACTOR 1
 #define FONT_SIZE 20
-const float mouse_radius = 150.0f;
+const float mouse_radius = 25.0f;
 const int color_count = 15;
 const float default_mass = 600000;
 const float default_radius = 50.0f;

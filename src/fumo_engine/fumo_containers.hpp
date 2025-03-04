@@ -87,7 +87,7 @@ class NamedComponentContainer {
             component_type_name);
 
         // make sure this component is actually in this entity_id
-        global->ECS->check_for_component<U>(entity_id);
+        // global->ECS->check_for_component<U>(entity_id);
 
         named_entity_ids.insert({entity_name, entity_id});
     }

@@ -11,7 +11,7 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-const static float movement_scaling = 15000.0f;
+const static float movement_scaling = 20000.0f;
 const static float jump_scaling = 25000.0f;
 
 void BodyMovement::move_towards(Body& body, Body& target) {

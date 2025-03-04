@@ -46,8 +46,9 @@ struct GravityField {
     float gravity_strength;
 };
 
-struct PlanetHasPlayer {
+struct AggregateField {
     // used to flag planets for orbit swap checking
+    // use if we want to transition based on proximity
 };
 
 struct CircleShape {

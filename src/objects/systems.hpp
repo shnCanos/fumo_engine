@@ -43,6 +43,7 @@ class InputHandlerLevelEditor : public InputHandler {
     // TODO: rewrite this class so its split into more classwe
   private:
     void spawn_planet();
+    void spawn_aggregate_field_planet();
     void move_planet();
     void delete_planet();
     void delete_created_planet();
@@ -50,6 +51,7 @@ class InputHandlerLevelEditor : public InputHandler {
     void delete_all_planets();
     void resize_planet(float resize);
     void debug_print();
+    void spawn_planet_no_gravity();
 };
 
 class Debugger : public System {

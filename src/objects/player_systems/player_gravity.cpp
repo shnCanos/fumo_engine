@@ -103,10 +103,6 @@ void GravityHandler::find_player_owning_gravity_field(
                 player_body.position - (player_body.gravity_direction) * gravity_reach;
         }
 
-        // BeginMode2D(*global->camera);
-        // DrawLineV(player_body.position, line_end, RED);
-        // EndMode2D();
-
         float distance =
             PointToLineDistance(planet_body.position, player_body.position, line_end);
 
@@ -131,6 +127,10 @@ void GravityHandler::find_final_candidate_gravity_field(
     std::tuple<Body, GravityField, CircleShape, EntityId> final_planet;
     const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
 
+    EntityQuery query{.component_mask =
+                          global->ECS->make_component_mask<AggregateField>(),
+                      .component_filter = Filter::All};
+
     for (const auto& planet_tuple : final_candidate_planets) {
         const auto& planet_body = std::get<0>(planet_tuple);
         const auto& gravity_field = std::get<1>(planet_tuple);
@@ -138,8 +138,18 @@ void GravityHandler::find_final_candidate_gravity_field(
         const auto& planet_id = std::get<3>(planet_tuple);
 
         float distance = Vector2Distance(player_body.position, planet_body.position);
+
         if (distance < min_distance) {
-            if (planet_id != gravity_updater->player_owning_planet) {
+
+            if (global->ECS->filter(gravity_updater->player_owning_planet, query)) {
+                min_distance = distance;
+                final_planet = planet_tuple;
+                // } else if (!global->ECS->filter(planet_id, query) &&
+                //            global->ECS->filter(gravity_updater->player_owning_planet,
+                //                                query)) {
+                //     min_distance = distance;
+                //     final_planet = planet_tuple;
+            } else if (planet_id != gravity_updater->player_owning_planet) {
                 min_distance = distance;
                 final_planet = planet_tuple;
             }
@@ -164,27 +174,6 @@ void GravityHandler::find_final_candidate_gravity_field(
     scheduler_system->sleep_system<GravityHandler>();
     scheduler_system->awake_system_priority<GravityBufferHandler, 8>();
     // }
-}
-void smoothen_jump(std::tuple<Body, GravityField, CircleShape, EntityId>& final_planet) {
-
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<CircleShape>(global->player_id);
-    const auto& planet_body = std::get<0>(final_planet);
-    const auto& gravity_field = std::get<1>(final_planet);
-    const auto& circle_shape = std::get<2>(final_planet);
-    player_body.velocity -= player_body.gravity_direction * 10.0f;
-
-    float distance = Vector2Distance(planet_body.position, player_body.position);
-    float radius_sum = player_shape.radius + circle_shape.radius;
-    float gravity_radius_sum = radius_sum + gravity_field.gravity_radius;
-    //-------------------------------------------------------------------
-    float correction = 2.0f;
-    // bool touching_ground = distance < radius_sum + correction;
-    bool inside_field = distance < gravity_radius_sum;
-    //-------------------------------------------------------------------
-    if (inside_field) {
-        player_body.jumping = false;
-    }
 }
 
 void GravityUpdater::update_gravity(Body& body) {
@@ -218,15 +207,15 @@ void GravityUpdater::update_gravity(Body& body) {
     entity_body.x_direction = x_direction;
     entity_body.rotation = std::atan2(x_direction.y, x_direction.x) * RAD2DEG;
 
+    // mario galaxy-like changing of the left-right movement to match
+    // the player expectation of what right and left should be
     if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
-        if (170 < abs(entity_body.rotation) && abs(entity_body.rotation) < 180) {
+        if (160 < abs(entity_body.rotation) && abs(entity_body.rotation) < 180) {
             entity_body.inverse_direction = true;
-        } else {
+        } else if (0 < abs(entity_body.rotation) && abs(entity_body.rotation) < 20) {
             entity_body.inverse_direction = false;
         }
     }
-    // entity_body.x_direction = Vector2Negate(entity_body.x_direction);
-    // x_direction = Vector2Negate(entity_body.x_direction);
 
     //-------------------------------------------------------------------
     float distance = Vector2Distance(planet_body.position, entity_body.position);
@@ -250,35 +239,30 @@ void GravityUpdater::update_gravity(Body& body) {
         entity_body.velocity =
             x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
     }
-
-    // PRINT(entity_body.position.x)
-    // PRINT(entity_body.position.y)
-    // PRINT(entity_body.touching_ground)
-    // PRINT(entity_body.position.x)
-    // PRINT(entity_body.position.x)
-    // PRINT(entity_body.position.x)
 }
 
 void GravityUpdater::update_position(Body& player_body) {
     player_body.position += player_body.velocity * global->frametime;
 }
-
-// if (candidate_planets.size() == 2) {
-//     const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
+// void smoothen_jump(std::tuple<Body, GravityField, CircleShape, EntityId>&
+// final_planet) {
 //
-//     auto old_planet = gravity_updater->player_owning_planet;
-//     gravity_updater->player_owning_planet =
-//         std::get<3>(candidate_planets[0]) == gravity_updater->player_owning_planet
-//             ? std::get<3>(candidate_planets[1])
-//             : std::get<3>(candidate_planets[0]);
-//
-//     const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-//     scheduler_system->sleep_system<GravityHandler>();
-//     scheduler_system->awake_system_priority<GravityBufferHandler, 8>();
+//     auto& player_body = global->ECS->get_component<Body>(global->player_id);
+//     auto& player_shape = global->ECS->get_component<CircleShape>(global->player_id);
+//     const auto& planet_body = std::get<0>(final_planet);
+//     const auto& gravity_field = std::get<1>(final_planet);
+//     const auto& circle_shape = std::get<2>(final_planet);
 //     player_body.velocity -= player_body.gravity_direction * 10.0f;
 //
-//     if (old_planet != gravity_updater->player_owning_planet) {
+//     float distance = Vector2Distance(planet_body.position, player_body.position);
+//     float radius_sum = player_shape.radius + circle_shape.radius;
+//     float gravity_radius_sum = radius_sum + gravity_field.gravity_radius;
+//     //-------------------------------------------------------------------
+//     float correction = 2.0f;
+//     // bool touching_ground = distance < radius_sum + correction;
+//     bool inside_field = distance < gravity_radius_sum;
+//     //-------------------------------------------------------------------
+//     if (inside_field) {
 //         player_body.jumping = false;
 //     }
-//     return;
 // }

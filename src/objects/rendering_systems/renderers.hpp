@@ -4,8 +4,10 @@
 
 struct PlanetRenderer : System {
   public:
-    void sys_call() override { draw_planet(); };
-    void draw_planet();
+    void sys_call() override { draw_planets(); };
+    void draw_planets();
+    // void draw_planet_no_gravity(EntityId entity_id);
+    // void draw_planet_gravity(EntityId entity_id);
 };
 
 

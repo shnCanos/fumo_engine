@@ -27,7 +27,7 @@ void register_components() {
     global->ECS->register_component<AnimationInfo>();
     global->ECS->register_component<Timer>();
     global->ECS->register_component<Render>();
-    // global->ECS->register_component<PlanetHasPlayer>();
+    global->ECS->register_component<AggregateField>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
@@ -42,8 +42,8 @@ void register_systems_scheduled() {
 
     global->ECS->register_system<InputHandlerLevelEditor, 1>(EntityQuery{
         .component_mask =
-            global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
-        .component_filter = Filter::Only});
+            global->ECS->make_component_mask<Body, Render, CircleShape>(),
+        .component_filter = Filter::All});
 
     global->ECS->register_system<GravityHandler, 2>(EntityQuery{
         .component_mask =
@@ -56,7 +56,7 @@ void register_systems_scheduled() {
 
     global->ECS->register_system<PlanetRenderer, 6>(EntityQuery{
         .component_mask =
-            global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
+            global->ECS->make_component_mask<Body, Render, CircleShape>(),
         .component_filter = Filter::All});
 
     global->ECS->register_system<TimerHandler, 7>(
@@ -73,7 +73,7 @@ void register_systems_scheduled() {
 void register_systems_physics_collisions() {
     global->ECS->register_system_unscheduled<CircleCollisionHandler>(EntityQuery{
         .component_mask =
-            global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
+            global->ECS->make_component_mask<Body, CircleShape>(),
         .component_filter = Filter::All});
     // global->ECS->register_system_unscheduled<CirclePhysicsHandler>(EntityQuery{
     //     .component_mask =

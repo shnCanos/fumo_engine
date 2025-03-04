@@ -125,10 +125,10 @@ class SchedulerECS {
     [[nodiscard]] T& get_component(const EntityId& entity_id) {
         return ecs->get_component<T>(entity_id);
     }
-    template<typename T>
-    void check_for_component(const EntityId& entity_id) {
-        return ecs->check_for_component<T>(entity_id);
-    }
+    // template<typename T>
+    // void check_for_component(const EntityId& entity_id) {
+    //     return ecs->check_for_component<T>(entity_id);
+    // }
     template<typename T>
     [[nodiscard]] ComponentId get_component_id() {
         return ecs->get_component_id<T>();
