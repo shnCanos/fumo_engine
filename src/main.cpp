@@ -1,10 +1,7 @@
-#include "objects/factory_systems.hpp"
-#include "objects/player_systems/player_physics.hpp"
 #include "raylib.h"
 #define CUTE_C2_IMPLEMENTATION
-#include "constants.hpp"
 #include "fumo_engine/global_state.hpp"
-// #include "clay_stuff.c"
+#include "objects/factory_systems.hpp"
 
 std::unique_ptr<GlobalState> global;
 

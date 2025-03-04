@@ -1,7 +1,6 @@
 // clang-format off
 #include "fumo_engine/event_manager.hpp"
 #include "fumo_engine/global_state.hpp"
-#include "fumo_engine/scheduling_systems.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
 #include "systems.hpp"
@@ -40,8 +39,18 @@ void BodyMovement::move_vertically(Body& body, float amount) {
         body.gravity_direction * amount * movement_scaling * global->frametime;
 }
 void BodyMovement::move_horizontally(Body& body, float amount) {
-    Vector2 x_direction = {body.gravity_direction.y, -body.gravity_direction.x};
-    body.velocity += x_direction * amount * movement_scaling * global->frametime;
+    // if (body.rotation > 90 && !IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
+    //     body.velocity -=
+    //         body.x_direction * amount * movement_scaling * global->frametime;
+    //     return;
+    // }
+    PRINT(body.rotation)
+    if (body.inverse_direction == true) {
+        body.velocity -=
+            body.x_direction * amount * movement_scaling * global->frametime;
+        return;
+    }
+    body.velocity += body.x_direction * amount * movement_scaling * global->frametime;
 }
 
 void BodyMovement::jump(Body& body) {

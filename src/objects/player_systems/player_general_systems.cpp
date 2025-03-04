@@ -41,39 +41,39 @@ void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
 void PlayerEndFrameUpdater::reset_state() {
     const auto& player_id = global->player_id;
     auto& player_body = global->ECS->get_component<Body>(player_id);
-    // const auto& body_movement_ptr = global->ECS->get_system<BodyMovement>();
-    if (player_body.jumping) {
-    }
+
+    // player_body.x_direction = {player_body.gravity_direction.y,
+    //                            -player_body.gravity_direction.x};
+    // if (player_body.rotation > 90 && !IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
+    //     PRINT(player_body.rotation)
+    //     player_body.x_direction = Vector2Negate(player_body.x_direction);
+    // }
+
     player_body.velocity = {0.0f, 0.0f};
 }
 
 void PlayerEndFrameUpdater::end_of_frame_update() {
 
+    //-----------------------------------------------------------------
+    // extra visualization code
     BeginMode2D(*global->camera);
-
     const auto& player_body = global->ECS->get_component<Body>(global->player_id);
     const auto& circle_shape =
         global->ECS->get_component<CircleShape>(global->player_id);
     const auto& render = global->ECS->get_component<Render>(global->player_id);
     DrawCircleV(player_body.position, circle_shape.radius, render.color);
-
-    //-----------------------------------------------------------------
-    // extra visualization code
     double gravity_reach = 300.0f;
     Vector2 normalized_velocity = Vector2Normalize(player_body.velocity);
     Vector2 line_end = player_body.position + normalized_velocity * gravity_reach;
-
     if (player_body.jumping) {
         line_end =
             player_body.position - (player_body.gravity_direction) * gravity_reach;
     }
-
     DrawLineV(player_body.position, line_end, YELLOW);
+    EndMode2D();
     //-----------------------------------------------------------------
 
     UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
-    EndMode2D();
 
     reset_state();
 }
-

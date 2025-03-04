@@ -12,7 +12,7 @@
 
 // const int screenWidth = 500;
 constexpr int screenWidth = 1000;
-constexpr int screenHeight = 1000;
+constexpr int screenHeight = 1200;
 const Vector2 screenCenter = {(float)screenWidth / 2, (float)screenHeight / 2};
 #define GRAVITY 9.81
 #define GRAVITATIONAL_CONSTANT 0.6

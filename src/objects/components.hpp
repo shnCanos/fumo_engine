@@ -12,6 +12,8 @@ struct Body {
     Vector2 position = screenCenter;
     Vector2 velocity{0.0f, 0.0f};
     Vector2 gravity_direction = {0.0f, -1.0f};
+    Vector2 x_direction = {gravity_direction.y, -gravity_direction.x};
+    bool inverse_direction = false;
     bool touching_ground = true;
     bool jumping = false;
     bool going_up;

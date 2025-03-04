@@ -5,6 +5,7 @@
 #include "objects/player_systems/player_physics.hpp"
 #include "objects/systems.hpp"
 #include "raylib.h"
+#include <cstdlib>
 #include <vector>
 
 extern std::unique_ptr<GlobalState> global;
@@ -102,9 +103,9 @@ void GravityHandler::find_player_owning_gravity_field(
                 player_body.position - (player_body.gravity_direction) * gravity_reach;
         }
 
-        BeginMode2D(*global->camera);
-        DrawLineV(player_body.position, line_end, RED);
-        EndMode2D();
+        // BeginMode2D(*global->camera);
+        // DrawLineV(player_body.position, line_end, RED);
+        // EndMode2D();
 
         float distance =
             PointToLineDistance(planet_body.position, player_body.position, line_end);
@@ -214,7 +215,18 @@ void GravityUpdater::update_gravity(Body& body) {
 
     Vector2 x_direction = {entity_body.gravity_direction.y,
                            -entity_body.gravity_direction.x};
+    entity_body.x_direction = x_direction;
     entity_body.rotation = std::atan2(x_direction.y, x_direction.x) * RAD2DEG;
+
+    if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
+        if (170 < abs(entity_body.rotation) && abs(entity_body.rotation) < 180) {
+            entity_body.inverse_direction = true;
+        } else {
+            entity_body.inverse_direction = false;
+        }
+    }
+    // entity_body.x_direction = Vector2Negate(entity_body.x_direction);
+    // x_direction = Vector2Negate(entity_body.x_direction);
 
     //-------------------------------------------------------------------
     float distance = Vector2Distance(planet_body.position, entity_body.position);

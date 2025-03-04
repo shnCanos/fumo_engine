@@ -21,16 +21,13 @@ void register_all_to_ECS() {
 
 void register_components() {
     global->ECS->register_component<Body>();
-    global->ECS->register_component<Render>();
     global->ECS->register_component<CircleShape>();
     global->ECS->register_component<GravityField>();
     global->ECS->register_component<PlayerFlag>();
-    // NOTE: using raylib's struct directly
-    // NOTE: we must name each individual container we want to have
-    // (this enforces stricter type checking and separates containers better by type)
     global->ECS->register_component<AnimationInfo>();
-    global->ECS->register_component<PlanetHasPlayer>();
     global->ECS->register_component<Timer>();
+    global->ECS->register_component<Render>();
+    // global->ECS->register_component<PlanetHasPlayer>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
@@ -48,7 +45,6 @@ void register_systems_scheduled() {
             global->ECS->make_component_mask<Body, Render, CircleShape, GravityField>(),
         .component_filter = Filter::Only});
 
-    // global->ECS->add_unregistered_system<PlayerPhysicsRunner, 2>();
     global->ECS->register_system<GravityHandler, 2>(EntityQuery{
         .component_mask =
             global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
@@ -79,18 +75,18 @@ void register_systems_physics_collisions() {
         .component_mask =
             global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
         .component_filter = Filter::All});
-    global->ECS->register_system_unscheduled<CirclePhysicsHandler>(EntityQuery{
-        .component_mask =
-            global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
-        .component_filter = Filter::All});
+    // global->ECS->register_system_unscheduled<CirclePhysicsHandler>(EntityQuery{
+    //     .component_mask =
+    //         global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
+    //     .component_filter = Filter::All});
 }
 void register_agnostic_sytems() {
+    global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
+    global->ECS->add_unregistered_system_unscheduled<AnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
     global->ECS->add_unregistered_system_unscheduled<JumpPhysicsHandler>();
     global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();
     global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
-    global->ECS->add_unregistered_system_unscheduled<AnimationPlayer>();
-    global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
     global->ECS->add_unregistered_system_unscheduled<BodyMovement>();
     global->ECS->add_unregistered_system_unscheduled<PlanetFactory>();
     global->ECS->add_unregistered_system_unscheduled<Debugger>();

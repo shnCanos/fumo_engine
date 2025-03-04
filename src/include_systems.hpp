@@ -9,7 +9,7 @@
 #include "objects/factory_systems.hpp"
 #include "objects/rendering_systems/renderers.hpp"
 #include "fumo_engine/scheduling_systems.hpp"
-#include "objects/fumo_containers.hpp"
+#include "fumo_engine/fumo_containers.hpp"
 #include "objects/rendering_systems/renderers.hpp"
 #include "objects/player_systems/player_physics.hpp"
 #include "fumo_engine/scheduling_systems.hpp"

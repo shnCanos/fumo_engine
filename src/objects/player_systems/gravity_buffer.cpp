@@ -7,9 +7,13 @@ extern std::unique_ptr<GlobalState> global;
 
 void GravityBufferHandler::wait_for_touching_ground() {
 
-    const auto& body = global->ECS->get_component<Body>(global->player_id);
+    auto& body = global->ECS->get_component<Body>(global->player_id);
 
     if (body.touching_ground) {
+        // garbage fix for the shitty player jump
+        body.iterations = 0;
+        body.going_down = false;
+        body.going_down = false;
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
         scheduler_system->awake_system<GravityHandler>();
     }

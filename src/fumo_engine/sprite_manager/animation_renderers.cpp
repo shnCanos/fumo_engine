@@ -40,10 +40,17 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
     Rectangle destination = {body.position.x, body.position.y,
                              animation_info.current_region_rect.width * sprite_scaling,
                              animation_info.current_region_rect.height * sprite_scaling};
+    Rectangle source = animation_info.current_region_rect;
+    if (body.inverse_direction) {
+        source = {animation_info.current_region_rect.x,
+                  animation_info.current_region_rect.y,
+                  -animation_info.current_region_rect.width,
+                  animation_info.current_region_rect.height};
+    }
 
     Vector2 origin = {abs(destination.width / 2), 3 * destination.height / 4};
 
-    DrawTexturePro(sheet_texture, animation_info.current_region_rect, destination,
-                   origin, body.rotation, WHITE);
+    DrawTexturePro(sheet_texture, source, destination, origin, body.rotation, WHITE);
+
     EndMode2D();
 }
