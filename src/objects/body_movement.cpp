@@ -59,13 +59,13 @@ void BodyMovement::jump(Body& body) {
     body.jumping = true;
     body.going_up = true;
     // body.touching_ground = false;
-    auto scheduler_ecs = global->ECS->get_system<SchedulerSystemECS>();
-    scheduler_ecs->awake_system<JumpPhysicsHandler>();
+    // auto scheduler_ecs = global->ECS->get_system<SchedulerSystemECS>();
+    // scheduler_ecs->awake_system<JumpPhysicsHandler>();
 
     // NOTE: finally need the system awake thing naisu
 }
 
-void JumpPhysicsHandler::hard_coded_jump() {
+bool JumpPhysicsHandler::hard_coded_jump() {
     // NOTE: this code is for testing and will be removed later
 
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
@@ -76,7 +76,7 @@ void JumpPhysicsHandler::hard_coded_jump() {
             player_body.scale_velocity(-40.0f /
                                        (player_body.iterations * global->frametime));
             if (player_body.iterations < 10) {
-                return;
+                return true;
             }
 
             player_body.scale_velocity(-5.0f /
@@ -94,15 +94,17 @@ void JumpPhysicsHandler::hard_coded_jump() {
             player_body.iterations++;
             player_body.scale_velocity(3000.0f * player_body.iterations *
                                        global->frametime);
+
             if (player_body.iterations == 10) {
                 player_body.jumping = false;
                 player_body.going_down = false;
                 player_body.iterations = 0;
+                // const auto& scheduler_system =
+                //     global->ECS->get_system<SchedulerSystemECS>();
+                // scheduler_system->sleep_system<JumpPhysicsHandler>();
             }
         }
-        return;
+        return true;
     }
-
-    const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-    scheduler_system->sleep_system<JumpPhysicsHandler>();
+    return false;
 }

@@ -24,8 +24,8 @@ class BodyMovement : public System {
     void reset_velocity(Body& body);
 };
 struct JumpPhysicsHandler : System {
-    void sys_call() override { hard_coded_jump(); }
-    void hard_coded_jump();
+    void sys_call() override {}
+    bool hard_coded_jump();
 };
 
 class InputHandler : public System {

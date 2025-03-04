@@ -3,6 +3,7 @@
 #include "main_functions.hpp"
 #include "objects/components.hpp"
 #include "objects/player_systems/player_physics.hpp"
+#include "objects/systems.hpp"
 #include "raylib.h"
 #include <vector>
 
@@ -223,7 +224,8 @@ void GravityUpdater::update_gravity(Body& body) {
     entity_body.touching_ground = touching_ground;
     //-------------------------------------------------------------------
 
-    if (entity_body.jumping) {
+    const auto& jump_physics = global->ECS->get_system<JumpPhysicsHandler>();
+    if (jump_physics->hard_coded_jump()) {
         return;
     }
 
@@ -231,6 +233,7 @@ void GravityUpdater::update_gravity(Body& body) {
         Vector2 acceleration =
             gravity_direction * gravity_field.gravity_strength * 1000.0f;
         entity_body.velocity += acceleration * global->frametime;
+
     } else {
         entity_body.velocity =
             x_direction * Vector2DotProduct(entity_body.velocity, x_direction);

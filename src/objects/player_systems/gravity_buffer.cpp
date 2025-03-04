@@ -10,9 +10,7 @@ void GravityBufferHandler::wait_for_touching_ground() {
     const auto& body = global->ECS->get_component<Body>(global->player_id);
 
     if (body.touching_ground) {
-
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
         scheduler_system->awake_system<GravityHandler>();
-
     }
 }
