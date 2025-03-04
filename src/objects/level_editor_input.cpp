@@ -1,6 +1,7 @@
 // clang-format off
 #include "../constants.hpp"
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/scheduling_systems.hpp"
 #include "objects/components.hpp"
 #include "systems.hpp"
 #include "objects/factory_systems.hpp"
@@ -36,6 +37,7 @@ void InputHandlerLevelEditor::handle_input() {
     //     const auto& scheduler_ptr = global->ECS->get_system<SchedulerSystemECS>();
     //     scheduler_ptr->sleep_system<PlanetRenderer>();
     // }
+
 }
 
 void InputHandlerLevelEditor::debug_print() {
@@ -43,6 +45,8 @@ void InputHandlerLevelEditor::debug_print() {
     debugger_ptr->global_debug();
 }
 void InputHandlerLevelEditor::spawn_planet() {
+    const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
 
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
@@ -52,6 +56,8 @@ void InputHandlerLevelEditor::spawn_planet() {
 }
 
 void InputHandlerLevelEditor::resize_planet(float resize) {
+    const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     for (auto entity_id : sys_entities) {

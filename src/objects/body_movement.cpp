@@ -1,11 +1,13 @@
 // clang-format off
 #include "fumo_engine/event_manager.hpp"
 #include "fumo_engine/global_state.hpp"
+#include "fumo_engine/scheduling_systems.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
 #include "systems.hpp"
 #include "raymath.h"
 #include <cerrno>
+#include <sched.h>
 // clang-format on
 
 extern std::unique_ptr<GlobalState> global;
@@ -41,6 +43,7 @@ void BodyMovement::move_horizontally(Body& body, float amount) {
     Vector2 x_direction = {body.gravity_direction.y, -body.gravity_direction.x};
     body.velocity += x_direction * amount * movement_scaling * global->frametime;
 }
+
 void BodyMovement::jump(Body& body) {
 
     // TODO:
@@ -56,28 +59,50 @@ void BodyMovement::jump(Body& body) {
     body.jumping = true;
     body.going_up = true;
     // body.touching_ground = false;
+    auto scheduler_ecs = global->ECS->get_system<SchedulerSystemECS>();
+    scheduler_ecs->awake_system<JumpPhysicsHandler>();
 
     // NOTE: finally need the system awake thing naisu
 }
-// void JumpBufferHandler::update_jump_buffer() {
-//     // now we want to slowly remove the velocity every frame
-//     Vector2 y_velocity =
-//         entity_body.gravity_direction *
-//         Vector2DotProduct(entity_body.velocity, entity_body.gravity_direction);
-//     if (Vector2Equals(y_velocity, Vector2Zero())) {
-//         entity_body.jumping = false;
-//     }
-//
-//     entity_body.velocity += entity_body.gravity_direction;
-// }
-// // unused atm
-// void BodyMovement::move_vertically_fixed(Body& body, float amount) {
-//     Vector2 new_vel = body.gravity_direction * amount * movement_scaling;
-//     body.position -= new_vel * global->frametime;
-// }
-//
-// void BodyMovement::move_horizontally_fixed(Body& body, float amount) {
-//     Vector2 x_direction = {body.gravity_direction.y, -body.gravity_direction.x};
-//     Vector2 new_vel = x_direction * amount * movement_scaling;
-//     body.position += new_vel * global->frametime;
-// }
+
+void JumpPhysicsHandler::hard_coded_jump() {
+    // NOTE: this code is for testing and will be removed later
+
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    if (player_body.jumping) {
+        // going up smoothing
+        if (player_body.going_up) {
+            player_body.iterations++;
+            player_body.scale_velocity(-40.0f /
+                                       (player_body.iterations * global->frametime));
+            if (player_body.iterations < 10) {
+                return;
+            }
+
+            player_body.scale_velocity(-5.0f /
+                                       (player_body.iterations * global->frametime));
+
+            if (player_body.iterations == 17) {
+                player_body.going_up = false;
+                player_body.going_down = true;
+                player_body.iterations = 0;
+            }
+        }
+        // going down smoothing
+        if (player_body.going_down) {
+            // 25000 at least downwards
+            player_body.iterations++;
+            player_body.scale_velocity(3000.0f * player_body.iterations *
+                                       global->frametime);
+            if (player_body.iterations == 10) {
+                player_body.jumping = false;
+                player_body.going_down = false;
+                player_body.iterations = 0;
+            }
+        }
+        return;
+    }
+
+    const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+    scheduler_system->sleep_system<JumpPhysicsHandler>();
+}

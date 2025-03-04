@@ -9,6 +9,27 @@
 
 extern std::unique_ptr<GlobalState> global;
 
+
+
+class ScheduledContainer {
+
+    std::vector<std::shared_ptr<System>> system_scheduler{};
+
+    void insert();
+    void erase();
+
+
+
+
+};
+
+
+
+
+
+
+
+
 template<typename T>
 class NamedComponentContainer {
     // friend struct Sprite2DAnimations;

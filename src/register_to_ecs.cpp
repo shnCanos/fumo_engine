@@ -1,8 +1,7 @@
 #include "fumo_engine/global_state.hpp"
-#include "fumo_engine/scheduling_systems.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
-#include "objects/player_systems/player_physics.hpp"
+#include "objects/systems.hpp"
 // angular include so clang wont complain
 #include <include_systems.hpp>
 
@@ -87,6 +86,7 @@ void register_systems_physics_collisions() {
 }
 void register_agnostic_sytems() {
     global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
+    global->ECS->add_unregistered_system_unscheduled<JumpPhysicsHandler>();
     global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();
     global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<AnimationPlayer>();

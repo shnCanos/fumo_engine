@@ -34,7 +34,7 @@ EntityId PlanetFactory::create_default_planet(Vector2 position) {
                                       CircleShape{.radius = default_radius * 5});
 
     global->ECS->entity_add_component(
-        entity_id, GravityField{.gravity_radius = default_planet_radius,
+        entity_id, GravityField{.gravity_radius = default_planet_radius * 2,
                                 .gravity_strength = default_grav_strength});
 
     sys_entities.insert(entity_id);

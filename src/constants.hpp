@@ -2,17 +2,17 @@
 #define CONSTANTS_HPP_
 #include "array"
 #include "raylib.h"
-// WARNING: ignore clangd's warning, you need to include <iostream>
+// WARNING: 
 // ----------------------------------------------------------------
 #include <iostream>
-// WARNING:
+// WARNING: ignore clangd's warning, you need to include <iostream>
 // ----------------------------------------------------------------
 #include <libassert/assert.hpp>
 // const int particle_count = 50;
 
 // const int screenWidth = 500;
-const int screenWidth = 1700;
-const int screenHeight = 1000;
+constexpr int screenWidth = 1000;
+constexpr int screenHeight = 1000;
 const Vector2 screenCenter = {(float)screenWidth / 2, (float)screenHeight / 2};
 #define GRAVITY 9.81
 #define GRAVITATIONAL_CONSTANT 0.6

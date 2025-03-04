@@ -23,6 +23,10 @@ class BodyMovement : public System {
     void update_position(Body& body);
     void reset_velocity(Body& body);
 };
+struct JumpPhysicsHandler : System {
+    void sys_call() override { hard_coded_jump(); }
+    void hard_coded_jump();
+};
 
 class InputHandler : public System {
     // generic interface aggregate for all input handling
@@ -58,6 +62,5 @@ class Debugger : public System {
     void sys_call() override { global_debug(); };
     void global_debug();
 };
-
 
 #endif

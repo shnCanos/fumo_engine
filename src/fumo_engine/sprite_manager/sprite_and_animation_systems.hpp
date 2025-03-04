@@ -3,7 +3,6 @@
 #include "constants.hpp"
 #include "fumo_engine/system_base.hpp"
 #include "objects/components.hpp"
-#include <memory>
 #include <string_view>
 #include <unordered_map>
 
@@ -36,12 +35,6 @@ class SpriteManager {
         return all_sprite_sheets[sprite_name].texture_sheet;
     }
 
-    // FIXME: you dont need this container anymore
-    // now we can just register all our sprite sheets without making them into
-    // components -> because AnimationInfos are unique per entity id and hold
-    // all the info we need to operate on SpriteSheet2D
-
-    // NamedComponentContainer<SpriteSheet2D> all_sprite_sheets{};
     void unload_all_textures() {
         for (auto& sprite_sheet_pair : all_sprite_sheets) {
             auto& sprite_sheet = sprite_sheet_pair.second;
@@ -63,7 +56,6 @@ class AnimationPlayer : public System {
     // void play(AnimationInfo& animation_info, std::string_view animation_name,
     //           bool looping);
     void queue(AnimationInfo& animation_info, std::string_view animation_name);
-    // FIXME: do these later
     // ---------------------------------------------------------------------------
 
     // pauses the current animation and resets it to the initial state
@@ -100,6 +92,8 @@ struct EntireAnimationPlayer : System {
     AnimationInfo* animation_info_ptr;
     std::string_view animation_name = "NO_NAME";
     void sys_call() override { play_full_animation(); }
+    // FIXME: this system is sleeping on already slept systems
+    // if i add the check it crashes the game
     void play_entire_animation(AnimationInfo& _animation_info,
                                std::string_view _animation_name) {
         animation_info_ptr = &_animation_info;

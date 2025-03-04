@@ -223,7 +223,7 @@ void GravityUpdater::update_gravity(Body& body) {
     entity_body.touching_ground = touching_ground;
     //-------------------------------------------------------------------
 
-    if (dont_look_bad_hard_coded_physics(entity_body)) {
+    if (entity_body.jumping) {
         return;
     }
 
@@ -248,44 +248,6 @@ void GravityUpdater::update_position(Body& player_body) {
     player_body.position += player_body.velocity * global->frametime;
 }
 
-bool dont_look_bad_hard_coded_physics(Body& entity_body) {
-    // NOTE: this code is for testing and will be removed later
-
-    if (entity_body.jumping) {
-        // going up smoothing
-        if (entity_body.going_up) {
-            entity_body.iterations++;
-            entity_body.scale_velocity(-40.0f /
-                                       (entity_body.iterations * global->frametime));
-            if (entity_body.iterations < 10) {
-                return true;
-            }
-
-            entity_body.scale_velocity(-5.0f /
-                                       (entity_body.iterations * global->frametime));
-
-            if (entity_body.iterations == 17) {
-                entity_body.going_up = false;
-                entity_body.going_down = true;
-                entity_body.iterations = 0;
-            }
-        }
-        // going down smoothing
-        if (entity_body.going_down) {
-            // 25000 at least downwards
-            entity_body.iterations++;
-            entity_body.scale_velocity(3000.0f * entity_body.iterations *
-                                       global->frametime);
-            if (entity_body.iterations == 10) {
-                entity_body.jumping = false;
-                entity_body.going_down = false;
-                entity_body.iterations = 0;
-            }
-        }
-        return true;
-    }
-    return false;
-}
 // if (candidate_planets.size() == 2) {
 //     const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
 //

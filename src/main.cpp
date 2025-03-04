@@ -36,15 +36,21 @@ int main(void) {
 
         global->ECS->run_systems();
 
-        if (!count) {
-            const auto& planet_factory = global->ECS->get_system<PlanetFactory>();
-            EntityId planet_id = planet_factory->create_default_planet(
-                {screenCenter.x / 2.0f, screenCenter.y});
+        // if (!count) [[unlikely]] {
+        //     const auto& planet_factory = global->ECS->get_system<PlanetFactory>();
+        //     EntityId planet_id = planet_factory->create_default_planet(
+        //         {screenCenter.x / 2.0f, screenCenter.y});
+        //
+        //     // const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
+        // }
 
-            const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
-            gravity_updater->player_owning_planet = planet_id;
-            count++;
-        }
+        // auto& player_body = global->ECS->get_component<Body>(global->player_id);
+        // count++;
+        // if (count % 20 == 7) {
+        //     count = 1;
+        //     PRINT("GAMING")
+        //     player_body.velocity = {0.0f, 0.0f};
+        // }
 
         DrawFPS(10, 10);
         EndDrawing();
