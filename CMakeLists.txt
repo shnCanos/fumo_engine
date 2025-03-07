@@ -114,59 +114,45 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
 ##########################################################################################
 
 
-if(NOT ${PLATFORM} STREQUAL "Web")
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libstdc++ -static-libgcc -static-libstdc++ -pthread")
-        target_link_libraries(${LIBRARIES} -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
+    # if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    #     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libstdc++ -static-libgcc -static-libstdc++ -pthread")
+        # target_link_libraries(${LIBRARIES} -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
         # dont forget to set  "cmake.configureSettings": { "CMAKE_BUILD_TYPE": "${buildType}" } in settings.json for vs code
-        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-            SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 -DDEBUG -fsanitize=address -Werror -g -march=native")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 -DDEBUG -fsanitize=address -Werror -g -march=native -pthread")
             # SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fmodule-file=std=std.compat.pcm -fmodule-file=std=std.pcm")
 
-        else()
-            SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 -g -march=native")
-        endif()
-    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        target_link_libraries(${LIBRARIES} -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
-    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-        target_link_libraries(${LIBRARIES} -static-intel -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
-    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        target_link_libraries(${LIBRARIES})
-
-        if(OFF)
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")  
-        endif()
-
-        # dont forget to set  "cmake.configureSettings": { "CMAKE_BUILD_TYPE": "${buildType}" } in settings.json for vs code
-        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-            # message("-- console enabled")
-            # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
-        else()
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")  
-        endif()
-    else()
-        target_link_libraries(${LIBRARIES})
-    endif()
-else()
+        # else()
+    # SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 -g -march=native")
     target_link_libraries(${LIBRARIES})
 endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_link_libraries(${LIBRARIES} -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    target_link_libraries(${LIBRARIES} -static-intel -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_link_libraries(${LIBRARIES})
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")  
+endif()
+    # endif()
 
 ##########################################################################################
 # Build flags and additional settings
 ##########################################################################################
 
 # copy assets over into the build dir for the executable to have them for debug/run reasons
-if(NOT USE_NO_ASSETS)
-    add_custom_target(copyAssetsOver
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/assets
-        ${CMAKE_CURRENT_BINARY_DIR}/assets
-        COMMENT "Copying assets to build directory"
-    )
-    add_dependencies(${PROJECT_NAME} copyAssetsOver) 
-endif()
+# if(NOT USE_NO_ASSETS)
+add_custom_target(copyAssetsOver
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets
+    ${CMAKE_CURRENT_BINARY_DIR}/assets
+    COMMENT "Copying assets to build directory"
+)
+add_dependencies(${PROJECT_NAME} copyAssetsOver) 
+# endif()
 
 add_definitions( -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} )
+target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")   
 
 
 ##########################################################################################
@@ -178,11 +164,10 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
         SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG -fsanitize=address -Werror -g -march=native")
     endif()
         # Set the asset path macro to the absolute path on the dev machine
-        target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")   
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fsanitize=address")
         # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
-        target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="./assets/")
+        # target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="./assets/")
     if(WIN32)
       if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows") 
@@ -194,8 +179,8 @@ if(NOT WIN32)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unused-variable")
 endif()
 # Set common compiler flags
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CMAKE_C_STANDARD 99)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
+# set_property(TARGET ${PROJECT_NAME} PROPERTY CMAKE_C_STANDARD 99)
 # if (${PLATFORM} STREQUAL "Web")
 #     # Tell Emscripten to build an .html file.
 #     set(CMAKE_EXECUTABLE_SUFFIX ".html")
