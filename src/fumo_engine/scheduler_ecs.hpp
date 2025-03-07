@@ -31,11 +31,6 @@
 //     }
 // };
 
-
-
-
-
-
 struct SystemCompare {
     // TODO: allow for repeated priorities
     inline bool operator()(const std::shared_ptr<System>& sysA,
@@ -188,7 +183,8 @@ class SchedulerECS {
 
     //------------------------------------------------------------------
     void run_systems() {
-        for (auto system_ptr : system_scheduler) {
+        std::set<std::shared_ptr<System>, SystemCompare> copy_scheduler(system_scheduler);
+        for (auto system_ptr : copy_scheduler) {
             system_ptr->sys_call();
         }
     }
