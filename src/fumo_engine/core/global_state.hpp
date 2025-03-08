@@ -1,8 +1,8 @@
 #ifndef GLOBAL_STATE_HPP
 #define GLOBAL_STATE_HPP
-#include "fumo_engine/engine_constants.hpp"
+#include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/sprite_manager/sprite_and_animation_systems.hpp"
-#include "scheduler_ecs.hpp"
+#include "fumo_engine/core/scheduler_ecs.hpp"
 #include <memory>
 
 class GlobalState {

@@ -1,6 +1,5 @@
 #include "raylib.h"
-#define CUTE_C2_IMPLEMENTATION
-#include "fumo_engine/global_state.hpp"
+#include "fumo_engine/core/global_state.hpp"
 #include "objects/factory_systems.hpp"
 
 std::unique_ptr<GlobalState> global;

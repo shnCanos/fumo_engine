@@ -1,6 +1,6 @@
 #ifndef RENDERERS_HPP
 #define RENDERERS_HPP
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/system_base.hpp"
 
 struct PlanetRenderer : System {
   public:

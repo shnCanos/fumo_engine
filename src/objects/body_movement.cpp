@@ -1,6 +1,6 @@
 // clang-format off
-#include "fumo_engine/event_manager.hpp"
-#include "fumo_engine/global_state.hpp"
+#include "fumo_engine/core/event_manager.hpp"
+#include "fumo_engine/core/global_state.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
 #include "systems.hpp"

@@ -1,11 +1,11 @@
 #ifndef SCHEDULER_ECS_HPP
 #define SCHEDULER_ECS_HPP
-#include "ECS.hpp"
+#include "fumo_engine/core/ECS.hpp"
 #include "constants.hpp"
 #include "entity_query.hpp"
-#include "fumo_engine/component_array.hpp"
-#include "fumo_engine/engine_constants.hpp"
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/component_array.hpp"
+#include "fumo_engine/core/engine_constants.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include <memory>
 #include <ostream>
 // template <class T, class S, class C>

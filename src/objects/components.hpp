@@ -1,7 +1,7 @@
 #ifndef COMPONENTS_HPP
 #define COMPONENTS_HPP
 #include "constants.hpp"
-#include "fumo_engine/engine_constants.hpp"
+#include "fumo_engine/core/engine_constants.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <string_view>

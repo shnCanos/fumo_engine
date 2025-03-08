@@ -1,7 +1,7 @@
 #ifndef FACTORY_SYSTEMS_HPP
 #define FACTORY_SYSTEMS_HPP
-#include "fumo_engine/engine_constants.hpp"
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/engine_constants.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "raylib.h"
 
 // NOTE: this is an interface for all factory spawner classes

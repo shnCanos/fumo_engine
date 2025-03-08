@@ -1,5 +1,5 @@
 #include "player_collisions.hpp"
-#include "fumo_engine/global_state.hpp"
+#include "fumo_engine/core/global_state.hpp"
 #include "main_functions.hpp"
 #include "objects/components.hpp"
 #include "raymath.h"

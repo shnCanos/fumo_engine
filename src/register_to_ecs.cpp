@@ -1,5 +1,5 @@
-#include "fumo_engine/global_state.hpp"
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "objects/components.hpp"
 #include "objects/systems.hpp"
 // angular include so clang wont complain
@@ -44,10 +44,10 @@ void register_systems_scheduled() {
             global->ECS->make_component_mask<Body, Render, Circle>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system<GravityHandler, 2>(EntityQuery{
-        .component_mask =
-            global->ECS->make_component_mask<Body, Circle, GravityField>(),
-        .component_filter = Filter::All});
+    // global->ECS->register_system<GravityHandler, 2>(EntityQuery{
+    //     .component_mask =
+    //         global->ECS->make_component_mask<Body, Circle, GravityField>(),
+    //     .component_filter = Filter::All});
 
     global->ECS->register_system<PlanetRenderer, 6>(EntityQuery{
         .component_mask =

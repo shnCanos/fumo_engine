@@ -1,6 +1,6 @@
 #ifndef SYSTEMS_HPP
 #define SYSTEMS_HPP
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "objects/components.hpp"
 #include "raylib.h"
 

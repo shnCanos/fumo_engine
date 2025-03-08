@@ -1,9 +1,9 @@
 
 
-#include "fumo_engine/global_state.hpp"
-#include "fumo_engine/scheduling_systems.hpp"
+#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/scheduling_systems.hpp"
 #include "main_functions.hpp"
-#include "player_physics.hpp"
+#include "fumo_engine/collisions_and_physics/gravity_physics.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 

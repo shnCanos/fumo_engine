@@ -1,8 +1,8 @@
 #ifndef SCHEDULING_SYSTEMS_HPP
 #define SCHEDULING_SYSTEMS_HPP
 #include "constants.hpp"
-#include "fumo_engine/scheduler_ecs.hpp"
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/scheduler_ecs.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "objects/components.hpp"
 #include <memory>
 

@@ -1,10 +1,10 @@
 #ifndef ECS_HPP
 #define ECS_HPP
-#include "component_manager.hpp"
+#include "fumo_engine/core/component_manager.hpp"
 #include "engine_constants.hpp"
-#include "entity_manager.hpp"
-#include "fumo_engine/entity_query.hpp"
-#include "system_manager.hpp"
+#include "fumo_engine/core/entity_manager.hpp"
+#include "fumo_engine/core/entity_query.hpp"
+#include "fumo_engine/core/system_manager.hpp"
 #include <memory>
 class ECS {
   private:

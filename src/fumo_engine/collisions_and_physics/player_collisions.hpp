@@ -1,7 +1,7 @@
 #ifndef PLAYER_COLLISIONS_HPP
 #define PLAYER_COLLISIONS_HPP
-#include "fumo_engine/engine_constants.hpp"
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/engine_constants.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "objects/components.hpp"
 
 // both used to check collisions for the player agaisnt the planets

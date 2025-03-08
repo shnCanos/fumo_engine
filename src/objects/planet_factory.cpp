@@ -1,6 +1,6 @@
 #include "constants.hpp"
-#include "fumo_engine/engine_constants.hpp"
-#include "fumo_engine/global_state.hpp"
+#include "fumo_engine/core/engine_constants.hpp"
+#include "fumo_engine/core/global_state.hpp"
 #include "objects/components.hpp"
 #include "objects/factory_systems.hpp"
 #include "raymath.h"

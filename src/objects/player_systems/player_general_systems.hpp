@@ -1,7 +1,7 @@
 #ifndef PLAYER_GENERAL_SYSTEMS_HPP
 #define PLAYER_GENERAL_SYSTEMS_HPP
-#include "fumo_engine/engine_constants.hpp"
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/engine_constants.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "objects/components.hpp"
 
 class PlayerInitializer : public System {

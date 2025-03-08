@@ -1,7 +1,7 @@
 #ifndef SPRITE_AND_ANIMATION_SYSTEMS_HPP
 #define SPRITE_AND_ANIMATION_SYSTEMS_HPP
 #include "constants.hpp"
-#include "fumo_engine/system_base.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "objects/components.hpp"
 #include <string_view>
 #include <unordered_map>

@@ -1,7 +1,7 @@
 #ifndef SYSTEM_MANAGER_HPP
 #define SYSTEM_MANAGER_HPP
 #include "constants.hpp"
-#include "fumo_engine/entity_query.hpp"
+#include "fumo_engine/core/entity_query.hpp"
 #include "system_base.hpp"
 #include <libassert/assert.hpp>
 #include <string_view>
