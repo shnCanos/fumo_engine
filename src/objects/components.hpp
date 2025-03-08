@@ -1,6 +1,7 @@
 #ifndef COMPONENTS_HPP
 #define COMPONENTS_HPP
 #include "constants.hpp"
+#include "fumo_engine/engine_constants.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <string_view>
@@ -45,27 +46,65 @@ struct GravityField {
     double gravity_radius;
     float gravity_strength;
 };
-
 struct AggregateField {
     // used to flag planets for orbit swap checking
     // use if we want to transition based on proximity
 };
-
 struct CircleShape {
     float radius;
 };
+struct PlayerShape {
+    EntityId player_owning_field = NO_ENTITY_FOUND;
+    CircleShape top_circle;
+    Vector2 top_position;
+    CircleShape bottom_circle;
+    Vector2 bottom_position = screenCenter;
+    void calculate_circle_positions(const Body& player_body) {
+        top_position =
+            player_body.position - player_body.gravity_direction * top_circle.radius;
+        bottom_position =
+            player_body.position + player_body.gravity_direction * bottom_circle.radius;
+    }
+};
 
-// NOTE: here for reference but we are using raylib's rectangle struct
-// struct Rectangle : Rectangle {
-//     Rectangle(float width, float height) : Rectangle(width, height) {}
-// };
-// Rectangle, 4 components
-// typedef struct Rectangle {
-//     float x;                // Rectangle top-left corner position x
-//     float y;                // Rectangle top-left corner position y
-//     float width;            // Rectangle width
-//     float height;           // Rectangle height
-// } Rectangle;
+// WARNING: **NOT** counted from the surface of the object we are on
+struct ParallelGravityField {
+    // this is parallel to a surface and points in one direction
+    double gravity_reach{};
+    float gravity_strength{};
+    // Vector2 position = screenCenter;
+    float rotation{}; // in degrees
+
+    Rectangle field_rectangle{};
+
+    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
+
+};
+
+// WARNING: **NOT** counted from the surface of the object we are on
+struct CircularGravityField {
+    double gravity_radius;
+    float gravity_strength;
+    Vector2 position = screenCenter;
+
+    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
+};
+
+struct Level1Tag {
+    // identify objects in level 1
+    // NOTE: general idea for how levels work:
+    //
+    // we create all the entities a level will need, then we store them in some
+    // level manager thing that deals with them, and knows what belongs where
+    // it also adds the OnScreen component to entities so other systems
+    // can know what entities they should be updating
+    // and it manages the screen transitions
+};
+
+struct OnScreen {
+    // given to entities that are currently on screen
+    // (used by systems that only care about what should be on the screen)
+};
 
 struct Render {
     Color color;

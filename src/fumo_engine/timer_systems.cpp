@@ -18,7 +18,7 @@ void TimerHandler::update_timers() {
         if (elapsed_time >= timer.ending_time) {
             // remove the timer associated to the system
             // and awake the system
-            scheduler_system->awake_system_from_name(timer.system_name);
+            scheduler_system->awake_unregistered_system_from_name(timer.system_name);
             global->ECS->destroy_entity(timer_entity_id);
         }
     }

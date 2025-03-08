@@ -102,7 +102,7 @@ void EntireAnimationPlayer::play_full_animation() {
         animation_name = "NO_NAME";
 
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        scheduler_system->sleep_system<EntireAnimationPlayer>();
+        scheduler_system->sleep_unregistered_system<EntireAnimationPlayer>();
 
         // animation_info_ptr = new AnimationInfo{};
     }

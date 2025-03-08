@@ -25,7 +25,7 @@ void PlayerInputHandler::handle_input() {
     if (IsKeyDown(KEY_SPACE) && player_body.touching_ground) {
 
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        scheduler_system->awake_system_priority<EntireAnimationPlayer, 58>();
+        scheduler_system->awake_unregistered_system_priority<EntireAnimationPlayer, 58>();
 
         const auto& entire_anim_player =
             global->ECS->get_system<EntireAnimationPlayer>();

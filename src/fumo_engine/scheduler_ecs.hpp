@@ -43,7 +43,8 @@ class SchedulerECS {
   private:
     friend struct SchedulerSystemECS;
     //------------------------------------------------------------------------------
-    std::set<std::shared_ptr<System>, SystemCompare> system_scheduler{};
+    std::multiset<std::shared_ptr<System>, SystemCompare> system_scheduler{};
+    std::multiset<std::shared_ptr<System>, SystemCompare> unregistered_system_scheduler{};
 
     // NOTE: if the system is not awake, we put it in unscheduled_systems;
     // (it is stored with the other systems that never want to be scheduled)
@@ -54,6 +55,8 @@ class SchedulerECS {
 
     // TODO: check if you really need this extra map later (using it for printing rn)
     // (i think it might be unnecessary overhead that slows down the ECS)
+    std::unordered_map<std::string_view, std::shared_ptr<System>>
+        all_scheduled_unregistered_systems_debug{};
     std::unordered_map<std::string_view, std::shared_ptr<System>>
         all_scheduled_systems_debug{};
     std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug{};
@@ -163,13 +166,13 @@ class SchedulerECS {
         const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->add_unregistered_system(system_ptr);
         system_ptr->priority = priority;
-        // can be changed to be in the constructor or test this with initializer list
 
-        system_scheduler.insert(system_ptr);
+        // can be changed to be in the constructor or test this with initializer list
+        unregistered_system_scheduler.insert(system_ptr);
 
         // NOTE: remove later if not using debugger
         std::string_view t_name = libassert::type_name<T>();
-        all_scheduled_systems_debug.insert({t_name, system_ptr});
+        all_scheduled_unregistered_systems_debug.insert({t_name, system_ptr});
     }
     // this system wont be called in run_systems() call
     template<typename T, typename... Types>
@@ -178,12 +181,13 @@ class SchedulerECS {
 
         ecs->add_unregistered_system(system_ptr);
 
-        system_scheduler.insert(system_ptr);
+        // unregistered_system_scheduler.insert(system_ptr);
     }
 
     //------------------------------------------------------------------
     void run_systems() {
-        std::set<std::shared_ptr<System>, SystemCompare> copy_scheduler(system_scheduler);
+        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
+            system_scheduler);
         for (auto system_ptr : copy_scheduler) {
             system_ptr->sys_call();
         }
@@ -231,7 +235,13 @@ class SchedulerECS {
     }
     void debug_print_scheduler() {
         PRINT(system_scheduler);
-        PRINT(all_scheduled_systems_debug);
+        PRINT(all_scheduled_unregistered_systems_debug);
+        for (auto const& pair : all_scheduled_unregistered_systems_debug) {
+            auto const& t_name = pair.first;
+            auto const& system = pair.second;
+            std::cerr << libassert::highlight_stringify(t_name) << " -----> "
+                      << libassert::highlight_stringify(system->priority) << std::endl;
+        }
         for (auto const& pair : all_scheduled_systems_debug) {
             auto const& t_name = pair.first;
             auto const& system = pair.second;

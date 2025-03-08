@@ -12,12 +12,6 @@ extern std::unique_ptr<GlobalState> global;
 bool dont_look_bad_hard_coded_physics(Body& entity_body);
 void smoothen_jump(std::tuple<Body, GravityField, CircleShape, EntityId>& final_planet);
 
-void GravityUpdater::gravity_update() {
-
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    update_gravity(player_body);
-    update_position(player_body);
-}
 
 void GravityHandler::find_candidate_gravity_field() {
     // NOTE: we should only let one planet affect the player at each time
@@ -31,22 +25,20 @@ void GravityHandler::find_candidate_gravity_field() {
     for (const auto& planet_id : sys_entities) {
         const auto& planet_body = global->ECS->get_component<Body>(planet_id);
         const auto& circle_shape = global->ECS->get_component<CircleShape>(planet_id);
-        auto& gravity_field = global->ECS->get_component<GravityField>(planet_id);
+        const auto& gravity_field = global->ECS->get_component<GravityField>(planet_id);
 
         float distance = Vector2Distance(planet_body.position, player_body.position);
         float radius_sum = player_shape.radius + circle_shape.radius;
-
         float gravity_radius_sum = radius_sum + gravity_field.gravity_radius;
-
         //-------------------------------------------------------------------
         // correction is the leeway i give to stop adding gravity to the body
         // (important to properly identify if we are touching the group)
         float correction = 2.0f;
         bool touching_ground = distance < radius_sum + correction;
-        bool inside_field = distance < gravity_radius_sum;
-        //-------------------------------------------------------------------
         player_body.touching_ground = touching_ground;
+        //-------------------------------------------------------------------
 
+        bool inside_field = distance < gravity_radius_sum;
         if (inside_field) {
             candidate_planets.emplace_back(
                 std::tuple<Body, GravityField, CircleShape, EntityId>(
@@ -171,11 +163,17 @@ void GravityHandler::find_final_candidate_gravity_field(
     //-------------------------------------------------------------------
 
     const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-    scheduler_system->sleep_system<GravityHandler>();
-    scheduler_system->awake_system_priority<GravityBufferHandler, 8>();
+    scheduler_system->sleep_unregistered_system<GravityHandler>();
+    scheduler_system->awake_unregistered_system_priority<GravityBufferHandler, 8>();
     // }
 }
 
+void GravityUpdater::gravity_update() {
+
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    update_gravity(player_body);
+    update_position(player_body);
+}
 void GravityUpdater::update_gravity(Body& body) {
     // NOTE: points towards the planet's planet_body
 

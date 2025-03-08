@@ -49,7 +49,7 @@ void InputHandlerLevelEditor::debug_print() {
 }
 void InputHandlerLevelEditor::spawn_planet() {
     const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
+    scheduler_system->sleep_unregistered_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
 
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
@@ -60,7 +60,7 @@ void InputHandlerLevelEditor::spawn_planet() {
 
 void InputHandlerLevelEditor::spawn_aggregate_field_planet() {
     const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
+    scheduler_system->sleep_unregistered_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
 
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
@@ -71,7 +71,7 @@ void InputHandlerLevelEditor::spawn_aggregate_field_planet() {
 
 void InputHandlerLevelEditor::spawn_planet_no_gravity() {
     const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
+    scheduler_system->sleep_unregistered_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
 
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
@@ -82,7 +82,7 @@ void InputHandlerLevelEditor::spawn_planet_no_gravity() {
 
 void InputHandlerLevelEditor::resize_planet(float resize) {
     const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-    scheduler_system->sleep_system_for<InputHandlerLevelEditor>(0.3f);
+    scheduler_system->sleep_unregistered_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
 

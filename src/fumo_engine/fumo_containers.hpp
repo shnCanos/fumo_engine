@@ -127,4 +127,26 @@ class NamedComponentContainer {
 //     }
 // };
 
+// template <class T, class S, class C>
+// S& Container(std::priority_queue<T, S, C>& q) {
+//     struct HackedQueue : private std::priority_queue<T, S, C> {
+//         static S& Container(std::priority_queue<T, S, C>& q) {
+//             return q.*&HackedQueue::c;
+//         }
+//     };
+//     return HackedQueue::Container(q);
+// }
+// template<class T>
+// class PQV : public std::priority_queue<T> {
+//   public:
+//     typedef std::vector<T> TVec;
+//     TVec getVector() {
+//         TVec r(this->c.begin(), this->c.end());
+//         // c is already a heap
+//         sort_heap(r.begin(), r.end(), this->comp);
+//         // Put it into priority-queue order:
+//         reverse(r.begin(), r.end());
+//         return r;
+//     }
+// };
 #endif

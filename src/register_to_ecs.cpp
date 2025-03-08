@@ -10,7 +10,7 @@ extern std::unique_ptr<GlobalState> global;
 void register_components();
 void register_systems();
 void register_systems_physics_collisions();
-void register_agnostic_sytems();
+void register_unregistered_systems();
 void register_systems_scheduled();
 void create_entities();
 void register_all_to_ECS() {
@@ -32,13 +32,12 @@ void register_components() {
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
     // conditions or the game state (unregister the system?)
-    register_agnostic_sytems();
+    register_unregistered_systems();
     register_systems_physics_collisions();
     register_systems_scheduled();
 }
 void register_systems_scheduled() {
 
-    global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
 
     global->ECS->register_system<InputHandlerLevelEditor, 1>(EntityQuery{
         .component_mask =
@@ -49,10 +48,6 @@ void register_systems_scheduled() {
         .component_mask =
             global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
         .component_filter = Filter::All});
-
-    global->ECS->add_unregistered_system<GravityUpdater, 3>();
-
-    global->ECS->add_unregistered_system<PlayerCollisionRunner, 5>();
 
     global->ECS->register_system<PlanetRenderer, 6>(EntityQuery{
         .component_mask =
@@ -67,20 +62,24 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
         .component_filter = Filter::All});
 
-    global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
-}
-
-void register_systems_physics_collisions() {
     global->ECS->register_system_unscheduled<CircleCollisionHandler>(EntityQuery{
         .component_mask =
             global->ECS->make_component_mask<Body, CircleShape>(),
         .component_filter = Filter::All});
+}
+
+void register_systems_physics_collisions() {
     // global->ECS->register_system_unscheduled<CirclePhysicsHandler>(EntityQuery{
     //     .component_mask =
     //         global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
     //     .component_filter = Filter::All});
 }
-void register_agnostic_sytems() {
+void register_unregistered_systems() {
+    global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
+    global->ECS->add_unregistered_system<GravityUpdater, 3>();
+    global->ECS->add_unregistered_system<PlayerCollisionRunner, 5>();
+    global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
+
     global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
     global->ECS->add_unregistered_system_unscheduled<AnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
