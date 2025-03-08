@@ -10,21 +10,21 @@
 
 extern std::unique_ptr<GlobalState> global;
 bool dont_look_bad_hard_coded_physics(Body& entity_body);
-void smoothen_jump(std::tuple<Body, GravityField, CircleShape, EntityId>& final_planet);
+void smoothen_jump(std::tuple<Body, GravityField, Circle, EntityId>& final_planet);
 
 
 void GravityHandler::find_candidate_gravity_field() {
     // NOTE: we should only let one planet affect the player at each time
 
-    std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>> candidate_planets;
+    std::vector<std::tuple<Body, GravityField, Circle, EntityId>> candidate_planets;
     candidate_planets.reserve(sys_entities.size());
 
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<CircleShape>(global->player_id);
+    auto& player_shape = global->ECS->get_component<Circle>(global->player_id);
 
     for (const auto& planet_id : sys_entities) {
         const auto& planet_body = global->ECS->get_component<Body>(planet_id);
-        const auto& circle_shape = global->ECS->get_component<CircleShape>(planet_id);
+        const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
         const auto& gravity_field = global->ECS->get_component<GravityField>(planet_id);
 
         float distance = Vector2Distance(planet_body.position, player_body.position);
@@ -41,7 +41,7 @@ void GravityHandler::find_candidate_gravity_field() {
         bool inside_field = distance < gravity_radius_sum;
         if (inside_field) {
             candidate_planets.emplace_back(
-                std::tuple<Body, GravityField, CircleShape, EntityId>(
+                std::tuple<Body, GravityField, Circle, EntityId>(
                     planet_body, gravity_field, circle_shape, planet_id));
         }
     }
@@ -56,11 +56,11 @@ void GravityHandler::find_candidate_gravity_field() {
 }
 
 void GravityHandler::find_player_owning_gravity_field(
-    std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>&
+    std::vector<std::tuple<Body, GravityField, Circle, EntityId>>&
         candidate_planets,
     Body& player_body) {
 
-    std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>
+    std::vector<std::tuple<Body, GravityField, Circle, EntityId>>
         final_candidate_planets;
     final_candidate_planets.reserve(candidate_planets.size());
 
@@ -110,13 +110,13 @@ void GravityHandler::find_player_owning_gravity_field(
 }
 
 void GravityHandler::find_final_candidate_gravity_field(
-    std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>&
+    std::vector<std::tuple<Body, GravityField, Circle, EntityId>>&
         final_candidate_planets,
     Body& player_body) {
 
     float min_distance = 6969.0f;
 
-    std::tuple<Body, GravityField, CircleShape, EntityId> final_planet;
+    std::tuple<Body, GravityField, Circle, EntityId> final_planet;
     const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
 
     EntityQuery query{.component_mask =
@@ -184,10 +184,10 @@ void GravityUpdater::update_gravity(Body& body) {
 
     const auto& planet_body = global->ECS->get_component<Body>(planet_id);
     const auto& gravity_field = global->ECS->get_component<GravityField>(planet_id);
-    const auto& circle_shape = global->ECS->get_component<CircleShape>(planet_id);
+    const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
 
     auto& entity_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<CircleShape>(global->player_id);
+    auto& player_shape = global->ECS->get_component<Circle>(global->player_id);
 
     Vector2 gravity_direction =
         Vector2Normalize(planet_body.position - entity_body.position);

@@ -91,7 +91,7 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
 
     for (auto entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
-        auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
+        auto& circle_shape = global->ECS->get_component<Circle>(entity_id);
         float distance = Vector2Distance(mouse_position, body.position);
 
         if (mouse_radius + circle_shape.radius > distance) {
@@ -114,7 +114,7 @@ void InputHandlerLevelEditor::delete_created_planet() {
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     for (auto entity_id : planet_factory_ptr->sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
-        auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
+        auto& circle_shape = global->ECS->get_component<Circle>(entity_id);
         float distance = Vector2Distance(mouse_position, body.position);
         if (mouse_radius + circle_shape.radius > distance) {
             planet_factory_ptr->delete_planet(entity_id);
@@ -133,7 +133,7 @@ void InputHandlerLevelEditor::move_planet() {
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     for (auto entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
-        auto& circle_shape = global->ECS->get_component<CircleShape>(entity_id);
+        auto& circle_shape = global->ECS->get_component<Circle>(entity_id);
         float distance = Vector2Distance(mouse_position, body.position);
         if (mouse_radius + circle_shape.radius > distance) {
             // auto body_movement_ptr = global->ECS->get_system<BodyMovement>();

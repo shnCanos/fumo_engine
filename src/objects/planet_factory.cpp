@@ -15,7 +15,7 @@ EntityId PlanetFactory::create_planet(float radius, float mass, Vector2 velocity
     global->ECS->entity_add_component(entity_id,
                                       Body{.position = position, .velocity = velocity});
     global->ECS->entity_add_component(entity_id, Render{.color = color});
-    global->ECS->entity_add_component(entity_id, CircleShape{.radius = radius});
+    global->ECS->entity_add_component(entity_id, Circle{.radius = radius});
 
     global->ECS->entity_add_component(
         entity_id,
@@ -31,7 +31,7 @@ EntityId PlanetFactory::create_default_planet(Vector2 position, Color color) {
         entity_id, Body{.position = position, .velocity = Vector2Zero()});
     global->ECS->entity_add_component(entity_id, Render{.color = color});
     global->ECS->entity_add_component(entity_id,
-                                      CircleShape{.radius = default_radius * 5});
+                                      Circle{.radius = default_radius * 5});
 
     global->ECS->entity_add_component(
         entity_id, GravityField{.gravity_radius = default_planet_radius * 2,
@@ -50,7 +50,7 @@ EntityId PlanetFactory::create_default_aggregate_field_planet(Vector2 position,
         entity_id, Body{.position = position, .velocity = Vector2Zero()});
     global->ECS->entity_add_component(entity_id, Render{.color = color});
     global->ECS->entity_add_component(entity_id,
-                                      CircleShape{.radius = default_radius * 5});
+                                      Circle{.radius = default_radius * 5});
 
     global->ECS->entity_add_component(
         entity_id, GravityField{.gravity_radius = default_planet_radius * 2,
@@ -84,7 +84,7 @@ EntityId PlanetFactory::create_planet_no_gravity(Vector2 position, Color color) 
         entity_id, Body{.position = position, .velocity = Vector2Zero()});
     global->ECS->entity_add_component(entity_id, Render{.color = color});
     global->ECS->entity_add_component(entity_id,
-                                      CircleShape{.radius = default_radius * 5});
+                                      Circle{.radius = default_radius * 5});
     sys_entities.insert(entity_id);
     return entity_id;
 }

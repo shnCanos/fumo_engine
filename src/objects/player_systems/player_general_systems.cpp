@@ -10,7 +10,7 @@ EntityId PlayerInitializer::initialize_player() {
 
     global->ECS->entity_add_component(player_id, PlayerFlag{});
     global->ECS->entity_add_component(player_id, Render{.color = {50, 50, 50, 100}});
-    global->ECS->entity_add_component(player_id, CircleShape{.radius = 66.0f});
+    global->ECS->entity_add_component(player_id, Circle{.radius = 66.0f});
     global->ECS->entity_add_component(player_id, Body{.position = screenCenter,
                                                       .velocity = {0.0f, 0.0f},
                                                       .smooth_jump_buffer = 1.0f});
@@ -59,7 +59,7 @@ void PlayerEndFrameUpdater::end_of_frame_update() {
     BeginMode2D(*global->camera);
     const auto& player_body = global->ECS->get_component<Body>(global->player_id);
     const auto& circle_shape =
-        global->ECS->get_component<CircleShape>(global->player_id);
+        global->ECS->get_component<Circle>(global->player_id);
     const auto& render = global->ECS->get_component<Render>(global->player_id);
     DrawCircleV(player_body.position, circle_shape.radius, render.color);
     double gravity_reach = 300.0f;

@@ -55,7 +55,16 @@ void LevelGravityHandler::find_gravity_field() {
     for (const auto& planet_id : candidate_planets) {
         if (planet_id != player_shape.player_owning_field) {
             player_shape.player_owning_field = planet_id;
+            // -------------------------------------------------------------------------------
+            // check if you want to cancel the jump this way later on
+            // solution:
+            // - the jump only moves up, the gravity pulls it down
+            // (im not sure if this is feasible to get a  nice jump curve)
+            // - i dont think it is feasible to find a good gravity value
+            // that makes the jump as smooth as we want it to be,
+            // but we can try
             player_body.jumping = false;
+            // -------------------------------------------------------------------------------
 
             const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
             scheduler_system->sleep_unregistered_system<GravityHandler>();
@@ -68,9 +77,13 @@ void LevelGravityHandler::find_gravity_field() {
 bool ParallelGravityField::is_inside_field(const Body& player_body,
                                            const PlayerShape& player_shape) const {
 
-    // FIXME: change to this checking both of the player circles for collisions
+    // FIXME:
+    // -------------------------------------------------------------------------------
+    // change to this checking agaisnt the CAPSULE shape
+    // -------------------------------------------------------------------------------
+
     Rectangle rect;
-    CircleShape circle;
+    Circle circle;
     Vector2 circle_center;
 
     Vector2 TopLeft = {rect.x, rect.y};
@@ -111,77 +124,52 @@ bool ParallelGravityField::is_inside_field(const Body& player_body,
     // -------------------------------------------------------------------------------
     // no collision happened, not inside the field
     return false;
-
 }
 
-// FIXME: finish writing the rectangle code
-// and change to this checking both of the player circles for collisions
-void circle_to_rectangle_collision_solving() {
-
-    // NOTE: assume rectangles are NOT rotated
-    // (add rotation support later if i want to add slopes and stuff)
+bool CircularGravityField::is_inside_field(const Body& player_body,
+                                           const PlayerShape& player_shape) const {
 
     // -------------------------------------------------------------------------------
-    // Explanation:
-    // 1- we take our circle and find the distance between the center of the circle
-    //  and the closest point to the circle's center,
-    //  on any of the sides of the rectangle.
-    //  then we take the closest side and pick that as our collision side
-    //  and move the circle away from that point of intersection
-    //
-    // 2- if neither side is valid that means we are colliding with the corner.
-    //  this means we want to move the circle away from the corner, so we take
-    //  the closest corner and solve for that
+    // check for collisions with capsule
     // -------------------------------------------------------------------------------
 
-    Rectangle rect;
-    CircleShape circle;
-    Vector2 circle_center;
-
-    Vector2 TopLeft = {rect.x, rect.y};
-    Vector2 TopRight = {rect.x + rect.width, rect.y};
-    Vector2 BottomLeft = {rect.x, rect.y + rect.height};
-    Vector2 BottomRight = {rect.x + rect.width, rect.y + rect.height};
-
-    std::pair<float, Vector2> distance_to_left, distance_to_bottom, distance_to_right,
-        distance_to_top;
-
-    distance_to_left =
-        PointToLineDistanceAndIntersection(circle_center, TopLeft, BottomLeft);
-    distance_to_top =
-        PointToLineDistanceAndIntersection(circle_center, TopLeft, TopRight);
-    distance_to_right =
-        PointToLineDistanceAndIntersection(circle_center, TopRight, BottomRight);
-    distance_to_bottom =
-        PointToLineDistanceAndIntersection(circle_center, BottomLeft, BottomRight);
-
-    std::vector<std::pair<float, Vector2>> distances = {
-        distance_to_left, distance_to_top, distance_to_right, distance_to_bottom};
-
-    std::pair<float, Vector2> closest_pair = closest_line(distances);
-
     // -------------------------------------------------------------------------------
-    // solve overlapping
-    // -------------------------------------------------------------------------------
-    float intersection_distance = closest_pair.first;
-    Vector2 closest_intersection = closest_pair.second;
+    // capsule sides collision check
+    const auto left_line_distance_pair =
+        PointToLineDistanceAndIntersection(position, player_shape.left_line);
 
-    // -------------------------------------------------------------------------------
-    // if no side a direct collision, then
-    // find the closest corner and move away from it
-    if (intersection_distance == 0) {
-        std::vector<Vector2> points{TopLeft, TopRight, BottomLeft, BottomRight};
-        closest_intersection = closest_point(circle_center, points);
-        intersection_distance = Vector2Distance(circle_center, closest_intersection);
+    if (left_line_distance_pair.first != 0 &&
+        left_line_distance_pair.first < gravity_radius) {
+        // collided with left_line
+        return true;
+    }
+
+    const auto right_line_distance_pair =
+        PointToLineDistanceAndIntersection(position, player_shape.right_line);
+
+    if (right_line_distance_pair.first != 0 &&
+        right_line_distance_pair.first < gravity_radius) {
+        // collided with right_line
+        return true;
     }
     // -------------------------------------------------------------------------------
 
-    float overlap = circle.radius - intersection_distance;
-    float correction = 1.0f; // NOTE: this value is here to stabilize the collision
+    float radius_sum = player_shape.radius + gravity_radius;
 
-    Vector2 push_direction = circle_center - closest_intersection;
-    Vector2 push = Vector2Normalize(push_direction);
-
-    push = Vector2Scale(push, overlap * correction);
-    circle_center += push;
+    // -------------------------------------------------------------------------------
+    // top circle collision check
+    float top_distance = Vector2Distance(position, player_shape.top_circle_center);
+    if (top_distance < radius_sum) {
+        // collided with top circle
+        return true;
+    }
+    // -------------------------------------------------------------------------------
+    // bottom circle collision check
+    float bottom_distance = Vector2Distance(position, player_shape.bottom_circle_center);
+    if (bottom_distance < radius_sum) {
+        // collided with top circle
+        return true;
+    }
+    // -------------------------------------------------------------------------------
+    return false;
 }

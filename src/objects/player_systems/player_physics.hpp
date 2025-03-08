@@ -38,11 +38,11 @@ struct GravityHandler : System {
 
     void find_candidate_gravity_field();
     void find_player_owning_gravity_field(
-        std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>&
+        std::vector<std::tuple<Body, GravityField, Circle, EntityId>>&
             final_candidate_planets,
         Body& player_body);
     void find_final_candidate_gravity_field(
-        std::vector<std::tuple<Body, GravityField, CircleShape, EntityId>>&
+        std::vector<std::tuple<Body, GravityField, Circle, EntityId>>&
             final_candidate_planets,
         Body& player_body);
 };

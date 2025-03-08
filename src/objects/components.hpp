@@ -50,20 +50,31 @@ struct AggregateField {
     // used to flag planets for orbit swap checking
     // use if we want to transition based on proximity
 };
-struct CircleShape {
+struct Circle {
     float radius;
 };
+
 struct PlayerShape {
     EntityId player_owning_field = NO_ENTITY_FOUND;
-    CircleShape top_circle;
-    Vector2 top_position;
-    CircleShape bottom_circle;
-    Vector2 bottom_position = screenCenter;
-    void calculate_circle_positions(const Body& player_body) {
-        top_position =
-            player_body.position - player_body.gravity_direction * top_circle.radius;
-        bottom_position =
-            player_body.position + player_body.gravity_direction * bottom_circle.radius;
+
+    float radius;
+    Vector2 top_circle_center;
+    Vector2 bottom_circle_center;
+
+    std::pair<Vector2, Vector2> left_line;  // .first is the bottom point
+    std::pair<Vector2, Vector2> right_line; // .first is the bottom point
+
+    void update_capsule_positions(const Body& player_body) {
+        top_circle_center =
+            player_body.position - player_body.gravity_direction * radius;
+        bottom_circle_center =
+            player_body.position + player_body.gravity_direction * radius;
+
+        left_line.second = top_circle_center - player_body.x_direction * radius;
+        left_line.first = bottom_circle_center - player_body.x_direction * radius;
+
+        right_line.second = top_circle_center + player_body.x_direction * radius;
+        right_line.first = bottom_circle_center + player_body.x_direction * radius;
     }
 };
 
@@ -78,7 +89,6 @@ struct ParallelGravityField {
     Rectangle field_rectangle{};
 
     bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
-
 };
 
 // WARNING: **NOT** counted from the surface of the object we are on
