@@ -2,8 +2,8 @@
 
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/core/scheduling_systems.hpp"
-#include "main_functions.hpp"
-#include "fumo_engine/collisions_and_physics/gravity_physics.hpp"
+#include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
+#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -68,7 +68,7 @@ void LevelGravityHandler::find_gravity_field() {
 
             const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
             scheduler_system->sleep_unregistered_system<GravityHandler>();
-            scheduler_system
+            gravity_field_systems.hppscheduler_system
                 ->awake_unregistered_system_priority<GravityBufferHandler, 8>();
         }
     }
@@ -173,3 +173,4 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     // -------------------------------------------------------------------------------
     return false;
 }
+

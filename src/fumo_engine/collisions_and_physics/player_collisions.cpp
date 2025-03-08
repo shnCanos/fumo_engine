@@ -1,6 +1,6 @@
 #include "player_collisions.hpp"
+#include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "main_functions.hpp"
 #include "objects/components.hpp"
 #include "raymath.h"
 
@@ -56,7 +56,7 @@ void PlayerCollisionRunner::player_to_rect_collision_solving(
     // -> Checking agaisnt the capsule's sides:
     // - this works similar to RectangleToRectangle collisions, but we
     // only need to check if either of the capsule's sides are inside the rectangle
-    // if they are, we move
+    // if they are, we move away
     // -------------------------------------------------------------------------------
 
     // FIXME:
@@ -182,4 +182,3 @@ void PlayerCollisionRunner::player_to_circle_collision_solving(
     player_body.position += push;
     player_shape.update_capsule_positions(player_body);
 }
-

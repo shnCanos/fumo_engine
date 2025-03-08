@@ -67,8 +67,6 @@ class AnimationPlayer : public System {
 
     // Clears all queued, unplayed animations.
     void clear_queue();
-    // FIXME:
-    // ---------------------------------------------------------------------------
 
   private:
     void advance_animation(AnimationInfo& animation_info,

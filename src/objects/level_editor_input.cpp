@@ -138,8 +138,6 @@ void InputHandlerLevelEditor::move_planet() {
         if (mouse_radius + circle_shape.radius > distance) {
             // auto body_movement_ptr = global->ECS->get_system<BodyMovement>();
             // body_movement_ptr->move_towards_position(body, mouse_position);
-            // // FIXME: think if its okay to update position here
-            // body.position += body.velocity * global->frametime;
 
             body.position = mouse_position;
             return;
