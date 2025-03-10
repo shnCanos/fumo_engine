@@ -1,8 +1,8 @@
 #ifndef SCHEDULER_ECS_HPP
 #define SCHEDULER_ECS_HPP
-#include "fumo_engine/core/ECS.hpp"
 #include "constants.hpp"
 #include "entity_query.hpp"
+#include "fumo_engine/core/ECS.hpp"
 #include "fumo_engine/core/component_array.hpp"
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
@@ -44,7 +44,8 @@ class SchedulerECS {
     friend struct SchedulerSystemECS;
     //------------------------------------------------------------------------------
     std::multiset<std::shared_ptr<System>, SystemCompare> system_scheduler{};
-    std::multiset<std::shared_ptr<System>, SystemCompare> unregistered_system_scheduler{};
+    std::multiset<std::shared_ptr<System>, SystemCompare>
+        unregistered_system_scheduler{};
 
     // NOTE: if the system is not awake, we put it in unscheduled_systems;
     // (it is stored with the other systems that never want to be scheduled)
@@ -186,11 +187,17 @@ class SchedulerECS {
 
     //------------------------------------------------------------------
     void run_systems() {
-        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
-            system_scheduler);
-        for (auto system_ptr : copy_scheduler) {
+        std::multiset<std::shared_ptr<System>, SystemCompare>
+            copy_unregistered_scheduler(unregistered_system_scheduler);
+        for (const auto& system_ptr : copy_unregistered_scheduler) {
             system_ptr->sys_call();
         }
+        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
+            system_scheduler);
+        for (const auto& system_ptr : copy_scheduler) {
+            system_ptr->sys_call();
+        }
+
     }
     // returns the system **cast** from the System interface
     template<typename T>

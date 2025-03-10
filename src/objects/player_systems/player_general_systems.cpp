@@ -63,9 +63,12 @@ void PlayerEndFrameUpdater::end_of_frame_update() {
     // extra visualization code
     BeginMode2D(*global->camera);
     const auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    const auto& circle_shape = global->ECS->get_component<Circle>(global->player_id);
+    const auto& player_shape =
+        global->ECS->get_component<PlayerShape>(global->player_id);
     const auto& render = global->ECS->get_component<Render>(global->player_id);
-    DrawCircleV(player_body.position, circle_shape.radius, render.color);
+    DrawCircleV(player_shape.bottom_circle_center, player_shape.radius, render.color);
+    DrawCircleV(player_shape.top_circle_center, player_shape.radius, render.color);
+
     double gravity_reach = 300.0f;
     Vector2 normalized_velocity = Vector2Normalize(player_body.velocity);
     Vector2 line_end = player_body.position + normalized_velocity * gravity_reach;
