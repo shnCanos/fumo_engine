@@ -1,13 +1,13 @@
 
 
+#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
+#include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/core/scheduling_systems.hpp"
-#include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
-#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
-void LevelGravityHandler::find_gravity_field() {
+void GravityHandler::find_gravity_field() {
     // RULES:
     // - give priority to orbit change
     // - don't change orbits if the player is on the ground
@@ -66,9 +66,12 @@ void LevelGravityHandler::find_gravity_field() {
             player_body.jumping = false;
             // -------------------------------------------------------------------------------
 
+            // FIXME: add this back when the code is working (gravity handler has been
+            // redone)
+            //
             const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
             scheduler_system->sleep_unregistered_system<GravityHandler>();
-            gravity_field_systems.hppscheduler_system
+            scheduler_system
                 ->awake_unregistered_system_priority<GravityBufferHandler, 8>();
         }
     }
@@ -77,53 +80,11 @@ void LevelGravityHandler::find_gravity_field() {
 bool ParallelGravityField::is_inside_field(const Body& player_body,
                                            const PlayerShape& player_shape) const {
 
-    // FIXME:
-    // -------------------------------------------------------------------------------
-    // change to this checking agaisnt the CAPSULE shape
-    // -------------------------------------------------------------------------------
+    Collision collision =
+        PlayerToRectCollision(player_shape, player_body, field_rectangle);
 
-    Rectangle rect;
-    Circle circle;
-    Vector2 circle_center;
-
-    Vector2 TopLeft = {rect.x, rect.y};
-    Vector2 TopRight = {rect.x + rect.width, rect.y};
-    Vector2 BottomLeft = {rect.x, rect.y + rect.height};
-    Vector2 BottomRight = {rect.x + rect.width, rect.y + rect.height};
-
-    std::pair<float, Vector2> distance_to_left, distance_to_bottom, distance_to_right,
-        distance_to_top;
-
-    distance_to_left =
-        PointToLineDistanceAndIntersection(circle_center, TopLeft, BottomLeft);
-    distance_to_top =
-        PointToLineDistanceAndIntersection(circle_center, TopLeft, TopRight);
-    distance_to_right =
-        PointToLineDistanceAndIntersection(circle_center, TopRight, BottomRight);
-    distance_to_bottom =
-        PointToLineDistanceAndIntersection(circle_center, BottomLeft, BottomRight);
-
-    std::vector<std::pair<float, Vector2>> distances = {
-        distance_to_left, distance_to_top, distance_to_right, distance_to_bottom};
-
-    std::pair<float, Vector2> closest_pair = closest_line(distances);
-
-    // -------------------------------------------------------------------------------
-    float intersection_distance = closest_pair.first;
-    Vector2 closest_intersection = closest_pair.second;
-
-    if (intersection_distance == 0) {
-        // check the corner of the rectangle
-        std::vector<Vector2> points{TopLeft, TopRight, BottomLeft, BottomRight};
-        closest_intersection = closest_point(circle_center, points);
-        intersection_distance = Vector2Distance(circle_center, closest_intersection);
-
-        // if true, then there was a collision with the corner
-        return (intersection_distance < circle.radius);
-    }
-    // -------------------------------------------------------------------------------
-    // no collision happened, not inside the field
-    return false;
+    // if overlap == 0, then there was no collision
+    return (collision.overlap == 0);
 }
 
 bool CircularGravityField::is_inside_field(const Body& player_body,
@@ -132,8 +93,26 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     // -------------------------------------------------------------------------------
     // check for collisions with capsule
     // -------------------------------------------------------------------------------
+    float radius_sum = player_shape.radius + gravity_radius;
 
     // -------------------------------------------------------------------------------
+    // top circle collision check
+    float top_distance = Vector2Distance(position, player_shape.top_circle_center);
+    if (top_distance < radius_sum) {
+        // collided with top circle
+        return true;
+    }
+    // -------------------------------------------------------------------------------
+    // bottom circle collision check
+    float bottom_distance = Vector2Distance(position, player_shape.bottom_circle_center);
+    if (bottom_distance < radius_sum) {
+        // collided with top circle
+        return true;
+    }
+
+    // -------------------------------------------------------------------------------
+    // FIXME: remove the side checks later
+    //
     // capsule sides collision check
     const auto left_line_distance_pair =
         PointToLineDistanceAndIntersection(position, player_shape.left_line);
@@ -153,24 +132,5 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
         return true;
     }
     // -------------------------------------------------------------------------------
-
-    float radius_sum = player_shape.radius + gravity_radius;
-
-    // -------------------------------------------------------------------------------
-    // top circle collision check
-    float top_distance = Vector2Distance(position, player_shape.top_circle_center);
-    if (top_distance < radius_sum) {
-        // collided with top circle
-        return true;
-    }
-    // -------------------------------------------------------------------------------
-    // bottom circle collision check
-    float bottom_distance = Vector2Distance(position, player_shape.bottom_circle_center);
-    if (bottom_distance < radius_sum) {
-        // collided with top circle
-        return true;
-    }
-    // -------------------------------------------------------------------------------
     return false;
 }
-

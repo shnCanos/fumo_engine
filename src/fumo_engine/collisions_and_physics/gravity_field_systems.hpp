@@ -21,7 +21,7 @@ struct GravityUpdater : System {
     void update_position(Body& player_body);
 };
 
-struct LevelGravityHandler : System {
+struct GravityHandler : System {
     // only cares about entities on screen
 
     void sys_call() override { find_gravity_field(); }

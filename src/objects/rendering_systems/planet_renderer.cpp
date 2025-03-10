@@ -8,7 +8,7 @@ void PlanetRenderer::draw_planets() {
 
     BeginMode2D(*global->camera);
 
-    EntityQuery query{.component_mask = global->ECS->make_component_mask<GravityField>(),
+    EntityQuery query{.component_mask = global->ECS->make_component_mask<CircularGravityField>(),
                       .component_filter = Filter::All};
     // allow for drawing planets with and without gravity
     // could be different functions but its only one function call
@@ -23,7 +23,7 @@ void PlanetRenderer::draw_planets() {
 
         if (global->ECS->filter(entity_id, query)) {
             const auto& gravity_field =
-                global->ECS->get_component<GravityField>(entity_id);
+                global->ECS->get_component<CircularGravityField>(entity_id);
             DrawCircleV(body.position,
                         circle_shape.radius + gravity_field.gravity_radius,
                         ColorAlpha(render.color, 0.2f));

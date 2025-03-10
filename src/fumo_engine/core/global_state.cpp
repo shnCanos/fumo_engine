@@ -1,7 +1,5 @@
-#include "fumo_engine/global_state.hpp"
-#include "objects/factory_systems.hpp"
+#include "fumo_engine/core/global_state.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
-#include "objects/player_systems/player_physics.hpp"
 
 void GlobalState::setup_game_state() {
     const auto& player_initializer_ptr = ECS->get_system<PlayerInitializer>();

@@ -22,12 +22,19 @@ void register_all_to_ECS() {
 void register_components() {
     global->ECS->register_component<Body>();
     global->ECS->register_component<Circle>();
-    global->ECS->register_component<GravityField>();
+    // global->ECS->register_component<GravityField>();
     global->ECS->register_component<PlayerFlag>();
     global->ECS->register_component<AnimationInfo>();
     global->ECS->register_component<Timer>();
     global->ECS->register_component<Render>();
-    global->ECS->register_component<AggregateField>();
+
+    // NOTE: new components
+    global->ECS->register_component<Rectangle>();
+    global->ECS->register_component<PlayerShape>();
+    global->ECS->register_component<ParallelGravityField>();
+    global->ECS->register_component<CircularGravityField>();
+    // global->ECS->register_component<Level1Tag>();
+    // global->ECS->register_component<OnScreen>();
 }
 void register_systems() {
     // NOTE: consider how you would stop systems from running based on
@@ -38,10 +45,8 @@ void register_systems() {
 }
 void register_systems_scheduled() {
 
-
     global->ECS->register_system<InputHandlerLevelEditor, 1>(EntityQuery{
-        .component_mask =
-            global->ECS->make_component_mask<Body, Render, Circle>(),
+        .component_mask = global->ECS->make_component_mask<Body, Render, Circle>(),
         .component_filter = Filter::All});
 
     // global->ECS->register_system<GravityHandler, 2>(EntityQuery{
@@ -50,8 +55,7 @@ void register_systems_scheduled() {
     //     .component_filter = Filter::All});
 
     global->ECS->register_system<PlanetRenderer, 6>(EntityQuery{
-        .component_mask =
-            global->ECS->make_component_mask<Body, Render, Circle>(),
+        .component_mask = global->ECS->make_component_mask<Body, Render, Circle>(),
         .component_filter = Filter::All});
 
     global->ECS->register_system<TimerHandler, 7>(
@@ -62,10 +66,9 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system_unscheduled<CircleCollisionHandler>(EntityQuery{
-        .component_mask =
-            global->ECS->make_component_mask<Body, Circle>(),
-        .component_filter = Filter::All});
+    global->ECS->register_system<PlayerCollisionRunner, 3>(EntityQuery{
+        .component_mask = global->ECS->make_component_mask<Rectangle, Circle>(),
+        .component_filter = Filter::Any});
 }
 
 void register_systems_physics_collisions() {
@@ -77,7 +80,7 @@ void register_systems_physics_collisions() {
 void register_unregistered_systems() {
     global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
     global->ECS->add_unregistered_system<GravityUpdater, 3>();
-    global->ECS->add_unregistered_system<PlayerCollisionRunner, 5>();
+    // global->ECS->add_unregistered_system<PlayerCollisionRunner, 5>();
     global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
 
     global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);

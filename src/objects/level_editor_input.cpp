@@ -13,6 +13,12 @@
 extern std::unique_ptr<GlobalState> global;
 
 void InputHandlerLevelEditor::handle_input() {
+    // FIXME:
+    // -------------------------------------------------------------------------------
+    // replace the current level editor with code that uses the new
+    // gravity fields, and uses the new shapes (and test everything)
+    // -------------------------------------------------------------------------------
+
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         move_planet();
     } else if (IsKeyPressed(KEY_S)) {
@@ -81,12 +87,14 @@ void InputHandlerLevelEditor::spawn_planet_no_gravity() {
 }
 
 void InputHandlerLevelEditor::resize_planet(float resize) {
+
     const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
     scheduler_system->sleep_unregistered_system_for<InputHandlerLevelEditor>(0.3f);
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
     DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
 
-    EntityQuery query{.component_mask = global->ECS->make_component_mask<GravityField>(),
+    EntityQuery query{.component_mask =
+                          global->ECS->make_component_mask<CircularGravityField>(),
                       .component_filter = Filter::All};
 
     for (auto entity_id : sys_entities) {
@@ -99,7 +107,7 @@ void InputHandlerLevelEditor::resize_planet(float resize) {
 
             if (global->ECS->filter(entity_id, query)) {
                 auto& gravity_field =
-                    global->ECS->get_component<GravityField>(entity_id);
+                    global->ECS->get_component<CircularGravityField>(entity_id);
                 gravity_field.gravity_radius *= resize * resize * resize;
             }
 

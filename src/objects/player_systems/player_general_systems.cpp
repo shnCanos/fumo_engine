@@ -9,12 +9,17 @@ EntityId PlayerInitializer::initialize_player() {
     EntityId player_id = global->ECS->create_entity();
 
     global->ECS->entity_add_component(player_id, PlayerFlag{});
-    global->ECS->entity_add_component(player_id, Render{.color = {50, 50, 50, 100}});
-    global->ECS->entity_add_component(player_id, Circle{.radius = 66.0f});
-    global->ECS->entity_add_component(player_id, Body{.position = screenCenter,
-                                                      .velocity = {0.0f, 0.0f},
-                                                      .smooth_jump_buffer = 1.0f});
     global->ECS->entity_add_component(player_id, AnimationInfo{});
+    global->ECS->entity_add_component(player_id, Render{.color = {50, 50, 50, 100}});
+    // global->ECS->entity_add_component(player_id, Circle{.radius = 66.0f});
+
+    Body player_body{
+        .position = screenCenter, .velocity = {0.0f, 0.0f}, .smooth_jump_buffer = 1.0f};
+    global->ECS->entity_add_component(player_id, player_body);
+
+    PlayerShape player_shape{.radius = 66.0f};
+    player_shape.update_capsule_positions(player_body);
+    global->ECS->entity_add_component(player_id, player_shape);
 
     return player_id;
 }
@@ -58,8 +63,7 @@ void PlayerEndFrameUpdater::end_of_frame_update() {
     // extra visualization code
     BeginMode2D(*global->camera);
     const auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    const auto& circle_shape =
-        global->ECS->get_component<Circle>(global->player_id);
+    const auto& circle_shape = global->ECS->get_component<Circle>(global->player_id);
     const auto& render = global->ECS->get_component<Render>(global->player_id);
     DrawCircleV(player_body.position, circle_shape.radius, render.color);
     double gravity_reach = 300.0f;

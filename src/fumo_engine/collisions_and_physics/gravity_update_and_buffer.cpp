@@ -17,7 +17,7 @@ void GravityBufferHandler::wait_for_touching_ground() {
         body.going_down = false;
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
         // scheduler_system->awake_unregistered_system<GravityHandler>();
-        scheduler_system->awake_unregistered_system<LevelGravityHandler>();
+        scheduler_system->awake_unregistered_system<GravityHandler>();
     }
 }
 void GravityUpdater::gravity_update() {
@@ -35,7 +35,7 @@ void GravityUpdater::update_gravity(Body& body) {
     EntityId planet_id = player_owning_planet;
 
     const auto& planet_body = global->ECS->get_component<Body>(planet_id);
-    const auto& gravity_field = global->ECS->get_component<GravityField>(planet_id);
+    const auto& gravity_field = global->ECS->get_component<CircularGravityField>(planet_id);
     const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
 
     auto& entity_body = global->ECS->get_component<Body>(global->player_id);

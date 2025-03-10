@@ -1,18 +1,40 @@
 #ifndef POINT_LINE_COLLISIONS_HPP
 #define POINT_LINE_COLLISIONS_HPP
+#include "objects/components.hpp"
 #include "raylib.h"
 #include <utility>
 #include <vector>
-[[nodiscard]] float PointToLineDistance(Vector2& Point, Vector2& LineStart,
-                                        Vector2& LineEnd);
+
+struct Collision {
+    float overlap;
+    Vector2 push;
+};
+
+// [[nodiscard]] float PointToLineDistance(const Vector2& Point, const Vector2&
+// LineStart,
+//                                         const Vector2& LineEnd);
 [[nodiscard]] std::pair<float, Vector2>
-PointToLineDistanceAndIntersection(Vector2& Point, Vector2& LineStart, Vector2& LineEnd);
-[[nodiscard]] std::pair<float, Vector2>
-closest_line(const std::vector<std::pair<float, Vector2>>& distances);
-[[nodiscard]] Vector2 closest_point(Vector2 target, const std::vector<Vector2>& points);
+PointToLineDistanceAndIntersection(const Vector2& Point, const Vector2& LineStart,
+                                   const Vector2& LineEnd);
 [[nodiscard]] std::pair<float, Vector2>
 PointToLineDistanceAndIntersection(const Vector2& Point,
                                    const std::pair<Vector2, Vector2>& line);
-[[nodiscard]] Vector2 LineToLineIntersection(const std::pair<Vector2, Vector2>& line1,
-                                             const std::pair<Vector2, Vector2>& line2);
+[[nodiscard]] std::pair<float, Vector2>
+closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances);
+[[nodiscard]] Vector2 closest_point(const Vector2 target,
+                                    const std::vector<Vector2>& points);
+// [[nodiscard]] Vector2 LineToLineIntersection(const std::pair<Vector2, Vector2>& line1,
+//                                              const std::pair<Vector2, Vector2>&
+//                                              line2);
+[[nodiscard]] std::pair<float, Vector2>
+CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& radius,
+                                    const Rectangle& rect);
+[[nodiscard]] Collision PlayerToRectCollision(const PlayerShape& player_shape,
+                                              const Body& player_body,
+                                              const Rectangle& rectangle);
+
+[[nodiscard]] Collision PlayerToCircleCollision(const PlayerShape& player_shape,
+                                                const Body& player_body,
+                                                const Circle& circle_shape,
+                                                const Body& circle_body);
 #endif

@@ -39,17 +39,14 @@ struct Body {
     void scale_velocity(float scale) { velocity += gravity_direction * scale; }
 };
 
-struct GravityField {
+// struct GravityField {
+//
+//     // WARNING: counted from the surface of the object we are on
+//     // (need to add the radius if its a circular planet for example)
+//     double gravity_radius;
+//     float gravity_strength;
+// };
 
-    // WARNING: counted from the surface of the object we are on
-    // (need to add the radius if its a circular planet for example)
-    double gravity_radius;
-    float gravity_strength;
-};
-struct AggregateField {
-    // used to flag planets for orbit swap checking
-    // use if we want to transition based on proximity
-};
 struct Circle {
     float radius;
 };
@@ -81,18 +78,24 @@ struct PlayerShape {
 // WARNING: **NOT** counted from the surface of the object we are on
 struct ParallelGravityField {
     // this is parallel to a surface and points in one direction
+    // NOTE: we only want a single side for now, add a rectangle version
+    // later
     double gravity_reach{};
     float gravity_strength{};
     // Vector2 position = screenCenter;
     float rotation{}; // in degrees
 
-    Rectangle field_rectangle{};
+    // the field has one direction INSIDE this rectangle
+    // NOTE: assume the field points towards the bottom side of the rectangle
+     Rectangle field_rectangle{};
 
     bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
 };
 
 // WARNING: **NOT** counted from the surface of the object we are on
 struct CircularGravityField {
+    // FIXME: save the push on the grav fields themselves later when refactoring
+    // Vector2 push_direction;
     double gravity_radius;
     float gravity_strength;
     Vector2 position = screenCenter;

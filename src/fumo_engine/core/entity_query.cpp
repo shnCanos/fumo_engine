@@ -1,5 +1,5 @@
 #include "entity_query.hpp"
-#include "fumo_engine/component_array.hpp"
+#include "constants.hpp"
 // TODO: try again doing this with templates, i failed unfortunately (skill issue)
 bool EntityQuery::filter(ComponentMask entity_mask) {
     switch (component_filter) {
