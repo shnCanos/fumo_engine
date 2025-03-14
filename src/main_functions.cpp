@@ -12,3 +12,4 @@ void debug_print_animation_info(const AnimationInfo& animation_info) {
     PRINT(animation_info.frame_progress);
     std::cerr << '\n';
 }
+

@@ -2,12 +2,10 @@
 #define RENDERERS_HPP
 #include "fumo_engine/core/system_base.hpp"
 
-struct PlanetRenderer : System {
+struct ObjectRenderer : System {
   public:
     void sys_call() override { draw_planets(); };
     void draw_planets();
-    // void draw_planet_no_gravity(EntityId entity_id);
-    // void draw_planet_gravity(EntityId entity_id);
 };
 
 

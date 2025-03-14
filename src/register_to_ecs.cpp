@@ -1,6 +1,7 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/core/system_base.hpp"
 #include "objects/components.hpp"
+#include "objects/input_handling_systems.hpp"
 #include "objects/systems.hpp"
 // angular include so clang wont complain
 #include <include_systems.hpp>
@@ -33,6 +34,8 @@ void register_components() {
     global->ECS->register_component<PlayerShape>();
     global->ECS->register_component<ParallelGravityField>();
     global->ECS->register_component<CircularGravityField>();
+    global->ECS->register_component<LevelObjectFlag>();
+    global->ECS->register_component<GravFieldFlag>();
     // global->ECS->register_component<Level1Tag>();
     // global->ECS->register_component<OnScreen>();
 }
@@ -45,17 +48,16 @@ void register_systems() {
 }
 void register_systems_scheduled() {
 
-    global->ECS->register_system<InputHandlerLevelEditor, 1>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<Body, Render, Circle>(),
+    global->ECS->register_system<DebugLevelEditor, 1>(EntityQuery{
+        .component_mask = global->ECS->make_component_mask<LevelObjectFlag>(),
         .component_filter = Filter::All});
 
-    // global->ECS->register_system<GravityHandler, 2>(EntityQuery{
-    //     .component_mask =
-    //         global->ECS->make_component_mask<Body, Circle, GravityField>(),
-    //     .component_filter = Filter::All});
+    global->ECS->register_system<GravityHandler, 2>(
+        EntityQuery{.component_mask = global->ECS->make_component_mask<GravFieldFlag>(),
+                    .component_filter = Filter::All});
 
-    global->ECS->register_system<PlanetRenderer, 6>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<Body, Render, Circle>(),
+    global->ECS->register_system<ObjectRenderer, 6>(EntityQuery{
+        .component_mask = global->ECS->make_component_mask<LevelObjectFlag>(),
         .component_filter = Filter::All});
 
     global->ECS->register_system<TimerHandler, 7>(
@@ -67,7 +69,7 @@ void register_systems_scheduled() {
         .component_filter = Filter::All});
 
     global->ECS->register_system<PlayerCollisionRunner, 3>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<Rectangle, Circle>(),
+        .component_mask = global->ECS->make_component_mask<LevelObjectFlag>(),
         .component_filter = Filter::Any});
 }
 
@@ -90,7 +92,7 @@ void register_unregistered_systems() {
     global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();
     global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<BodyMovement>();
-    global->ECS->add_unregistered_system_unscheduled<PlanetFactory>();
+    global->ECS->add_unregistered_system_unscheduled<LevelEntityFactory>();
     global->ECS->add_unregistered_system_unscheduled<Debugger>();
 }
 

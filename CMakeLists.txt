@@ -161,7 +161,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_S
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     # message("-- console enabled")
     if(NOT WIN32)
-        SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG -fsanitize=address -Werror -g -march=native")
+        SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG -fsanitize=address -Werror -g -march=native -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_CONCEPT_CHECKS")
     endif()
         # Set the asset path macro to the absolute path on the dev machine
 else()

@@ -16,7 +16,6 @@ void GravityBufferHandler::wait_for_touching_ground() {
         body.going_down = false;
         body.going_down = false;
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        // scheduler_system->awake_unregistered_system<GravityHandler>();
         scheduler_system->awake_unregistered_system<GravityHandler>();
     }
 }

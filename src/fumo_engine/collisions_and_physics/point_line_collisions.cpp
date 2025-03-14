@@ -283,7 +283,7 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
         return {overlap, push_direction};
     }
     // -------------------------------------------------------------------------------
-    // FIXME: remove the capsule sides later but for now i want to test them
+    // NOTE: remove the capsule sides later but for now i want to test them
     //
     // -------------------------------------------------------------------------------
     // capsule sides collision check

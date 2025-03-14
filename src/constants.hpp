@@ -2,7 +2,7 @@
 #define CONSTANTS_HPP_
 #include "array"
 #include "raylib.h"
-// WARNING: 
+// WARNING:
 // ----------------------------------------------------------------
 #include <iostream>
 // WARNING: ignore clangd's warning, you need to include <iostream>
@@ -28,9 +28,9 @@ const float max_fall_velocity = 500.0f;
 // const float default_grav_strength = 1000.0f;
 const Color player_color = ORANGE;
 // NOTE: add orange back to all colors after adding a sprite to the player
-const std::array<Color, 100> all_colors = {
-    LIGHTGRAY, GRAY, YELLOW, GOLD,   PINK,  RED,   MAROON,   GREEN,
-    LIME,      SKYBLUE, BLUE,     PURPLE, VIOLET, BEIGE, ORANGE};
+const std::array<Color, 100> all_colors = {LIGHTGRAY, GRAY,   YELLOW, GOLD,  PINK,
+                                           RED,       MAROON, GREEN,  LIME,  SKYBLUE,
+                                           BLUE,      PURPLE, VIOLET, BEIGE, ORANGE};
 #define PRINT(x)                                                                        \
     std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
 #endif

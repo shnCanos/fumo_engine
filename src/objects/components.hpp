@@ -39,14 +39,6 @@ struct Body {
     void scale_velocity(float scale) { velocity += gravity_direction * scale; }
 };
 
-// struct GravityField {
-//
-//     // WARNING: counted from the surface of the object we are on
-//     // (need to add the radius if its a circular planet for example)
-//     double gravity_radius;
-//     float gravity_strength;
-// };
-
 struct Circle {
     float radius;
 };
@@ -75,19 +67,18 @@ struct PlayerShape {
     }
 };
 
+// NOTE: we only want a single side for now, add a rectangle version
+// later
 // WARNING: **NOT** counted from the surface of the object we are on
 struct ParallelGravityField {
     // this is parallel to a surface and points in one direction
-    // NOTE: we only want a single side for now, add a rectangle version
-    // later
-    double gravity_reach{};
-    float gravity_strength{};
-    // Vector2 position = screenCenter;
-    float rotation{}; // in degrees
-
     // the field has one direction INSIDE this rectangle
+
     // NOTE: assume the field points towards the bottom side of the rectangle
-     Rectangle field_rectangle{};
+    Rectangle field_rectangle{};
+
+    float gravity_strength{};
+    float rotation{}; // in degrees
 
     bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
 };
@@ -126,6 +117,12 @@ struct Render {
 struct PlayerFlag {
     // used to identify the player uniquely by associating this struct
     // to an entity id
+};
+struct LevelObjectFlag {
+    // identifies planets and rectangles and such shapes
+};
+struct GravFieldFlag {
+    // if it has a field of any type
 };
 
 // NOTE: to make a really modular and reusable timer class,

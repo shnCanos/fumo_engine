@@ -32,10 +32,11 @@ int main(void) {
 
         global->ECS->run_systems();
 
+        // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {
-            const auto& planet_factory = global->ECS->get_system<PlanetFactory>();
-            EntityId planet_id = planet_factory->create_default_aggregate_field_planet(
-                {screenCenter.x / 2.0f, screenCenter.y}, GREEN);
+            const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+            EntityId planet_id = planet_factory->create_circular_planet(
+                {screenCenter.x / 2.0f, screenCenter.y});
             count++;
 
         }

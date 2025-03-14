@@ -8,7 +8,7 @@
 
 typedef Texture Texture2D;
 
-// FIXME: finish this class
+// TODO: finish this class
 class SpriteManager {
 
     // holds all sprites globally, can be queried for Sprite2D or

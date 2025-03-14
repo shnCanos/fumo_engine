@@ -28,31 +28,30 @@ struct JumpPhysicsHandler : System {
     bool hard_coded_jump();
 };
 
-class InputHandler : public System {
-    // generic interface aggregate for all input handling
-  public:
-    virtual ~InputHandler() = default;
-    void sys_call() override = 0;
-};
-
-class InputHandlerLevelEditor : public InputHandler {
-  public:
-    void sys_call() override { handle_input(); }
-    void handle_input();
-
-    // TODO: rewrite this class so its split into more classwe
-  private:
-    void spawn_planet();
-    void spawn_aggregate_field_planet();
-    void move_planet();
-    void delete_planet();
-    void delete_created_planet();
-    void delete_all_created_planets();
-    void delete_all_planets();
-    void resize_planet(float resize);
-    void debug_print();
-    void spawn_planet_no_gravity();
-};
+// class InputHandler : public System {
+//     // generic interface aggregate for all input handling
+//   public:
+//     virtual ~InputHandler() = default;
+//     void sys_call() override = 0;
+// };
+//
+// class InputHandlerLevelEditor : public InputHandler {
+//   public:
+//     void sys_call() override { handle_input(); }
+//     void handle_input();
+//
+//     // TODO: rewrite this class so its split into more classwe
+//   private:
+//     void spawn_planet();
+//     void spawn_aggregate_field_planet();
+//     void move_planet();
+//     void delete_created_planet();
+//     void delete_all_created_planets();
+//     void delete_all_planets();
+//     void resize_planet(float resize);
+//     void debug_print();
+//     void spawn_planet_no_gravity();
+// };
 
 class Debugger : public System {
     // not very used for now

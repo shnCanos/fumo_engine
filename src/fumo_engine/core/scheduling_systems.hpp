@@ -7,9 +7,6 @@
 #include <memory>
 
 struct SchedulerSystemECS : System {
-    // FIXME: make a copy of the systems and change that,
-    // and overwrite the system_scheduler once the for loop ends
-    //
     //
     // NOTE: this is an extension of the main SchedulerECS class
     // used to awake systems when necessary, and put them to sleep
@@ -22,7 +19,7 @@ struct SchedulerSystemECS : System {
     // (this being shared meant that this reference wouldnt get deleted once
     // global_state variable get deleted)
     std::weak_ptr<SchedulerECS> parent_ECS;
-    // FIXME: make this a raw pointer and make the SchedulerECS a unique_ptr
+    // TODO: make this a raw pointer and make the SchedulerECS a unique_ptr
 
     SchedulerSystemECS(std::shared_ptr<SchedulerECS> parent_ECS)
         : parent_ECS(parent_ECS) {}
@@ -48,8 +45,9 @@ struct SchedulerSystemECS : System {
         auto& system_ptr = parent_ptr->ecs->get_system(t_name);
         system_ptr->priority = priority;
 
-        // DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
-        //              "can't awake a system that isn't asleep.", t_name);
+        // FIXME: watch out for this assert when sleeping the entire_animation system
+        DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
+                     "can't awake a system that isn't asleep.", t_name);
 
         parent_ptr->unregistered_system_scheduler.insert(system_ptr);
         parent_ptr->all_scheduled_unregistered_systems_debug.insert(

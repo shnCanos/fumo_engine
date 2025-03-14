@@ -83,8 +83,7 @@ class ComponentArray : public IComponentArray {
     }
     T& get_component_data(EntityId entity_id) {
         DEBUG_ASSERT(entity_to_index.contains(entity_id),
-                     "this entity does not have this component.", entity_to_index,
-                     entity_id);
+                     "this entity does not have this component.", entity_id);
         // notice that there is an overhead from the non-contiguous unordered_map access
         // on this method possibly replace this with something else later
         return all_components[entity_to_index[entity_id]];

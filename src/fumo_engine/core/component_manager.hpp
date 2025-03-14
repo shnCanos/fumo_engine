@@ -17,6 +17,11 @@ class ComponentManager {
         component_arrays;
     ComponentId current_component_id{};
 
+    // used for printing whole entities,
+    // and for getting all the components of an entity
+    // (could be used in serialization ?)
+    std::unordered_map<ComponentId, std::string_view> debug_component_id_to_name;
+
   public:
     template<typename T>
     void register_component() {
@@ -25,6 +30,8 @@ class ComponentManager {
                      component_ids);
         // assign the name a unique id (used for the component bitmasks)
         component_ids.insert({t_name, current_component_id});
+        // associate the id to the name for debugging
+        debug_component_id_to_name.insert({current_component_id, t_name});
 
         // use the t_name also for creating a new array of this component
         component_arrays.insert({t_name, std::make_shared<ComponentArray<T>>()});
@@ -95,4 +102,8 @@ class ComponentManager {
         }
     }
     void debug_print() { PRINT(component_arrays); }
+
+    [[nodiscard]] std::string_view get_name_of_component_id(ComponentId component_id) {
+        return debug_component_id_to_name[component_id];
+    }
 };

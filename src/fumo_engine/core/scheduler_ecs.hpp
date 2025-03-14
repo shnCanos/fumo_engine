@@ -3,7 +3,6 @@
 #include "constants.hpp"
 #include "entity_query.hpp"
 #include "fumo_engine/core/ECS.hpp"
-#include "fumo_engine/core/component_array.hpp"
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
 #include <memory>
@@ -32,7 +31,6 @@
 // };
 
 struct SystemCompare {
-    // TODO: allow for repeated priorities
     inline bool operator()(const std::shared_ptr<System>& sysA,
                            const std::shared_ptr<System>& sysB) const {
         return sysA->priority < sysB->priority;
@@ -187,17 +185,21 @@ class SchedulerECS {
 
     //------------------------------------------------------------------
     void run_systems() {
+        // NOTE: we copy every frame so that changes to the
+        // scheduler only apply on the next loop iteration
+
+        // run unregistered systems
         std::multiset<std::shared_ptr<System>, SystemCompare>
             copy_unregistered_scheduler(unregistered_system_scheduler);
         for (const auto& system_ptr : copy_unregistered_scheduler) {
             system_ptr->sys_call();
         }
+        // run registered systems
         std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
             system_scheduler);
         for (const auto& system_ptr : copy_scheduler) {
             system_ptr->sys_call();
         }
-
     }
     // returns the system **cast** from the System interface
     template<typename T>
@@ -230,6 +232,20 @@ class SchedulerECS {
     // filtering methods for entity ids
     [[nodiscard]] bool filter(EntityId entity_id, EntityQuery entity_query) {
         return entity_query.filter(ecs->get_component_mask(entity_id));
+    }
+
+    void debug_print_entity(EntityId entity_id) {
+        auto component_mask = ecs->get_component_mask(entity_id);
+
+        std::cerr << entity_id << " -----> ";
+
+        for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
+            // go through all components
+            if (component_mask & (1 << id)) {
+                std::string_view component_name = ecs->get_name_of_component_id(id);
+                std::cerr << libassert::highlight_stringify(component_name) << " ";
+            }
+        }
     }
 
     void debug_print() {

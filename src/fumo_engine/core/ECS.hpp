@@ -1,7 +1,7 @@
 #ifndef ECS_HPP
 #define ECS_HPP
-#include "fumo_engine/core/component_manager.hpp"
 #include "engine_constants.hpp"
+#include "fumo_engine/core/component_manager.hpp"
 #include "fumo_engine/core/entity_manager.hpp"
 #include "fumo_engine/core/entity_query.hpp"
 #include "fumo_engine/core/system_manager.hpp"
@@ -117,6 +117,9 @@ class ECS {
         component_manager->debug_print();
         entity_manager->debug_print();
         system_manager->debug_print();
+    }
+    [[nodiscard]] std::string_view get_name_of_component_id(ComponentId component_id) {
+        return component_manager->get_name_of_component_id(component_id);
     }
 };
 

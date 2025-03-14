@@ -1,5 +1,3 @@
-
-
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
 #include "fumo_engine/core/global_state.hpp"
@@ -20,6 +18,7 @@ void GravityHandler::find_gravity_field() {
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
 
     if (player_body.touching_ground) {
+        // dont check orbits when we are on the ground
         return;
     }
 
@@ -111,7 +110,7 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     }
 
     // -------------------------------------------------------------------------------
-    // FIXME: remove the side checks later
+    // TODO: remove the side checks later
     //
     // capsule sides collision check
     const auto left_line_distance_pair =
