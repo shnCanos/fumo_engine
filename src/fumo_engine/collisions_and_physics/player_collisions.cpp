@@ -43,7 +43,11 @@ void PlayerCollisionRunner::player_to_rect_collision_solving(
     // -------------------------------------------------------------------------------
     // solve the collision
     Collision collision =
-        PlayerToRectCollision(player_shape, player_body, rectangle);
+        PlayerToRectCollision(player_shape, player_body, rectangle, rectangle_body);
+    // FIXME: (latest) player is colliding completely off the rectangle.
+    // check if the issue is with creating the rectangle or if it is with
+    // the actual collision code.
+    // (we might be updating some values wrong in many places when making rects)
 
     if (collision.overlap == 0.0f) {
         // no collision happened

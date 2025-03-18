@@ -7,15 +7,15 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-void DebugLevelEditor::spawn_rect_planet(Vector2 mouse_position) {
-    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
-    planet_factory->create_rect_planet(mouse_position);
-}
-
 void DebugLevelEditor::spawn_circular_planet(Vector2 mouse_position) {
 
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_circular_planet(mouse_position);
+}
+
+void DebugLevelEditor::spawn_rect_planet(Vector2 mouse_position) {
+    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+    planet_factory->create_rect_planet(mouse_position);
 }
 
 void DebugLevelEditor::spawn_rect(Vector2 mouse_position) {
@@ -37,8 +37,13 @@ void DebugLevelEditor::debug_print() {
 void DebugLevelEditor::move_entity(Vector2 mouse_position) {
     for (const auto& entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
-        body.position = mouse_position;
-        return;
+        float distance = Vector2Distance(body.position, mouse_position);
+
+
+        if (distance < mouse_radius) {
+            body.position = mouse_position;
+            return;
+        }
     }
 }
 
@@ -48,13 +53,11 @@ void DebugLevelEditor::handle_input() {
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 
-        // FIXME: moves everything on screen somehow
         move_entity(mouse_position);
 
     } else if (IsKeyPressed(KEY_F1)) {
         spawn_circular_planet(mouse_position);
     } else if (IsKeyPressed(KEY_F2)) {
-        // FIXME: not being drawn at all right now
         spawn_rect_planet(mouse_position);
     } else if (IsKeyPressed(KEY_F3)) {
         spawn_rect(mouse_position);

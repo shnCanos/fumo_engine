@@ -25,7 +25,8 @@ void PlayerInputHandler::handle_input() {
     if (IsKeyDown(KEY_SPACE) && player_body.touching_ground) {
 
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        scheduler_system->awake_unregistered_system_priority<EntireAnimationPlayer, 58>();
+        scheduler_system
+            ->awake_unregistered_system_priority<EntireAnimationPlayer, 58>();
 
         const auto& entire_anim_player =
             global->ECS->get_system<EntireAnimationPlayer>();
@@ -61,4 +62,9 @@ void PlayerInputHandler::handle_input() {
         animation_player_ptr->play(player_animation, "idle");
     }
     body_movement_ptr->update_position(player_body);
+
+    // FIXME: dont update player shape here. do all the position updates in one place
+    auto& player_shape = global->ECS->get_component<PlayerShape>(player_id);
+    player_shape.update_capsule_positions(player_body);
+    // ------------------------------------------------------
 }

@@ -28,10 +28,12 @@ closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances);
 //                                              line2);
 [[nodiscard]] std::pair<float, Vector2>
 CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& radius,
-                                    const Rectangle& rect);
+                                    const Rectangle& rect, const Body& rect_body);
+
 [[nodiscard]] Collision PlayerToRectCollision(const PlayerShape& player_shape,
                                               const Body& player_body,
-                                              const Rectangle& rectangle);
+                                              const Rectangle& rectangle,
+                                              const Body& rectange_body);
 
 [[nodiscard]] Collision PlayerToCircleCollision(const PlayerShape& player_shape,
                                                 const Body& player_body,

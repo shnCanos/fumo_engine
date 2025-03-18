@@ -38,19 +38,26 @@ void ObjectRenderer::draw_planets() {
                     global->ECS->get_component<CircularGravityField>(entity_id);
                 DrawCircleV(body.position, gravity_field.gravity_radius,
                             ColorAlpha(render.color, 0.2f));
+            }
 
-            } else if (global->ECS->filter(entity_id, rect_query)) {
-                const auto& rect = global->ECS->get_component<Rectangle>(entity_id);
-                DrawRectangleRec(rect, render.color);
+        } else if (global->ECS->filter(entity_id, rect_query)) {
+            const auto& rect = global->ECS->get_component<Rectangle>(entity_id);
+            DrawRectangleV(body.position, {rect.width, rect.height}, render.color);
 
-                if (global->ECS->filter(entity_id, parallel_grav_query)) {
-                    const auto& parallel_field =
-                        global->ECS->get_component<ParallelGravityField>(entity_id);
-                    DrawRectangleRec(parallel_field.field_rectangle,
-                                     ColorAlpha(render.color, 0.2f));
-                }
+            if (global->ECS->filter(entity_id, parallel_grav_query)) {
+                const auto& parallel_field =
+                    global->ECS->get_component<ParallelGravityField>(entity_id);
+                // DrawRectangleRec(parallel_field.field_rectangle,
+                //                  ColorAlpha(render.color, 0.2f));
+
+                DrawRectangleV(body.position,
+                               {parallel_field.field_rectangle.width,
+                                parallel_field.field_rectangle.height},
+                               ColorAlpha(render.color, 0.2f));
             }
         }
+        // FIXME: DEBUG drawing
+        DrawCircleV(body.position, mouse_radius, GREEN);
     }
 
     EndMode2D();

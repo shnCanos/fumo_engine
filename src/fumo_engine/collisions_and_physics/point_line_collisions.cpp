@@ -148,12 +148,13 @@ closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances) 
 // }
 [[nodiscard]] std::pair<float, Vector2>
 CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& radius,
-                                    const Rectangle& rect) {
+                                    const Rectangle& rect, const Body& rect_body) {
 
-    Vector2 TopLeft = {rect.x, rect.y};
-    Vector2 TopRight = {rect.x + rect.width, rect.y};
-    Vector2 BottomLeft = {rect.x, rect.y + rect.height};
-    Vector2 BottomRight = {rect.x + rect.width, rect.y + rect.height};
+    Vector2 TopLeft = {rect_body.position.x, rect_body.position.y};
+    Vector2 TopRight = {rect_body.position.x + rect.width, rect_body.position.y};
+    Vector2 BottomLeft = {rect_body.position.x, rect_body.position.y + rect.height};
+    Vector2 BottomRight = {rect_body.position.x + rect.width,
+                           rect_body.position.y + rect.height};
     std::vector<Vector2> points{TopLeft, TopRight, BottomLeft, BottomRight};
 
     float intersection_distance;
@@ -209,7 +210,8 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
 
 [[nodiscard]] Collision PlayerToRectCollision(const PlayerShape& player_shape,
                                               const Body& player_body,
-                                              const Rectangle& rectangle) {
+                                              const Rectangle& rectangle,
+                                              const Body& rectangle_body) {
 
     // -------------------------------------------------------------------------------
     // Explanation:
@@ -229,7 +231,8 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
     // -------------------------------------------------------------------------------
     // try the bottom circle for collisions
     closest_dist_intersection = CircleToRectDistanceAndIntersection(
-        player_shape.bottom_circle_center, player_shape.radius, rectangle);
+        player_shape.bottom_circle_center, player_shape.radius, rectangle,
+        rectangle_body);
 
     if (closest_dist_intersection.first != 0.0f) {
         // this means we collided with the bottom circle
@@ -241,7 +244,7 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
     // -------------------------------------------------------------------------------
     // try the top circle for collisions
     closest_dist_intersection = CircleToRectDistanceAndIntersection(
-        player_shape.top_circle_center, player_shape.radius, rectangle);
+        player_shape.top_circle_center, player_shape.radius, rectangle, rectangle_body);
 
     if (closest_dist_intersection.first != 0.0f) {
         // this means we collided with the top circle

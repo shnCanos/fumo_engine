@@ -23,7 +23,6 @@ void register_all_to_ECS() {
 void register_components() {
     global->ECS->register_component<Body>();
     global->ECS->register_component<Circle>();
-    // global->ECS->register_component<GravityField>();
     global->ECS->register_component<PlayerFlag>();
     global->ECS->register_component<AnimationInfo>();
     global->ECS->register_component<Timer>();
@@ -40,10 +39,7 @@ void register_components() {
     // global->ECS->register_component<OnScreen>();
 }
 void register_systems() {
-    // NOTE: consider how you would stop systems from running based on
-    // conditions or the game state (unregister the system?)
     register_unregistered_systems();
-    register_systems_physics_collisions();
     register_systems_scheduled();
 }
 void register_systems_scheduled() {
@@ -73,16 +69,9 @@ void register_systems_scheduled() {
         .component_filter = Filter::Any});
 }
 
-void register_systems_physics_collisions() {
-    // global->ECS->register_system_unscheduled<CirclePhysicsHandler>(EntityQuery{
-    //     .component_mask =
-    //         global->ECS->make_component_mask<Body, CircleShape, GravityField>(),
-    //     .component_filter = Filter::All});
-}
 void register_unregistered_systems() {
     global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
     global->ECS->add_unregistered_system<GravityUpdater, 3>();
-    // global->ECS->add_unregistered_system<PlayerCollisionRunner, 5>();
     global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
 
     global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);

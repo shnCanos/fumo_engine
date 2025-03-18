@@ -80,7 +80,8 @@ struct ParallelGravityField {
     float gravity_strength{};
     float rotation{}; // in degrees
 
-    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
+    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape,
+                         const Body& body_parallel) const;
 };
 
 // WARNING: **NOT** counted from the surface of the object we are on
@@ -89,9 +90,10 @@ struct CircularGravityField {
     // Vector2 push_direction;
     double gravity_radius;
     float gravity_strength;
-    Vector2 position = screenCenter;
+    // Vector2 position = screenCenter;
 
-    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
+    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape,
+                         const Body& circular_body) const;
 };
 
 struct Level1Tag {

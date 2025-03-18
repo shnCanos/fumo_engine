@@ -27,18 +27,21 @@ void GravityHandler::find_gravity_field() {
         .component_filter = Filter::All};
 
     for (const auto& planet_id : sys_entities) {
+
+        const auto& body_planet = global->ECS->get_component<Body>(planet_id);
+
         if (global->ECS->filter(planet_id, query_parallel)) {
             // methods for parallel gravity fields
             const auto& parallel_field =
                 global->ECS->get_component<ParallelGravityField>(planet_id);
-            if (parallel_field.is_inside_field(player_body, player_shape)) {
+            if (parallel_field.is_inside_field(player_body, player_shape, body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
         } else {
             // methods for circular gravity fields
             const auto& circular_field =
                 global->ECS->get_component<CircularGravityField>(planet_id);
-            if (circular_field.is_inside_field(player_body, player_shape)) {
+            if (circular_field.is_inside_field(player_body, player_shape, body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
         }
@@ -77,17 +80,19 @@ void GravityHandler::find_gravity_field() {
 }
 
 bool ParallelGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape) const {
+                                           const PlayerShape& player_shape,
+                                           const Body& body_parallel) const {
 
     Collision collision =
-        PlayerToRectCollision(player_shape, player_body, field_rectangle);
+        PlayerToRectCollision(player_shape, player_body, field_rectangle, body_parallel);
 
     // if overlap == 0, then there was no collision
     return (collision.overlap == 0);
 }
 
 bool CircularGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape) const {
+                                           const PlayerShape& player_shape,
+                                           const Body& circular_body) const {
 
     // -------------------------------------------------------------------------------
     // check for collisions with capsule
@@ -96,14 +101,16 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
 
     // -------------------------------------------------------------------------------
     // top circle collision check
-    float top_distance = Vector2Distance(position, player_shape.top_circle_center);
+    float top_distance =
+        Vector2Distance(circular_body.position, player_shape.top_circle_center);
     if (top_distance < radius_sum) {
         // collided with top circle
         return true;
     }
     // -------------------------------------------------------------------------------
     // bottom circle collision check
-    float bottom_distance = Vector2Distance(position, player_shape.bottom_circle_center);
+    float bottom_distance =
+        Vector2Distance(circular_body.position, player_shape.bottom_circle_center);
     if (bottom_distance < radius_sum) {
         // collided with top circle
         return true;
@@ -113,8 +120,8 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     // TODO: remove the side checks later
     //
     // capsule sides collision check
-    const auto left_line_distance_pair =
-        PointToLineDistanceAndIntersection(position, player_shape.left_line);
+    const auto left_line_distance_pair = PointToLineDistanceAndIntersection(
+        circular_body.position, player_shape.left_line);
 
     if (left_line_distance_pair.first != 0 &&
         left_line_distance_pair.first < gravity_radius) {
@@ -122,8 +129,8 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
         return true;
     }
 
-    const auto right_line_distance_pair =
-        PointToLineDistanceAndIntersection(position, player_shape.right_line);
+    const auto right_line_distance_pair = PointToLineDistanceAndIntersection(
+        circular_body.position, player_shape.right_line);
 
     if (right_line_distance_pair.first != 0 &&
         right_line_distance_pair.first < gravity_radius) {

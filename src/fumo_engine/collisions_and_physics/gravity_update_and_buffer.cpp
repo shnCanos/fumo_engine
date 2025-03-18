@@ -1,7 +1,7 @@
 
+#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/core/scheduling_systems.hpp"
-#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "objects/systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -21,9 +21,9 @@ void GravityBufferHandler::wait_for_touching_ground() {
 }
 void GravityUpdater::gravity_update() {
 
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    update_gravity(player_body);
-    update_position(player_body);
+    // auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    // update_gravity(player_body);
+    // update_position(player_body);
 }
 void GravityUpdater::update_gravity(Body& body) {
     // NOTE: points towards the planet's planet_body
@@ -34,7 +34,8 @@ void GravityUpdater::update_gravity(Body& body) {
     EntityId planet_id = player_owning_planet;
 
     const auto& planet_body = global->ECS->get_component<Body>(planet_id);
-    const auto& gravity_field = global->ECS->get_component<CircularGravityField>(planet_id);
+    const auto& gravity_field =
+        global->ECS->get_component<CircularGravityField>(planet_id);
     const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
 
     auto& entity_body = global->ECS->get_component<Body>(global->player_id);
@@ -92,6 +93,8 @@ void GravityUpdater::update_gravity(Body& body) {
 
 void GravityUpdater::update_position(Body& player_body) {
     player_body.position += player_body.velocity * global->frametime;
+    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
+    player_shape.update_capsule_positions(player_body);
 }
 // void smoothen_jump(std::tuple<Body, GravityField, CircleShape, EntityId>&
 // final_planet) {
