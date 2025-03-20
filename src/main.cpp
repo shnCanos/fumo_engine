@@ -36,7 +36,7 @@ int main(void) {
         // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {
             const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
-            EntityId planet_id = planet_factory->create_rect_planet(
+            EntityId planet_id = planet_factory->create_circular_planet(
                 {screenCenter.x, screenCenter.y + 500.0f});
             count++;
             const auto& grav_updater = global->ECS->get_system<GravityUpdater>();

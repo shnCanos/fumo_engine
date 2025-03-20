@@ -7,6 +7,20 @@
 
 extern std::unique_ptr<GlobalState> global;
 
+void DebugLevelEditor::delete_planet(Vector2 mouse_position) {
+    for (const auto& entity_id : sys_entities) {
+        auto& body = global->ECS->get_component<Body>(entity_id);
+        float distance = Vector2Distance(body.position, mouse_position);
+
+        if (distance < mouse_radius) {
+
+            const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+            planet_factory->delete_planet(entity_id);
+            return;
+        }
+    }
+}
+
 void DebugLevelEditor::spawn_circular_planet(Vector2 mouse_position) {
 
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
@@ -92,7 +106,7 @@ void DebugLevelEditor::handle_input() {
         debug_print();
 
     } else if (IsKeyPressed(KEY_D)) {
-        // add deleter methods
+        delete_planet(mouse_position);
     } else if (IsKeyPressed(KEY_R)) {
         // resize_planet(1.25f);
     } else if (IsKeyDown(KEY_LEFT_SHIFT)) {

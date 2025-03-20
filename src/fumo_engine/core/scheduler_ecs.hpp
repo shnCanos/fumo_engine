@@ -196,7 +196,6 @@ class SchedulerECS {
         for (const auto& system_ptr : copy_unregistered_scheduler) {
             system_ptr->sys_call();
         }
-
         // run registered systems
         for (const auto& system_ptr : copy_scheduler) {
             system_ptr->sys_call();

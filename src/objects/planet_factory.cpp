@@ -1,3 +1,4 @@
+#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/factory_systems.hpp"
 
@@ -16,6 +17,14 @@ void LevelEntityFactory::delete_planet(EntityId entity_id) {
     // useful for grouping up entities based on their used context
     global->ECS->destroy_entity(entity_id);
     sys_entities.erase(entity_id);
+    // TODO: create a player_owning component,
+    // and have gravity updater query for that instead.
+    // this is way too coupled by saving it outside of the ECS
+    // like we are doing right now
+    const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
+    if (gravity_updater->player_owning_planet == entity_id) {
+        gravity_updater->player_owning_planet = NO_ENTITY_FOUND;
+    }
 }
 
 void LevelEntityFactory::delete_all_planets() {
@@ -56,10 +65,10 @@ EntityId LevelEntityFactory::create_rect_planet(Vector2 position) {
     Rectangle grav_field_rectangle = make_default_field_rect(position);
     grav_field_rectangle.y -= default_rect_height;
     global->ECS->entity_add_component(
-        entity_id, ParallelGravityField{.field_rectangle = grav_field_rectangle,
-                                        .gravity_strength = default_grav_strength,
-                                        .position = {grav_field_rectangle.x,
-                                                     grav_field_rectangle.y}});
+        entity_id, ParallelGravityField{
+                       .field_rectangle = grav_field_rectangle,
+                       .gravity_strength = default_grav_strength,
+                       .position = {grav_field_rectangle.x, grav_field_rectangle.y}});
 
     global->ECS->entity_add_component(
         entity_id, Body{.position = {ground_rectangle.x, ground_rectangle.y},

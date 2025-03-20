@@ -1,7 +1,6 @@
 
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/core/scheduling_systems.hpp"
 #include "objects/systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -22,9 +21,9 @@ void GravityBufferHandler::wait_for_touching_ground() {
 
         // TODO: (check if this is actually more performant)
         // turn itself off to avoid busy wait
-        const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        scheduler_system->sleep_unregistered_system<GravityBufferHandler>();
-        scheduler_system->awake_system<GravityHandler>();
+        // const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+        // scheduler_system->sleep_unregistered_system<GravityBufferHandler>();
+        // scheduler_system->awake_system<GravityHandler>();
     }
 }
 
@@ -44,17 +43,6 @@ void GravityUpdater::update_gravity(Body& body) {
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
 
     // --------------------------------------------------------------------
-    const auto& jump_physics = global->ECS->get_system<JumpPhysicsHandler>();
-    if (jump_physics->hard_coded_jump()) {
-        return;
-    }
-    // --------------------------------------------------------------------
-    if (player_body.on_ground) {
-        // dont update while player is on the ground
-        return;
-    }
-
-    // --------------------------------------------------------------------
     // mario galaxy-like changing of the left-right movement to match
     // the player expectation of what right and left should be
     if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
@@ -65,6 +53,8 @@ void GravityUpdater::update_gravity(Body& body) {
         }
     }
     // --------------------------------------------------------------------
+    Vector2 gravity_direction{};
+    float gravity_strength{};
 
     EntityId planet_id = player_owning_planet;
 
@@ -76,33 +66,48 @@ void GravityUpdater::update_gravity(Body& body) {
 
     if (global->ECS->filter(planet_id, query_parallel)) {
         // methods for parallel gravity fields
-        const auto& parallel_field =
+        auto& parallel_field =
             global->ECS->get_component<ParallelGravityField>(planet_id);
         parallel_field.update_gravity(player_body);
+
+        gravity_direction = parallel_field.gravity_direction;
+        gravity_strength = parallel_field.gravity_strength;
     } else {
         // methods for circular gravity fields
-        const auto& circular_field =
+        auto& circular_field =
             global->ECS->get_component<CircularGravityField>(planet_id);
         const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
         circular_field.update_gravity(player_body, body_planet);
+
+        gravity_direction = circular_field.gravity_direction;
+        gravity_strength = circular_field.gravity_strength;
     }
-}
-
-void ParallelGravityField::update_gravity(Body& player_body) const {
+    // --------------------------------------------------------------------
 
     player_body.gravity_direction = gravity_direction;
 
+    // --------------------------------------------------------------------
+    const auto& jump_physics = global->ECS->get_system<JumpPhysicsHandler>();
+
+    if (jump_physics->hard_coded_jump()) {
+        return;
+    }
+    // if (player_body.on_ground) {
+    //     // dont update while player is on the ground
+    //     return;
+    // }
+    // --------------------------------------------------------------------
     Vector2 acceleration = gravity_direction * gravity_strength * 1000.0f;
     player_body.velocity += acceleration * global->frametime;
 }
 
-void CircularGravityField::update_gravity(Body& player_body,
-                                          const Body& body_planet) const {
+void ParallelGravityField::update_gravity(Body& player_body) {
 
-    Vector2 gravity_direction =
-        Vector2Normalize(body_planet.position - player_body.position);
-    player_body.gravity_direction = gravity_direction;
+    // do nothing, parallel fields stay the same unless they rotate
+    // TODO: implement updating based on rotation in this function
+    //
+}
 
-    Vector2 acceleration = gravity_direction * gravity_strength * 1000.0f;
-    player_body.velocity += acceleration * global->frametime;
+void CircularGravityField::update_gravity(Body& player_body, const Body& body_planet) {
+    gravity_direction = Vector2Normalize(body_planet.position - player_body.position);
 }

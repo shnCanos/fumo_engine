@@ -39,6 +39,7 @@ void BodyMovement::move_vertically(Body& body, float amount) {
     body.velocity -=
         body.gravity_direction * amount * movement_scaling * global->frametime;
 }
+
 void BodyMovement::move_horizontally(Body& body, float amount) {
     // if (body.rotation > 90 && !IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
     //     body.velocity -=

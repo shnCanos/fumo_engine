@@ -76,7 +76,7 @@ void register_unregistered_systems() {
     global->ECS->add_unregistered_system<PlayerEndFrameUpdater, MAX_PRIORITY - 1>();
 
     global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
-    global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
+    // global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
     global->ECS->add_unregistered_system_unscheduled<AnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<JumpPhysicsHandler>();
     global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();

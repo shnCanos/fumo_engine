@@ -12,6 +12,7 @@ void PlayerCollisionRunner::check_collisions() {
 
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
 
     EntityQuery query_rectangle{.component_mask =
                                     global->ECS->make_component_mask<Rectangle>(),
@@ -39,6 +40,10 @@ void PlayerCollisionRunner::check_collisions() {
     // if we dont collide with any object this frame,
     // then we were NOT on the ground
     player_body.on_ground = collision_happened;
+
+    if (!player_flag.can_swap_orbits) {
+        player_flag.can_swap_orbits = collision_happened;
+    }
 }
 
 bool PlayerCollisionRunner::player_to_rect_collision_solving(

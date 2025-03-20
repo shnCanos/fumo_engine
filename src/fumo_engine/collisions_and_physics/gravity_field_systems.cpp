@@ -18,10 +18,18 @@ void GravityHandler::find_gravity_field() {
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
 
-    if (player_body.on_ground) {
-        PRINT("CANT SWAP ORBITS");
-        // dont change fields when we are on the ground
-        // dont change fields after an orbit swap UNTIL we touch the ground
+    // if (player_body.on_ground) {
+    //     player_body.iterations = 0;
+    //     player_body.going_down = false;
+    //     player_body.going_down = false;
+    //     // player_flag.can_swap_orbits = true;
+    //
+    //     // PRINT("CANT SWAP ORBITS");
+    //     // dont change fields when we are on the ground
+    //     // dont change fields after an orbit swap UNTIL we touch the ground
+    // }
+
+    if (!player_flag.can_swap_orbits) {
         return;
     }
 
@@ -76,10 +84,10 @@ void GravityHandler::find_gravity_field() {
             //
             player_flag.can_swap_orbits = false;
 
-            const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-            scheduler_system
-                ->awake_unregistered_system_priority<GravityBufferHandler, 8>();
-            scheduler_system->sleep_system<GravityHandler>();
+            // const auto& scheduler_system =
+            // global->ECS->get_system<SchedulerSystemECS>(); scheduler_system
+            //     ->awake_unregistered_system_priority<GravityBufferHandler, 8>();
+            // scheduler_system->sleep_system<GravityHandler>();
             return;
         }
     }
