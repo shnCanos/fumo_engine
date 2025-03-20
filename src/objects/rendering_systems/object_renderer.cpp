@@ -36,7 +36,7 @@ void ObjectRenderer::draw_planets() {
             if (global->ECS->filter(entity_id, circle_grav_query)) {
                 const auto& gravity_field =
                     global->ECS->get_component<CircularGravityField>(entity_id);
-                DrawCircleV(body.position, gravity_field.gravity_radius,
+                DrawCircleV(gravity_field.position, gravity_field.gravity_radius,
                             ColorAlpha(render.color, 0.2f));
             }
 
@@ -50,14 +50,14 @@ void ObjectRenderer::draw_planets() {
                 // DrawRectangleRec(parallel_field.field_rectangle,
                 //                  ColorAlpha(render.color, 0.2f));
 
-                DrawRectangleV(body.position,
+                DrawRectangleV(parallel_field.position,
                                {parallel_field.field_rectangle.width,
                                 parallel_field.field_rectangle.height},
                                ColorAlpha(render.color, 0.2f));
             }
         }
-        // FIXME: DEBUG drawing
-        DrawCircleV(body.position, mouse_radius, GREEN);
+        // // FIXME: DEBUG drawing
+        // DrawCircleV(body.position, mouse_radius, GREEN);
     }
 
     EndMode2D();

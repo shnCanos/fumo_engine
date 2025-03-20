@@ -8,113 +8,101 @@ extern std::unique_ptr<GlobalState> global;
 
 void GravityBufferHandler::wait_for_touching_ground() {
 
+    auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
     auto& body = global->ECS->get_component<Body>(global->player_id);
 
-    if (body.touching_ground) {
+    if (body.on_ground) {
         // garbage fix for the shitty player jump
         body.iterations = 0;
         body.going_down = false;
         body.going_down = false;
+
+        player_flag.can_swap_orbits = true;
+        PRINT("ALLOWED TO SWAP ORBITS");
+
+        // TODO: (check if this is actually more performant)
+        // turn itself off to avoid busy wait
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        scheduler_system->awake_unregistered_system<GravityHandler>();
+        scheduler_system->sleep_unregistered_system<GravityBufferHandler>();
+        scheduler_system->awake_system<GravityHandler>();
     }
 }
+
 void GravityUpdater::gravity_update() {
 
-    // auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    // update_gravity(player_body);
-    // update_position(player_body);
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    update_gravity(player_body);
 }
+
 void GravityUpdater::update_gravity(Body& body) {
     // NOTE: points towards the planet's planet_body
 
     if (player_owning_planet == NO_ENTITY_FOUND || player_owning_planet == 0) {
         return;
     }
-    EntityId planet_id = player_owning_planet;
-
-    const auto& planet_body = global->ECS->get_component<Body>(planet_id);
-    const auto& gravity_field =
-        global->ECS->get_component<CircularGravityField>(planet_id);
-    const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
-
-    auto& entity_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<Circle>(global->player_id);
-
-    Vector2 gravity_direction =
-        Vector2Normalize(planet_body.position - entity_body.position);
-    entity_body.gravity_direction = gravity_direction;
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
 
     // --------------------------------------------------------------------
-    // remove the y component from the velocity
-    // by setting the velocity to its magnitude in the x direction
-    // some funky rotation matrix vector math going on here, check it on paper
-    // if you are confused
-    // --------------------------------------------------------------------
-
-    Vector2 x_direction = {entity_body.gravity_direction.y,
-                           -entity_body.gravity_direction.x};
-    entity_body.x_direction = x_direction;
-    entity_body.rotation = std::atan2(x_direction.y, x_direction.x) * RAD2DEG;
-
-    // mario galaxy-like changing of the left-right movement to match
-    // the player expectation of what right and left should be
-    if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
-        if (160 < abs(entity_body.rotation) && abs(entity_body.rotation) < 180) {
-            entity_body.inverse_direction = true;
-        } else if (0 < abs(entity_body.rotation) && abs(entity_body.rotation) < 20) {
-            entity_body.inverse_direction = false;
-        }
-    }
-
-    //-------------------------------------------------------------------
-    float distance = Vector2Distance(planet_body.position, entity_body.position);
-    float radius_sum = player_shape.radius + circle_shape.radius;
-    float correction = 2.0f;
-    bool touching_ground = distance < radius_sum + correction;
-    entity_body.touching_ground = touching_ground;
-    //-------------------------------------------------------------------
-
     const auto& jump_physics = global->ECS->get_system<JumpPhysicsHandler>();
     if (jump_physics->hard_coded_jump()) {
         return;
     }
+    // --------------------------------------------------------------------
+    if (player_body.on_ground) {
+        // dont update while player is on the ground
+        return;
+    }
 
-    if (!entity_body.touching_ground) {
-        Vector2 acceleration =
-            gravity_direction * gravity_field.gravity_strength * 1000.0f;
-        entity_body.velocity += acceleration * global->frametime;
+    // --------------------------------------------------------------------
+    // mario galaxy-like changing of the left-right movement to match
+    // the player expectation of what right and left should be
+    if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
+        if (160 < abs(player_body.rotation) && abs(player_body.rotation) < 180) {
+            player_body.inverse_direction = true;
+        } else if (0 < abs(player_body.rotation) && abs(player_body.rotation) < 20) {
+            player_body.inverse_direction = false;
+        }
+    }
+    // --------------------------------------------------------------------
 
+    EntityId planet_id = player_owning_planet;
+
+    const auto& body_planet = global->ECS->get_component<Body>(planet_id);
+
+    EntityQuery query_parallel{
+        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_filter = Filter::All};
+
+    if (global->ECS->filter(planet_id, query_parallel)) {
+        // methods for parallel gravity fields
+        const auto& parallel_field =
+            global->ECS->get_component<ParallelGravityField>(planet_id);
+        parallel_field.update_gravity(player_body);
     } else {
-        entity_body.velocity =
-            x_direction * Vector2DotProduct(entity_body.velocity, x_direction);
+        // methods for circular gravity fields
+        const auto& circular_field =
+            global->ECS->get_component<CircularGravityField>(planet_id);
+        const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
+        circular_field.update_gravity(player_body, body_planet);
     }
 }
 
-void GravityUpdater::update_position(Body& player_body) {
-    player_body.position += player_body.velocity * global->frametime;
-    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
-    player_shape.update_capsule_positions(player_body);
+void ParallelGravityField::update_gravity(Body& player_body) const {
+
+    player_body.gravity_direction = gravity_direction;
+
+    Vector2 acceleration = gravity_direction * gravity_strength * 1000.0f;
+    player_body.velocity += acceleration * global->frametime;
 }
-// void smoothen_jump(std::tuple<Body, GravityField, CircleShape, EntityId>&
-// final_planet) {
-//
-//     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-//     auto& player_shape = global->ECS->get_component<CircleShape>(global->player_id);
-//     const auto& planet_body = std::get<0>(final_planet);
-//     const auto& gravity_field = std::get<1>(final_planet);
-//     const auto& circle_shape = std::get<2>(final_planet);
-//     player_body.velocity -= player_body.gravity_direction * 10.0f;
-//
-//     float distance = Vector2Distance(planet_body.position, player_body.position);
-//     float radius_sum = player_shape.radius + circle_shape.radius;
-//     float gravity_radius_sum = radius_sum + gravity_field.gravity_radius;
-//     //-------------------------------------------------------------------
-//     float correction = 2.0f;
-//     // bool touching_ground = distance < radius_sum + correction;
-//     bool inside_field = distance < gravity_radius_sum;
-//     //-------------------------------------------------------------------
-//     if (inside_field) {
-//         player_body.jumping = false;
-//     }
-// }
+
+void CircularGravityField::update_gravity(Body& player_body,
+                                          const Body& body_planet) const {
+
+    Vector2 gravity_direction =
+        Vector2Normalize(body_planet.position - player_body.position);
+    player_body.gravity_direction = gravity_direction;
+
+    Vector2 acceleration = gravity_direction * gravity_strength * 1000.0f;
+    player_body.velocity += acceleration * global->frametime;
+}

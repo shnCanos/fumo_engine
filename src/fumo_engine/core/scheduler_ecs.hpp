@@ -187,21 +187,24 @@ class SchedulerECS {
     void run_systems() {
         // NOTE: we copy every frame so that changes to the
         // scheduler only apply on the next loop iteration
-
-        // run unregistered systems
         std::multiset<std::shared_ptr<System>, SystemCompare>
             copy_unregistered_scheduler(unregistered_system_scheduler);
+        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
+            system_scheduler);
+
+        // run unregistered systems
         for (const auto& system_ptr : copy_unregistered_scheduler) {
             system_ptr->sys_call();
         }
+
         // run registered systems
-        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
-            system_scheduler);
         for (const auto& system_ptr : copy_scheduler) {
             system_ptr->sys_call();
         }
     }
-    // returns the system **cast** from the System interface
+    //------------------------------------------------------------------
+
+    // returns the system cast from the System interface
     template<typename T>
     [[nodiscard]] std::shared_ptr<T> get_system() {
         std::string_view type_name = libassert::type_name<T>();

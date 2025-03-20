@@ -22,7 +22,7 @@ void PlayerInputHandler::handle_input() {
     //  turn all these if checks into an event class separate from this class
     //  ---------------------------------------------------------------------------
 
-    if (IsKeyDown(KEY_SPACE) && player_body.touching_ground) {
+    if (IsKeyDown(KEY_SPACE) && player_body.on_ground) {
 
         const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
         scheduler_system
@@ -44,24 +44,24 @@ void PlayerInputHandler::handle_input() {
         idle = false;
     }
     if (IsKeyDown(KEY_LEFT)) {
-        if (player_body.touching_ground) {
+        if (player_body.on_ground) {
             animation_player_ptr->play(player_animation, "run_backwards");
         }
         idle = false;
         body_movement_ptr->move_horizontally(player_body, -1.0f);
     }
     if (IsKeyDown(KEY_RIGHT)) {
-        if (player_body.touching_ground) {
+        if (player_body.on_ground) {
             animation_player_ptr->play(player_animation, "run");
         }
         body_movement_ptr->move_horizontally(player_body, 1.0f);
         idle = false;
     }
 
-    if (idle && player_body.touching_ground) {
+    if (idle && player_body.on_ground) {
         animation_player_ptr->play(player_animation, "idle");
     }
-    body_movement_ptr->update_position(player_body);
+    // body_movement_ptr->update_position(player_body);
 
     // FIXME: dont update player shape here. do all the position updates in one place
     auto& player_shape = global->ECS->get_component<PlayerShape>(player_id);

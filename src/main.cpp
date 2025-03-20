@@ -1,6 +1,7 @@
-#include "raylib.h"
+#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/factory_systems.hpp"
+#include "raylib.h"
 
 std::unique_ptr<GlobalState> global;
 
@@ -35,10 +36,11 @@ int main(void) {
         // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {
             const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
-            EntityId planet_id = planet_factory->create_circular_planet(
-                {screenCenter.x / 2.0f, screenCenter.y});
+            EntityId planet_id = planet_factory->create_rect_planet(
+                {screenCenter.x, screenCenter.y + 500.0f});
             count++;
-
+            const auto& grav_updater = global->ECS->get_system<GravityUpdater>();
+            grav_updater->player_owning_planet = planet_id;
         }
 
         DrawFPS(10, 10);

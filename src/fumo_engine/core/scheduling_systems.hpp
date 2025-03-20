@@ -46,8 +46,9 @@ struct SchedulerSystemECS : System {
         system_ptr->priority = priority;
 
         // FIXME: watch out for this assert when sleeping the entire_animation system
-        DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
-                     "can't awake a system that isn't asleep.", t_name);
+        DEBUG_ASSERT(
+            !parent_ptr->all_scheduled_unregistered_systems_debug.contains(t_name),
+            "can't awake an unregistered system that isn't asleep.", t_name);
 
         parent_ptr->unregistered_system_scheduler.insert(system_ptr);
         parent_ptr->all_scheduled_unregistered_systems_debug.insert(
@@ -62,7 +63,8 @@ struct SchedulerSystemECS : System {
         size_t erased_count =
             parent_ptr->unregistered_system_scheduler.erase(system_ptr);
         parent_ptr->all_scheduled_unregistered_systems_debug.erase(t_name);
-        DEBUG_ASSERT(erased_count != 0, "this system wasnt awake/scheduled.", t_name);
+        DEBUG_ASSERT(erased_count != 0,
+                     "this unregistered system wasnt awake/scheduled.", t_name);
     }
 
     template<typename T>
@@ -73,7 +75,8 @@ struct SchedulerSystemECS : System {
         size_t erased_count =
             parent_ptr->unregistered_system_scheduler.erase(system_ptr);
         parent_ptr->all_scheduled_unregistered_systems_debug.erase(t_name);
-        DEBUG_ASSERT(erased_count != 0, "this system wasnt awake/scheduled.", t_name);
+        DEBUG_ASSERT(erased_count != 0,
+                     "this unregistered system wasnt awake/scheduled.", t_name);
 
         EntityId timer_id = parent_ptr->create_entity();
 
@@ -93,6 +96,33 @@ struct SchedulerSystemECS : System {
 
         parent_ptr->unregistered_system_scheduler.insert(system_ptr);
     }
+    //------------------------------------------------------------
+    // DEBUG: REMOVE THESE LATER
+    template<typename T>
+    void awake_system() {
+        std::string_view t_name = libassert::type_name<T>();
+        const auto& parent_ptr = parent_ECS.lock();
+        auto& system_ptr = parent_ptr->ecs->get_system(t_name);
+
+        // FIXME: watch out for this assert when sleeping the entire_animation system
+        DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
+                     "can't awake a system that isn't asleep.", t_name);
+
+        parent_ptr->system_scheduler.insert(system_ptr);
+        parent_ptr->all_scheduled_systems_debug.insert(
+            {t_name, system_ptr});
+    }
+
+    template<typename T>
+    void sleep_system() {
+        std::string_view t_name = libassert::type_name<T>();
+        const auto& parent_ptr = parent_ECS.lock();
+        const auto& system_ptr = parent_ptr->ecs->get_system(t_name);
+        size_t erased_count = parent_ptr->system_scheduler.erase(system_ptr);
+        parent_ptr->all_scheduled_systems_debug.erase(t_name);
+        DEBUG_ASSERT(erased_count != 0, "this system wasnt awake/scheduled.", t_name);
+    }
+    //------------------------------------------------------------
 };
 
 struct TimerHandler : System {

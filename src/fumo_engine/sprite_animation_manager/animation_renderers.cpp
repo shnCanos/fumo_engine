@@ -25,21 +25,22 @@ void AnimationRenderer::draw_animations() {
 void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
                                        const Texture2D& sheet_texture,
                                        const Body& body) {
-    BeginMode2D(*global->camera);
     // NOTE:
     // destination.x/y -> where to draw on the screen
     // origin -> where do we center the rectangle itself according to destination.x/y
     // origin is relative to the destination rectangle
     // width and height provide the scaling of our texture
 
-    float sprite_scaling = 3.0f;
-
     // PRINT("GAMING");
     // debug_print_animation_info(animation_info);
 
-    Rectangle destination = {body.position.x, body.position.y,
-                             animation_info.current_region_rect.width * sprite_scaling,
-                             animation_info.current_region_rect.height * sprite_scaling};
+    BeginMode2D(*global->camera);
+
+    Rectangle destination = {
+        body.position.x, body.position.y,
+        animation_info.current_region_rect.width * animation_info.sprite_scaling,
+        animation_info.current_region_rect.height * animation_info.sprite_scaling};
+
     Rectangle source = animation_info.current_region_rect;
     if (body.inverse_direction) {
         source = {animation_info.current_region_rect.x,

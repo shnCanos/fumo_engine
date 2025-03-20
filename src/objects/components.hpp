@@ -5,23 +5,27 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <string_view>
-struct Rectangle;
+// struct Rectangle;
 
 struct Body {
-    int iterations{};
-    int count{};
+    float rotation{}; // NOTE: in degrees?
     Vector2 position = screenCenter;
     Vector2 velocity{0.0f, 0.0f};
-    Vector2 gravity_direction = {0.0f, -1.0f};
+    Vector2 acceleration{0.0f, 0.0f};
+    Vector2 gravity_direction = {0.0f, 1.0f};
     Vector2 x_direction = {gravity_direction.y, -gravity_direction.x};
     bool inverse_direction = false;
-    bool touching_ground = true;
+    bool on_ground = true;
+
+    // -------------------------------------------------------------------------------
+    // trash to delete
     bool jumping = false;
     bool going_up;
     bool going_down;
-    float smooth_jump_buffer{};
-
-    float rotation{}; // NOTE: in degrees?
+    int iterations{};
+    int count{};
+    // float smooth_jump_buffer{};
+    // -------------------------------------------------------------------------------
 
     // NOTE: follows the gravity direction, not the vertical player direction
     [[nodiscard]] Vector2 get_y_velocity() {
@@ -77,11 +81,14 @@ struct ParallelGravityField {
     // NOTE: assume the field points towards the bottom side of the rectangle
     Rectangle field_rectangle{};
 
+    Vector2 gravity_direction = {0.0f, 1.0f}; // default is vertical
     float gravity_strength{};
     float rotation{}; // in degrees
+    Vector2 position = screenCenter;
 
     bool is_inside_field(const Body& player_body, const PlayerShape& player_shape,
                          const Body& body_parallel) const;
+    void update_gravity(Body& player_body) const;
 };
 
 // WARNING: **NOT** counted from the surface of the object we are on
@@ -90,12 +97,15 @@ struct CircularGravityField {
     // Vector2 push_direction;
     double gravity_radius;
     float gravity_strength;
-    // Vector2 position = screenCenter;
+    Vector2 position = screenCenter;
 
     bool is_inside_field(const Body& player_body, const PlayerShape& player_shape,
                          const Body& circular_body) const;
+    void update_gravity(Body& player_body, const Body& body_planet) const;
 };
 
+// -------------------------------------------------------------------------------
+// flag structs
 struct Level1Tag {
     // identify objects in level 1
     // NOTE: general idea for how levels work:
@@ -119,13 +129,15 @@ struct Render {
 struct PlayerFlag {
     // used to identify the player uniquely by associating this struct
     // to an entity id
+    bool can_swap_orbits = true;
 };
-struct LevelObjectFlag {
+struct ColliderObjectFlag {
     // identifies planets and rectangles and such shapes
 };
 struct GravFieldFlag {
     // if it has a field of any type
 };
+// -------------------------------------------------------------------------------
 
 // NOTE: to make a really modular and reusable timer class,
 // consider using std::function to send in a function call
@@ -176,6 +188,8 @@ struct AnimationInfo {
     Rectangle current_region_rect{};
     int sub_counter{};
     bool is_running = false;
+
+    float sprite_scaling{};
 };
 // ------------------------------------------------------------------------
 // NOTE: not used as components

@@ -7,8 +7,8 @@ extern std::unique_ptr<GlobalState> global;
 
 void GravityHandler::find_gravity_field() {
     // RULES:
-    // - give priority to orbit change
-    // - don't change orbits if the player is on the ground
+    // - give priority to field change
+    // - don't change fields if the player is on the ground
     // - only allow picking candidates again if the player touches the ground
 
     std::vector<EntityId> candidate_planets;
@@ -16,9 +16,12 @@ void GravityHandler::find_gravity_field() {
 
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
+    auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
 
-    if (player_body.touching_ground) {
-        // dont check orbits when we are on the ground
+    if (player_body.on_ground) {
+        PRINT("CANT SWAP ORBITS");
+        // dont change fields when we are on the ground
+        // dont change fields after an orbit swap UNTIL we touch the ground
         return;
     }
 
@@ -57,7 +60,7 @@ void GravityHandler::find_gravity_field() {
     for (const auto& planet_id : candidate_planets) {
         if (planet_id != player_shape.player_owning_field) {
             player_shape.player_owning_field = planet_id;
-            // -------------------------------------------------------------------------------
+            // --------------------------------------------------------------------------
             // check if you want to cancel the jump this way later on
             // solution:
             // - the jump only moves up, the gravity pulls it down
@@ -66,15 +69,18 @@ void GravityHandler::find_gravity_field() {
             // that makes the jump as smooth as we want it to be,
             // but we can try
             player_body.jumping = false;
-            // -------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------
 
             // FIXME: add this back when the code is working (gravity handler has been
             // redone)
             //
+            player_flag.can_swap_orbits = false;
+
             const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-            scheduler_system->sleep_unregistered_system<GravityHandler>();
             scheduler_system
                 ->awake_unregistered_system_priority<GravityBufferHandler, 8>();
+            scheduler_system->sleep_system<GravityHandler>();
+            return;
         }
     }
 }
@@ -120,23 +126,23 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     // TODO: remove the side checks later
     //
     // capsule sides collision check
-    const auto left_line_distance_pair = PointToLineDistanceAndIntersection(
-        circular_body.position, player_shape.left_line);
-
-    if (left_line_distance_pair.first != 0 &&
-        left_line_distance_pair.first < gravity_radius) {
-        // collided with left_line
-        return true;
-    }
-
-    const auto right_line_distance_pair = PointToLineDistanceAndIntersection(
-        circular_body.position, player_shape.right_line);
-
-    if (right_line_distance_pair.first != 0 &&
-        right_line_distance_pair.first < gravity_radius) {
-        // collided with right_line
-        return true;
-    }
+    // const auto left_line_distance_pair = PointToLineDistanceAndIntersection(
+    //     circular_body.position, player_shape.left_line);
+    //
+    // if (left_line_distance_pair.first != 0 &&
+    //     left_line_distance_pair.first < gravity_radius) {
+    //     // collided with left_line
+    //     return true;
+    // }
+    //
+    // const auto right_line_distance_pair = PointToLineDistanceAndIntersection(
+    //     circular_body.position, player_shape.right_line);
+    //
+    // if (right_line_distance_pair.first != 0 &&
+    //     right_line_distance_pair.first < gravity_radius) {
+    //     // collided with right_line
+    //     return true;
+    // }
     // -------------------------------------------------------------------------------
     return false;
 }

@@ -11,7 +11,8 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-const static float movement_scaling = 20000.0f;
+// const static float movement_scaling = 20000.0f;
+const static float movement_scaling = 70000.0f;
 const static float jump_scaling = 25000.0f;
 
 void BodyMovement::move_towards(Body& body, Body& target) {
@@ -25,9 +26,9 @@ void BodyMovement::move_towards_position(Body& body, Vector2 position) {
     float sqr_distance = Vector2DistanceSqr(position, body.position);
     body.velocity = direction * sqr_distance * global->frametime;
 }
-void BodyMovement::update_position(Body& body) {
-    body.position += body.velocity * global->frametime;
-}
+// void BodyMovement::update_position(Body& body) {
+//     body.position += body.velocity * global->frametime;
+// }
 
 void BodyMovement::reset_velocity(Body& body) { body.velocity = {0.0f, 0.0f}; }
 
@@ -44,7 +45,7 @@ void BodyMovement::move_horizontally(Body& body, float amount) {
     //         body.x_direction * amount * movement_scaling * global->frametime;
     //     return;
     // }
-    PRINT(body.rotation)
+    // PRINT(body.rotation)
     if (body.inverse_direction == true) {
         body.velocity -=
             body.x_direction * amount * movement_scaling * global->frametime;
@@ -67,7 +68,7 @@ void BodyMovement::jump(Body& body) {
         Vector2Negate(body.gravity_direction) * jump_scaling * global->frametime;
     body.jumping = true;
     body.going_up = true;
-    // body.touching_ground = false;
+    body.on_ground = false;
     // auto scheduler_ecs = global->ECS->get_system<SchedulerSystemECS>();
     // scheduler_ecs->awake_system<JumpPhysicsHandler>();
 
