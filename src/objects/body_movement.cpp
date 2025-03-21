@@ -12,8 +12,8 @@
 extern std::unique_ptr<GlobalState> global;
 
 // const static float movement_scaling = 20000.0f;
-const static float movement_scaling = 70000.0f;
-const static float jump_scaling = 25000.0f;
+const static float movement_scaling = 50000.0f;
+const static float jump_scaling = 50000.0f;
 
 void BodyMovement::move_towards(Body& body, Body& target) {
     Vector2 direction = Vector2Normalize(target.position - body.position);
@@ -26,9 +26,6 @@ void BodyMovement::move_towards_position(Body& body, Vector2 position) {
     float sqr_distance = Vector2DistanceSqr(position, body.position);
     body.velocity = direction * sqr_distance * global->frametime;
 }
-// void BodyMovement::update_position(Body& body) {
-//     body.position += body.velocity * global->frametime;
-// }
 
 void BodyMovement::reset_velocity(Body& body) { body.velocity = {0.0f, 0.0f}; }
 
@@ -41,12 +38,6 @@ void BodyMovement::move_vertically(Body& body, float amount) {
 }
 
 void BodyMovement::move_horizontally(Body& body, float amount) {
-    // if (body.rotation > 90 && !IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
-    //     body.velocity -=
-    //         body.x_direction * amount * movement_scaling * global->frametime;
-    //     return;
-    // }
-    // PRINT(body.rotation)
     if (body.inverse_direction == true) {
         body.velocity -=
             body.x_direction * amount * movement_scaling * global->frametime;
@@ -84,7 +75,7 @@ bool JumpPhysicsHandler::hard_coded_jump() {
         // going up smoothing
         if (player_body.going_up) {
             player_body.iterations++;
-            player_body.scale_velocity(-40.0f /
+            player_body.scale_velocity(-44.0f /
                                        (player_body.iterations * global->frametime));
             if (player_body.iterations < 10) {
                 return true;
@@ -93,7 +84,7 @@ bool JumpPhysicsHandler::hard_coded_jump() {
             player_body.scale_velocity(-5.0f /
                                        (player_body.iterations * global->frametime));
 
-            if (player_body.iterations == 17) {
+            if (player_body.iterations == 24) {
                 player_body.going_up = false;
                 player_body.going_down = true;
                 player_body.iterations = 0;
@@ -103,7 +94,7 @@ bool JumpPhysicsHandler::hard_coded_jump() {
         if (player_body.going_down) {
             // 25000 at least downwards
             player_body.iterations++;
-            player_body.scale_velocity(3000.0f * player_body.iterations *
+            player_body.scale_velocity(3130.0f * player_body.iterations *
                                        global->frametime);
 
             if (player_body.iterations == 10) {

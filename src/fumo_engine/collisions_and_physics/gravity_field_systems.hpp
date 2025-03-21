@@ -13,7 +13,7 @@ struct GravityBufferHandler : System {
 
 struct GravityUpdater : System {
 
-    EntityId player_owning_planet = NO_ENTITY_FOUND;
+    // EntityId player_owning_planet = NO_ENTITY_FOUND;
 
     void sys_call() override { gravity_update(); }
     void gravity_update();

@@ -13,19 +13,12 @@ struct Body {
     Vector2 velocity{0.0f, 0.0f};
     Vector2 acceleration{0.0f, 0.0f};
     Vector2 gravity_direction = {0.0f, 1.0f};
-    Vector2 x_direction = {gravity_direction.y, -gravity_direction.x};
+    Vector2 x_direction = {-gravity_direction.y, gravity_direction.x};
     bool inverse_direction = false;
-    bool on_ground = true;
 
-    // -------------------------------------------------------------------------------
-    // trash to delete
+    // player events and state
+    bool on_ground = true;
     bool jumping = false;
-    bool going_up;
-    bool going_down;
-    int iterations{};
-    int count{};
-    // float smooth_jump_buffer{};
-    // -------------------------------------------------------------------------------
 
     // NOTE: follows the gravity direction, not the vertical player direction
     [[nodiscard]] Vector2 get_y_velocity() {
@@ -37,10 +30,15 @@ struct Body {
     [[nodiscard]] float get_dot_x_velocity() {
         return Vector2DotProduct(velocity, {gravity_direction.y, -gravity_direction.x});
     }
-    // void set_y_velocity(float new_y_velocity) {
-    //     gravity_direction* Vector2DotProduct(velocity, gravity_direction);
-    // }
     void scale_velocity(float scale) { velocity += gravity_direction * scale; }
+
+    // -------------------------------------------------------------------------------
+    // trash to delete
+    bool going_up;
+    bool going_down;
+    int iterations{};
+    int count{};
+    // -------------------------------------------------------------------------------
 };
 
 struct Circle {
@@ -48,6 +46,7 @@ struct Circle {
 };
 
 struct PlayerShape {
+    // TODO: move this to the PlayerFlag
     EntityId player_owning_field = NO_ENTITY_FOUND;
 
     float radius;
@@ -84,11 +83,10 @@ struct ParallelGravityField {
     Vector2 gravity_direction = {0.0f, 1.0f}; // default is vertical
     float gravity_strength{};
     float rotation{}; // in degrees
-    Vector2 position = screenCenter;
+    // Vector2 position = screenCenter;
 
-    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape,
-                         const Body& body_parallel) const;
-    void update_gravity(Body& player_body) ;
+    bool is_inside_field(const Body& player_body, const PlayerShape& player_shape) const;
+    void update_gravity(Body& player_body);
 };
 
 // WARNING: **NOT** counted from the surface of the object we are on
@@ -102,7 +100,7 @@ struct CircularGravityField {
 
     bool is_inside_field(const Body& player_body, const PlayerShape& player_shape,
                          const Body& circular_body) const;
-    void update_gravity(Body& player_body, const Body& body_planet) ;
+    void update_gravity(Body& player_body, const Body& body_planet);
 };
 
 // -------------------------------------------------------------------------------

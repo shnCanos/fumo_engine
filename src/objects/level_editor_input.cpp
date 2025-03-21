@@ -5,6 +5,8 @@
 #include "objects/systems.hpp"
 // clang-format on
 
+const int default_rect_width = 500.0f;
+const int default_rect_height = 300.0f;
 extern std::unique_ptr<GlobalState> global;
 
 void DebugLevelEditor::delete_planet(Vector2 mouse_position) {
@@ -51,14 +53,18 @@ void DebugLevelEditor::debug_print() {
 void DebugLevelEditor::move_entity(Vector2 mouse_position) {
     for (const auto& entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
-        float distance = Vector2Distance(body.position, mouse_position);
-
+        float distance;
         EntityQuery circle_grav_query{
             .component_mask = global->ECS->make_component_mask<CircularGravityField>(),
             .component_filter = Filter::All};
         EntityQuery parallel_grav_query{
             .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
             .component_filter = Filter::All};
+        EntityQuery only_grav_query{
+            .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
+            .component_filter = Filter::None};
+
+        distance = Vector2Distance(body.position, mouse_position);
 
         if (distance < mouse_radius) {
             body.position = mouse_position;
@@ -68,12 +74,20 @@ void DebugLevelEditor::move_entity(Vector2 mouse_position) {
                     global->ECS->get_component<CircularGravityField>(entity_id);
                 gravity_field.position = mouse_position;
 
+            } else if (global->ECS->filter(entity_id, only_grav_query)) {
+                // for the isolated grav fields
+                auto& parallel_field =
+                    global->ECS->get_component<ParallelGravityField>(entity_id);
+                parallel_field.field_rectangle.x = mouse_position.x;
+                parallel_field.field_rectangle.y = mouse_position.y;
+                return;
+
             } else if (global->ECS->filter(entity_id, parallel_grav_query)) {
                 auto& parallel_field =
                     global->ECS->get_component<ParallelGravityField>(entity_id);
-                parallel_field.position = {body.position.x,
-                                           body.position.y -
-                                               parallel_field.field_rectangle.height};
+                parallel_field.field_rectangle.x = mouse_position.x;
+                parallel_field.field_rectangle.y =
+                    mouse_position.y - parallel_field.field_rectangle.height;
             }
             return;
         }
@@ -82,15 +96,23 @@ void DebugLevelEditor::move_entity(Vector2 mouse_position) {
 
 void DebugLevelEditor::handle_input() {
     Vector2 mouse_position = GetScreenToWorld2D(GetMousePosition(), *global->camera);
-    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
+    // DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 
         move_entity(mouse_position);
-
+        return;
     } else if (IsKeyPressed(KEY_F1)) {
         spawn_circular_planet(mouse_position);
-    } else if (IsKeyPressed(KEY_F2)) {
+        return;
+    } else if (IsKeyPressed(KEY_D)) {
+        delete_planet(mouse_position);
+    }
+
+    mouse_position = {.x = mouse_position.x - default_rect_width / 2.0f,
+                      .y = mouse_position.y - default_rect_height / 2.0f};
+    // so we spawn the center of the rect on the mouse
+    if (IsKeyPressed(KEY_F2)) {
         spawn_rect_planet(mouse_position);
     } else if (IsKeyPressed(KEY_F3)) {
         spawn_rect(mouse_position);
@@ -105,8 +127,6 @@ void DebugLevelEditor::handle_input() {
     } else if (IsKeyPressed(KEY_ONE)) {
         debug_print();
 
-    } else if (IsKeyPressed(KEY_D)) {
-        delete_planet(mouse_position);
     } else if (IsKeyPressed(KEY_R)) {
         // resize_planet(1.25f);
     } else if (IsKeyDown(KEY_LEFT_SHIFT)) {

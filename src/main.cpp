@@ -1,4 +1,3 @@
-#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/factory_systems.hpp"
 #include "raylib.h"
@@ -7,6 +6,7 @@ std::unique_ptr<GlobalState> global;
 
 void register_all_to_ECS();
 void initialize_all_textures();
+void debug_spawn_level_objects();
 
 int main(void) {
 
@@ -35,12 +35,8 @@ int main(void) {
 
         // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {
-            const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
-            EntityId planet_id = planet_factory->create_circular_planet(
-                {screenCenter.x, screenCenter.y + 500.0f});
             count++;
-            const auto& grav_updater = global->ECS->get_system<GravityUpdater>();
-            grav_updater->player_owning_planet = planet_id;
+            debug_spawn_level_objects();
         }
 
         DrawFPS(10, 10);
@@ -54,4 +50,41 @@ int main(void) {
     //--------------------------------------------------------------------------------------
 
     return 0;
+}
+
+void debug_spawn_level_objects() {
+    // FIXME: the player is currently not transitioning from a circle planet to a rect
+    // planet. only in this specific case does it stop working
+
+    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+
+    EntityId id_planet;
+    Vector2 starter_position = {screenCenter.x - 150.0f, screenCenter.y + 250.0f};
+    {
+        id_planet = planet_factory->create_rect_planet(starter_position);
+
+        auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
+        player_shape.player_owning_field = id_planet;
+
+        Rectangle& rect_planet = global->ECS->get_component<Rectangle>(id_planet);
+        rect_planet.width = rect_planet.width * 7;
+
+        ParallelGravityField& rect_field =
+            global->ECS->get_component<ParallelGravityField>(id_planet);
+        rect_field.field_rectangle.width = rect_planet.width;
+    }
+    {
+        starter_position.y -= 850.0f;
+
+        id_planet = planet_factory->create_rect_planet(starter_position);
+
+        Rectangle& rect_planet = global->ECS->get_component<Rectangle>(id_planet);
+        rect_planet.width = rect_planet.width * 7;
+
+        ParallelGravityField& rect_field =
+            global->ECS->get_component<ParallelGravityField>(id_planet);
+        rect_field.field_rectangle.width = rect_planet.width;
+        rect_field.field_rectangle.y += rect_planet.height * 2;
+        rect_field.gravity_direction = {0.0f, -1.0f};
+    }
 }

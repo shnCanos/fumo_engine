@@ -22,17 +22,17 @@ void PlayerInputHandler::handle_input() {
     //  turn all these if checks into an event class separate from this class
     //  ---------------------------------------------------------------------------
 
+    if (player_body.jumping) {
+        if (player_animation.frame_progress != player_animation.sprite_frame_count) {
+            animation_player_ptr->play(player_animation, "jump");
+        }
+        idle = false;
+    }
+
     if (IsKeyDown(KEY_SPACE) && player_body.on_ground) {
 
-        const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
-        scheduler_system
-            ->awake_unregistered_system_priority<EntireAnimationPlayer, 58>();
-
-        const auto& entire_anim_player =
-            global->ECS->get_system<EntireAnimationPlayer>();
-        entire_anim_player->play_entire_animation(player_animation, "jump");
-
         body_movement_ptr->jump(player_body);
+        animation_player_ptr->play(player_animation, "jump");
         idle = false;
     }
     if (IsKeyDown(KEY_DOWN)) {
@@ -53,18 +53,31 @@ void PlayerInputHandler::handle_input() {
     if (IsKeyDown(KEY_RIGHT)) {
         if (player_body.on_ground) {
             animation_player_ptr->play(player_animation, "run");
+            idle = false;
         }
         body_movement_ptr->move_horizontally(player_body, 1.0f);
-        idle = false;
     }
 
     if (idle && player_body.on_ground) {
         animation_player_ptr->play(player_animation, "idle");
     }
-    // body_movement_ptr->update_position(player_body);
+    if (!player_body.jumping && !player_body.on_ground) {
+        // TODO: debug
+        // hardcoded, remove this later
+        // make it look like player is falling
 
-    // FIXME: dont update player shape here. do all the position updates in one place
-    auto& player_shape = global->ECS->get_component<PlayerShape>(player_id);
-    player_shape.update_capsule_positions(player_body);
-    // ------------------------------------------------------
+        animation_player_ptr->play(player_animation, "jump");
+
+        player_animation.frame_progress = 3;
+        player_animation.current_region_rect.x =
+            player_animation.current_region_rect.width * player_animation.frame_progress;
+        player_animation.is_running = true;
+    }
 }
+// const auto& scheduler_system = global->ECS->get_system<SchedulerSystemECS>();
+// scheduler_system
+//     ->awake_unregistered_system_priority<EntireAnimationPlayer, 58>();
+//
+// const auto& entire_anim_player =
+//     global->ECS->get_system<EntireAnimationPlayer>();
+// entire_anim_player->play_entire_animation(player_animation, "jump");

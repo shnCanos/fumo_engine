@@ -35,16 +35,31 @@ void GravityUpdater::gravity_update() {
 
 void GravityUpdater::update_gravity(Body& body) {
     // NOTE: points towards the planet's planet_body
+    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
 
-    if (player_owning_planet == NO_ENTITY_FOUND || player_owning_planet == 0) {
+    if (player_shape.player_owning_field == NO_ENTITY_FOUND ||
+        player_shape.player_owning_field == 0) {
         return;
     }
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
+
+    float gravity_strength{};
+
+    EntityId planet_id = player_shape.player_owning_field;
+    EntityQuery query_parallel{
+        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_filter = Filter::All};
+
+    const auto& body_planet = global->ECS->get_component<Body>(planet_id);
+    Vector2 gravity_direction{};
 
     // --------------------------------------------------------------------
     // mario galaxy-like changing of the left-right movement to match
     // the player expectation of what right and left should be
+    EntityQuery skip_parallel{
+        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_filter = Filter::None};
+
     if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
         if (160 < abs(player_body.rotation) && abs(player_body.rotation) < 180) {
             player_body.inverse_direction = true;
@@ -53,16 +68,6 @@ void GravityUpdater::update_gravity(Body& body) {
         }
     }
     // --------------------------------------------------------------------
-    Vector2 gravity_direction{};
-    float gravity_strength{};
-
-    EntityId planet_id = player_owning_planet;
-
-    const auto& body_planet = global->ECS->get_component<Body>(planet_id);
-
-    EntityQuery query_parallel{
-        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
-        .component_filter = Filter::All};
 
     if (global->ECS->filter(planet_id, query_parallel)) {
         // methods for parallel gravity fields

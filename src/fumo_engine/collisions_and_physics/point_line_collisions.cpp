@@ -225,7 +225,7 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
     top_pair = PointToLineDistanceAndIntersection(circle_center, TopLeft, TopRight);
 
     // -------------------------------------------------------------------------------
-    weird_debug_print(closest_pair, left_pair, bottom_pair, right_pair, top_pair);
+    // weird_debug_print(closest_pair, left_pair, bottom_pair, right_pair, top_pair);
 
     if (closest_corner == TopLeft) {
         left_pair =

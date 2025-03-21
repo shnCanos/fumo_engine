@@ -11,14 +11,14 @@
 // const int particle_count = 50;
 
 // const int screenWidth = 500;
-constexpr int screenWidth = 1000;
-constexpr int screenHeight = 1200;
+constexpr int screenWidth = 1920;
+constexpr int screenHeight = 1080;
 const Vector2 screenCenter = {(float)screenWidth / 2, (float)screenHeight / 2};
 #define GRAVITY 9.81
 #define GRAVITATIONAL_CONSTANT 0.6
 #define SCALING_FACTOR 1
 #define FONT_SIZE 20
-const float mouse_radius = 80.0f;
+const float mouse_radius = 120.0f;
 const int color_count = 15;
 const float default_mass = 600000;
 const float default_radius = 50.0f;

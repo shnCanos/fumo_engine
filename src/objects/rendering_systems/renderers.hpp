@@ -8,5 +8,10 @@ struct ObjectRenderer : System {
     void draw_planets();
 };
 
+struct GravFieldRenderer : System {
+  public:
+    void sys_call() override { draw_fields(); };
+    void draw_fields();
+};
 
 #endif

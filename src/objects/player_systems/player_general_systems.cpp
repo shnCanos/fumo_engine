@@ -82,13 +82,13 @@ void debug_player_drawing(const PlayerShape& player_shape, const Body& player_bo
     DrawCircleV(player_shape.bottom_circle_center, player_shape.radius, render.color);
     DrawCircleV(player_shape.top_circle_center, player_shape.radius, render.color);
 
-    double gravity_reach = 300.0f;
-    Vector2 normalized_velocity = Vector2Normalize(player_body.velocity);
-    Vector2 line_end = player_body.position + normalized_velocity * gravity_reach;
-    if (player_body.jumping) {
-        line_end =
-            player_body.position - (player_body.gravity_direction) * gravity_reach;
-    }
-    DrawLineV(player_body.position, line_end, YELLOW);
+    // double gravity_reach = 300.0f;
+    // Vector2 normalized_velocity = Vector2Normalize(player_body.velocity);
+    // Vector2 line_end = player_body.position + normalized_velocity * gravity_reach;
+    // if (player_body.jumping) {
+    //     line_end =
+    //         player_body.position - (player_body.gravity_direction) * gravity_reach;
+    // }
+    // DrawLineV(player_body.position, line_end, YELLOW);
     EndMode2D();
 }

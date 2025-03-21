@@ -17,6 +17,8 @@ class LevelEntityFactory : public System {
     EntityId create_circular_planet(Vector2 position);
     EntityId create_rect_field(Vector2 position);
     EntityId create_rect(Vector2 position);
+
+    EntityId create_rect_field(Vector2 position, Vector2 grav_direction);
 };
 
 #endif

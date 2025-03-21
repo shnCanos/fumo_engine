@@ -21,7 +21,7 @@ void load_player_textures() {
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/jump.png"),
                       .sprite_sheet_name = "jump",
                       .sprite_frame_count = 4,
-                      .base_frame_speed = 7});
+                      .base_frame_speed = 8});
 
     global->sprite_manager->register_sprite(
         SpriteSheet2D{.texture_sheet = LoadTexture("assets/test_player/landing.png"),

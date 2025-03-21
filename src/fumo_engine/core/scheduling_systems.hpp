@@ -33,7 +33,7 @@ struct SchedulerSystemECS : System {
 
         DEBUG_ASSERT(
             !parent_ptr->all_scheduled_unregistered_systems_debug.contains(t_name),
-            "can't awake a system that isn't asleep.");
+            "can't awake an unregistered system that isn't asleep.");
 
         parent_ptr->unregistered_system_scheduler.insert(system_ptr);
     }

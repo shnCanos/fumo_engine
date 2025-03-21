@@ -12,22 +12,17 @@ void GravityHandler::find_gravity_field() {
     // - only allow picking candidates again if the player touches the ground
 
     std::vector<EntityId> candidate_planets;
-    candidate_planets.reserve(sys_entities.size());
+    candidate_planets.reserve(2);
 
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
 
-    // if (player_body.on_ground) {
-    //     player_body.iterations = 0;
-    //     player_body.going_down = false;
-    //     player_body.going_down = false;
-    //     // player_flag.can_swap_orbits = true;
-    //
-    //     // PRINT("CANT SWAP ORBITS");
-    //     // dont change fields when we are on the ground
-    //     // dont change fields after an orbit swap UNTIL we touch the ground
-    // }
+    if (player_body.on_ground) {
+        player_body.iterations = 0;
+        player_body.going_down = false;
+        player_body.going_down = false;
+    }
 
     if (!player_flag.can_swap_orbits) {
         return;
@@ -45,7 +40,7 @@ void GravityHandler::find_gravity_field() {
             // methods for parallel gravity fields
             const auto& parallel_field =
                 global->ECS->get_component<ParallelGravityField>(planet_id);
-            if (parallel_field.is_inside_field(player_body, player_shape, body_planet)) {
+            if (parallel_field.is_inside_field(player_body, player_shape)) {
                 candidate_planets.push_back(planet_id);
             }
         } else {
@@ -68,6 +63,11 @@ void GravityHandler::find_gravity_field() {
     for (const auto& planet_id : candidate_planets) {
         if (planet_id != player_shape.player_owning_field) {
             player_shape.player_owning_field = planet_id;
+            PRINT(candidate_planets.size())
+            if (global->ECS->filter(planet_id, query_parallel)) {
+                // PRINT("SWITCHING TO A PARALLEL FIELD")
+            }
+            // PRINT("CIRCULAR FIELD SWITCH")
             // --------------------------------------------------------------------------
             // check if you want to cancel the jump this way later on
             // solution:
@@ -94,14 +94,14 @@ void GravityHandler::find_gravity_field() {
 }
 
 bool ParallelGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape,
-                                           const Body& body_parallel) const {
+                                           const PlayerShape& player_shape) const {
 
     Collision collision =
-        PlayerToRectCollision(player_shape, player_body, field_rectangle, body_parallel);
+        PlayerToRectCollision(player_shape, player_body, field_rectangle,
+                              Body{.position = {field_rectangle.x, field_rectangle.y}});
 
     // if overlap == 0, then there was no collision
-    return (collision.overlap == 0);
+    return (collision.overlap != 0);
 }
 
 bool CircularGravityField::is_inside_field(const Body& player_body,

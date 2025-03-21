@@ -45,8 +45,8 @@ void register_systems() {
 void register_systems_scheduled() {
 
     global->ECS->register_system<DebugLevelEditor, 1>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
-        .component_filter = Filter::All});
+        .component_mask = global->ECS->make_component_mask<GravFieldFlag, ColliderObjectFlag>(),
+        .component_filter = Filter::Any});
 
     global->ECS->register_system<GravityHandler, 2>(
         EntityQuery{.component_mask = global->ECS->make_component_mask<GravFieldFlag>(),
@@ -55,14 +55,21 @@ void register_systems_scheduled() {
     global->ECS->register_system<ObjectRenderer, 6>(EntityQuery{
         .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
         .component_filter = Filter::All});
+    global->ECS->register_system<AnimationRenderer, 6>(EntityQuery{
+        .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
+        .component_filter = Filter::All});
+    //--------------------------------------------------------------------------------------
+    // NEW class
+    global->ECS->register_system<GravFieldRenderer, 6>(EntityQuery{
+        .component_mask =
+            global->ECS->make_component_mask<ParallelGravityField, Render, Body, GravFieldFlag>(),
+        .component_filter = Filter::Only});
+    //--------------------------------------------------------------------------------------
 
     global->ECS->register_system<TimerHandler, 7>(
         EntityQuery{.component_mask = global->ECS->make_component_mask<Timer>(),
                     .component_filter = Filter::Only});
 
-    global->ECS->register_system<AnimationRenderer, 60>(EntityQuery{
-        .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
-        .component_filter = Filter::All});
 
     global->ECS->register_system<PlayerCollisionRunner, 3>(EntityQuery{
         .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),

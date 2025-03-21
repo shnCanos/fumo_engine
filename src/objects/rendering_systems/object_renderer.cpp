@@ -47,18 +47,35 @@ void ObjectRenderer::draw_planets() {
             if (global->ECS->filter(entity_id, parallel_grav_query)) {
                 const auto& parallel_field =
                     global->ECS->get_component<ParallelGravityField>(entity_id);
-                // DrawRectangleRec(parallel_field.field_rectangle,
-                //                  ColorAlpha(render.color, 0.2f));
 
-                DrawRectangleV(parallel_field.position,
-                               {parallel_field.field_rectangle.width,
-                                parallel_field.field_rectangle.height},
-                               ColorAlpha(render.color, 0.2f));
+                DrawRectangle(parallel_field.field_rectangle.x,
+                              parallel_field.field_rectangle.y,
+                              parallel_field.field_rectangle.width,
+                              parallel_field.field_rectangle.height,
+                              ColorAlpha(render.color, 0.2f));
             }
         }
         // // FIXME: DEBUG drawing
         // DrawCircleV(body.position, mouse_radius, GREEN);
     }
 
+    EndMode2D();
+}
+
+void GravFieldRenderer::draw_fields() {
+
+    BeginMode2D(*global->camera);
+    for (const auto& entity_id : sys_entities) {
+
+        const auto& render = global->ECS->get_component<Render>(entity_id);
+        const auto& parallel_field =
+            global->ECS->get_component<ParallelGravityField>(entity_id);
+
+                DrawRectangle(parallel_field.field_rectangle.x,
+                              parallel_field.field_rectangle.y,
+                              parallel_field.field_rectangle.width,
+                              parallel_field.field_rectangle.height,
+                              ColorAlpha(render.color, 0.2f));
+    }
     EndMode2D();
 }

@@ -36,7 +36,7 @@ void PlayerCollisionRunner::check_collisions() {
         }
     }
 
-    PRINT(collision_happened)
+    // PRINT(collision_happened)
     // if we dont collide with any object this frame,
     // then we were NOT on the ground
     player_body.on_ground = collision_happened;
