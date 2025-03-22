@@ -12,7 +12,7 @@ void GravityHandler::find_gravity_field() {
     // - only allow picking candidates again if the player touches the ground
 
     std::vector<EntityId> candidate_planets;
-    candidate_planets.reserve(2);
+    candidate_planets.reserve(10);
 
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);

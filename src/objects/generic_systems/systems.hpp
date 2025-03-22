@@ -1,7 +1,7 @@
 #ifndef SYSTEMS_HPP
 #define SYSTEMS_HPP
 #include "fumo_engine/core/system_base.hpp"
-#include "objects/components.hpp"
+#include "fumo_engine/components.hpp"
 #include "raylib.h"
 
 class BodyMovement : public System {
@@ -25,7 +25,7 @@ class BodyMovement : public System {
 };
 struct JumpPhysicsHandler : System {
     void sys_call() override {}
-    bool hard_coded_jump();
+    void hard_coded_jump();
 };
 
 // class InputHandler : public System {

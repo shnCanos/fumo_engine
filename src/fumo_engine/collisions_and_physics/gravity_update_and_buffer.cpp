@@ -1,7 +1,7 @@
 
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "objects/systems.hpp"
+#include "objects/generic_systems/systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -36,12 +36,12 @@ void GravityUpdater::gravity_update() {
 void GravityUpdater::update_gravity(Body& body) {
     // NOTE: points towards the planet's planet_body
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
 
     if (player_shape.player_owning_field == NO_ENTITY_FOUND ||
         player_shape.player_owning_field == 0) {
         return;
     }
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
 
     float gravity_strength{};
 
@@ -92,18 +92,23 @@ void GravityUpdater::update_gravity(Body& body) {
     player_body.gravity_direction = gravity_direction;
 
     // --------------------------------------------------------------------
-    const auto& jump_physics = global->ECS->get_system<JumpPhysicsHandler>();
 
-    if (jump_physics->hard_coded_jump()) {
-        return;
-    }
+
+    const auto& jump_physics = global->ECS->get_system<JumpPhysicsHandler>();
+    jump_physics->hard_coded_jump();
+
+    // if (jump_physics->hard_coded_jump()) {
+    //     return;
+    // }
     // if (player_body.on_ground) {
+    //     PRINT("ON GROUND");
     //     // dont update while player is on the ground
     //     return;
     // }
+    // PRINT("NOT ON GROUND");
     // --------------------------------------------------------------------
-    Vector2 acceleration = gravity_direction * gravity_strength * 1000.0f;
-    player_body.velocity += acceleration * global->frametime;
+    Vector2 acceleration = gravity_direction * gravity_strength;
+    player_body.velocity += acceleration;
 }
 
 void ParallelGravityField::update_gravity(Body& player_body) {

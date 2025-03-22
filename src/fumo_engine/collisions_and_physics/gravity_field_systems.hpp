@@ -2,7 +2,7 @@
 #define PLAYER_PHYSICS_HPP
 
 #include "fumo_engine/core/system_base.hpp"
-#include "objects/components.hpp"
+#include "fumo_engine/components.hpp"
 
 struct GravityBufferHandler : System {
 

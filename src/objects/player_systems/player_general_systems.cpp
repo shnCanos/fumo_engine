@@ -1,6 +1,6 @@
 #include "objects/player_systems/player_general_systems.hpp"
+#include "fumo_engine/components.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "objects/components.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 void debug_player_drawing(const PlayerShape& player_shape, const Body& player_body);
@@ -13,8 +13,8 @@ EntityId PlayerInitializer::initialize_player() {
     global->ECS->entity_add_component(player_id, AnimationInfo{.sprite_scaling = 3.0f});
     global->ECS->entity_add_component(player_id, Render{.color = {50, 50, 50, 150}});
 
-    Body player_body{
-        .position = screenCenter, .velocity = {0.0f, 0.0f}};
+    Body player_body{.position = {.x = screenWidth / 2.0f, .y = screenCenter.y},
+                     .velocity = {0.0f, 0.0f}};
     global->ECS->entity_add_component(player_id, player_body);
 
     PlayerShape player_shape{.radius = 33.0f};
@@ -54,7 +54,7 @@ void PlayerEndFrameUpdater::end_of_frame_update() {
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
 
     // camera follows player
-    UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
+    // UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
 
     //-----------------------------------------------------------------
     // apply movement changes to the player
@@ -63,6 +63,13 @@ void PlayerEndFrameUpdater::end_of_frame_update() {
     player_body.rotation =
         std::atan2(player_body.x_direction.y, player_body.x_direction.x) * RAD2DEG;
 
+    // if (player_body.on_ground) {
+    //     // dont move in the GRAVITY direction while player is on the ground
+    //     player_body.velocity =
+    //         player_body.gravity_direction *
+    //         Vector2DotProduct(player_body.velocity, player_body.gravity_direction);
+    // }
+    //
     player_body.position += player_body.velocity * global->frametime;
     player_shape.update_capsule_positions(player_body);
 

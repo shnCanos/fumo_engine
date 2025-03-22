@@ -1,12 +1,11 @@
-#include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "objects/factory_systems.hpp"
+#include "objects/generic_systems/factory_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 [[nodiscard]] Rectangle make_default_field_rect(Vector2 position);
 [[nodiscard]] Rectangle make_default_ground_rect(Vector2 position);
 // TODO: move these to constants when you figure out their values
-const float default_grav_strength = 9.8f * 6;
+const float default_grav_strength = 900.0f;
 const float default_gravity_reach = 150.0f;
 const int default_rect_width = 500.0f;
 const int default_rect_height = 300.0f;

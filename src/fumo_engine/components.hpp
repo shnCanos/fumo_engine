@@ -136,6 +136,9 @@ struct ColliderObjectFlag {
 struct GravFieldFlag {
     // if it has a field of any type
 };
+
+struct OutlineRectFlag {};
+
 // -------------------------------------------------------------------------------
 
 // NOTE: to make a really modular and reusable timer class,

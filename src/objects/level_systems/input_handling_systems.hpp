@@ -17,6 +17,7 @@ class DebugLevelEditor : public System {
     void move_entity(Vector2 mouse_position);
     void resize_planet(float resize);
     void delete_planet(Vector2 mouse_position);
+void reset_position();
 };
 
 #endif

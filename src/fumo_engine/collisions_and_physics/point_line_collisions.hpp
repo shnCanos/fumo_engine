@@ -1,6 +1,6 @@
 #ifndef POINT_LINE_COLLISIONS_HPP
 #define POINT_LINE_COLLISIONS_HPP
-#include "objects/components.hpp"
+#include "fumo_engine/components.hpp"
 #include "raylib.h"
 #include <utility>
 #include <vector>

@@ -8,8 +8,9 @@ void GlobalState::setup_game_state() {
 
     camera = std::make_unique<Camera2D>();
     const auto& player_body = ECS->get_component<Body>(player_id);
-    camera->target = player_body.position;
+    // camera->target = player_body.position;
+    camera->target = screenCenter;
     camera->rotation = 0.0f;
-    camera->zoom = 0.5f;
+    camera->zoom = 1.0f;
     camera->offset = screenCenter;
 }

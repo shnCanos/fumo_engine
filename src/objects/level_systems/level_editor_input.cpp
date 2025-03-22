@@ -1,14 +1,16 @@
-// clang-format off
 #include "fumo_engine/core/global_state.hpp"
-#include "input_handling_systems.hpp"
-#include "objects/factory_systems.hpp"
-#include "objects/systems.hpp"
-// clang-format on
+#include "objects/level_systems/input_handling_systems.hpp"
+#include "objects/generic_systems/factory_systems.hpp"
+#include "objects/generic_systems/systems.hpp"
 
 const int default_rect_width = 500.0f;
 const int default_rect_height = 300.0f;
 extern std::unique_ptr<GlobalState> global;
 
+void DebugLevelEditor::reset_position() {
+    auto& body = global->ECS->get_component<Body>(global->player_id);
+    body.position = screenCenter;
+}
 void DebugLevelEditor::delete_planet(Vector2 mouse_position) {
     for (const auto& entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
@@ -102,6 +104,9 @@ void DebugLevelEditor::handle_input() {
 
         move_entity(mouse_position);
         return;
+    } else if (IsKeyPressed(KEY_P)) {
+        reset_position();
+
     } else if (IsKeyPressed(KEY_F1)) {
         spawn_circular_planet(mouse_position);
         return;

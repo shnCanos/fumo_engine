@@ -292,12 +292,10 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
         if (closest_dist_intersection.first < player_shape.radius) {
             // this means we collided with the bottom circle
 
-            // PRINT("COLLISION HAPPENED BOTTOM")
             collision.overlap = player_shape.radius - closest_dist_intersection.first;
             collision.push =
                 player_shape.bottom_circle_center - closest_dist_intersection.second;
 
-            // collision.push = player_body.position - closest_dist_intersection.second;
             return collision;
         }
     }

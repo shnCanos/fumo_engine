@@ -1,6 +1,6 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
-#include "objects/components.hpp"
+#include "fumo_engine/components.hpp"
 #include "raylib.h"
 #include "sprite_and_animation_systems.hpp"
 #include <cstdlib>
@@ -42,6 +42,7 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
         animation_info.current_region_rect.height * animation_info.sprite_scaling};
 
     Rectangle source = animation_info.current_region_rect;
+
     if (body.inverse_direction) {
         source = {animation_info.current_region_rect.x,
                   animation_info.current_region_rect.y,

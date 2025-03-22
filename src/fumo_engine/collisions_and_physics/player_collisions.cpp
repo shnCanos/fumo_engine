@@ -1,7 +1,7 @@
 #include "player_collisions.hpp"
 #include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
+#include "fumo_engine/components.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "objects/components.hpp"
 #include "raymath.h"
 
 extern std::unique_ptr<GlobalState> global;
@@ -80,6 +80,7 @@ bool PlayerCollisionRunner::player_to_circle_collision_solving(
     // solve the collision
     Collision collision =
         PlayerToCircleCollision(player_shape, player_body, circle_shape, circle_body);
+
     if (collision.overlap == 0.0f) {
         // no collision happened
         return false;
