@@ -13,7 +13,7 @@ EntityId PlayerInitializer::initialize_player() {
 
     global->ECS->entity_add_component(
         player_id,
-        AnimationInfo {.sprite_scaling = 3.0f}
+        AnimationInfo {.sprite_scaling = 2.5f}
     );
 
     Body player_body {
@@ -23,7 +23,7 @@ EntityId PlayerInitializer::initialize_player() {
 
     global->ECS->entity_add_component(player_id, player_body);
 
-    PlayerShape player_shape {.radius = 33.0f};
+    PlayerShape player_shape {.radius = 26.0f};
     player_shape.update_capsule_positions(player_body);
     global->ECS->entity_add_component(player_id, player_shape);
 

@@ -7,8 +7,8 @@ extern std::unique_ptr<GlobalState> global;
 // TODO: move these to constants when you figure out their values
 const float default_grav_strength = 900.0f;
 const float default_gravity_reach = 150.0f;
-const int default_rect_width = 500.0f;
-const int default_rect_height = 300.0f;
+const int default_rect_width = 200.0f;
+const int default_rect_height = 200.0f;
 
 void LevelEntityFactory::delete_planet(EntityId entity_id) {
     // here to keep track of what this instance of planet factory
@@ -43,10 +43,9 @@ EntityId LevelEntityFactory::create_circular_planet(Vector2 position) {
     global->ECS->entity_add_component(
         entity_id, Body{.position = position, .velocity = {0.0f, 0.0f}});
     global->ECS->entity_add_component(entity_id, Render{.color = BLUE});
-    global->ECS->entity_add_component(entity_id, Circle{.radius = default_radius * 5});
+    global->ECS->entity_add_component(entity_id, Circle{.radius = default_radius * 4});
     global->ECS->entity_add_component(
-        entity_id, CircularGravityField{.gravity_radius = default_planet_radius * 2 +
-                                                          default_radius * 3,
+        entity_id, CircularGravityField{.gravity_radius = default_planet_radius *3,
                                         .gravity_strength = default_grav_strength,
                                         .position = position});
     sys_entities.insert(entity_id);

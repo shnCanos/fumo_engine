@@ -10,7 +10,7 @@ void GlobalState::setup_game_state() {
     // camera->target = player_body.position;
     camera->target = screenCenter;
     camera->rotation = 0.0f;
-    camera->zoom = 1.0f;
+    camera->zoom = 0.8f;
     camera->offset = screenCenter;
     auto& player_animation = ECS->get_component<AnimationInfo>(player_id);
     AnimationPlayer::play(player_animation, "idle");

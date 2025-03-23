@@ -43,7 +43,7 @@ void StateHandler::end_of_frame_update() {
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
     // camera follows player
-    // UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
+    UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
     //-----------------------------------------------------------------
     // apply movement changes to the player
     player_body.x_direction = {
@@ -59,6 +59,19 @@ void StateHandler::end_of_frame_update() {
         player_body.velocity =
             player_body.get_x_velocity() + player_body.get_y_velocity() * 0.1f;
     }
+
+    // FIXME: hardcoded for a little bit smoother jump, delete later
+    //-----------------------------------------------------------------
+    float dot_vel = player_body.get_dot_y_velocity();
+    if (dot_vel >= 800) {
+        player_body.velocity =
+            player_body.get_y_velocity() * 3 / 4 + player_body.get_x_velocity();
+    }
+    // FIXME:
+    //-----------------------------------------------------------------
+
+    // PRINT(player_body.get_dot_y_velocity());
+
     player_body.position += player_body.velocity * global->frametime;
     player_shape.update_capsule_positions(player_body);
     //-----------------------------------------------------------------

@@ -11,7 +11,7 @@ extern std::unique_ptr<GlobalState> global;
 
 // const static float movement_scaling = 20000.0f;
 const static float movement_scaling = 560.0f;
-const static float jump_scaling = 830.0f;
+const static float jump_scaling = 400.0f;
 
 void BodyMovement::move(const EntityId& entity_id, const DIRECTION& direction) {
     auto& body = global->ECS->get_component<Body>(entity_id);
@@ -40,8 +40,8 @@ void BodyMovement::move(const EntityId& entity_id, const DIRECTION& direction) {
 
 float scaling = -980.0f * 3;
 float default_scaling = -980.0f * 3;
-float going_down_scaling = -980.0f;
-float default_going_down_scaling = -980.0f;
+float going_down_scaling = -900.0f;
+float default_going_down_scaling = -900.0f;
 
 void BodyMovement::jump(Body& body, const EntityId& entity_id) {
     auto& player_state = global->ECS->get_component<EntityState>(entity_id);
@@ -64,6 +64,25 @@ void BodyMovement::hard_coded_jump() {
     // NOTE: this code is for testing and will be removed later
 
     auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+
+    // if (player_state.jumping) {
+    //     if(IsKeyDown(KEY_SPACE)) {
+    //         player_body.velocity
+    //
+    //     }
+    //
+    // }
+
+    if (IsKeyReleased(KEY_SPACE)) {
+        if (player_body.iterations < 30) {
+            player_body.iterations = 40;
+
+            going_down_scaling = scaling;
+        }
+        // player_state.jumping = false;
+        // scaling = default_scaling;
+    }
 
     // going up smoothing
     if (player_state.jumping) {
@@ -73,29 +92,34 @@ void BodyMovement::hard_coded_jump() {
         if (player_body.iterations < 6) {
             player_body.scale_velocity(scaling);
             scaling /= 1.1f;
-        } else if (player_body.iterations < 24) {
-            player_body.scale_velocity(scaling);
-            scaling /= 1.1f;
-        }
-
-        if (player_body.iterations >= 24) {
-            player_body.scale_velocity(going_down_scaling);
-            going_down_scaling /= 1.2f;
-
-            if (player_body.iterations == 46) {
-                player_body.iterations = 0;
-                player_state.jumping = false;
-                scaling = default_scaling;
-                going_down_scaling = default_going_down_scaling;
-            }
             return;
         }
-        if (player_body.get_dot_y_velocity() < 0) {
-            // used up to iteration 24
-            // we stopped going upwards
-            if (scaling > going_down_scaling)
-                scaling = going_down_scaling;
+        if (player_body.iterations < 24) {
+            player_body.scale_velocity(scaling);
+            scaling /= 1.08f;
+            return;
         }
+
+        if (player_body.iterations < 30) {
+            player_body.scale_velocity(going_down_scaling);
+            going_down_scaling /= 1.15f;
+            return;
+        }
+        if (player_body.iterations < 50) {
+            player_body.scale_velocity(going_down_scaling);
+            going_down_scaling /= 1.24f;
+            return;
+        }
+        player_body.iterations = 0;
+        player_state.jumping = false;
+        scaling = default_scaling;
+        going_down_scaling = default_going_down_scaling;
+        // if (player_body.get_dot_y_velocity() < 0) {
+        //     // used up to iteration 24
+        //     // we stopped going upwards
+        //     if (scaling > going_down_scaling)
+        //         scaling = going_down_scaling;
+        // }
     }
 }
 

@@ -84,7 +84,7 @@ DIRECTION opposite_direction(DIRECTION direction) {
 }
 
 ACCEPT find_acceptance_state(float rotation) {
-    PRINT(rotation)
+    // PRINT(rotation)
     if (-135 <= rotation && rotation <= -45) {
         return ACCEPT::VERTICAL_INVERT;
     }
@@ -127,6 +127,8 @@ void MovedWrapper::moved_event() {
             switch (filter) {
                 case ACCEPT::HORIZONTAL: {
                     BodyMovement::move(entity_id, DIRECTION::LEFT);
+                    previous_direction = direction;
+                    continue_in_direction = DIRECTION::LEFT;
                     break;
                 }
                 case ACCEPT::HORIZONTAL_INVERT:
