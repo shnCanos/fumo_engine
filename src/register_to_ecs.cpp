@@ -47,17 +47,16 @@ void register_systems() {
 void register_systems_scheduled() {
     //--------------------------------------------------------------------------------------
     // actual game logic
-
     global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
+    global->ECS->add_unregistered_system<JumpHandler, 1>();
+    global->ECS->add_unregistered_system<GravityUpdater, 2>();
 
-    global->ECS->add_unregistered_system<GravityUpdater, 1>();
-
-    global->ECS->register_system<GravityFieldHandler, 2>(EntityQuery {
+    global->ECS->register_system<GravityFieldHandler, 3>(EntityQuery {
         .component_mask = global->ECS->make_component_mask<GravFieldFlag>(),
         .component_filter = Filter::All
     });
 
-    global->ECS->register_system<PlayerCollisionRunner, 3>(EntityQuery {
+    global->ECS->register_system<PlayerCollisionRunner, 4>(EntityQuery {
         .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
         .component_filter = Filter::Any
     });
@@ -107,4 +106,5 @@ void register_unregistered_systems_unscheduled() {
     // global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
     // global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<LevelEntityFactory>();
+    global->ECS->add_unregistered_system_unscheduled<MovedWrapper>();
 }

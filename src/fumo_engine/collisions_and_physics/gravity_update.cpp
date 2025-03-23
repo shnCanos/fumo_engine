@@ -4,30 +4,6 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-void GravityBufferHandler::wait_for_touching_ground() {
-    // auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
-    // auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    //
-    //
-    // // NOTE: this is NOT being used right now
-    //
-    //
-    //
-    // if (player_state.on_ground) {
-    //     // garbage fix for the shitty player jump
-    //
-    //     // player_flag.can_swap_orbits = true;
-    //
-    //     // PRINT("ALLOWED TO SWAP ORBITS");
-    //
-    //     // TODO: (check if this is actually more performant)
-    //     // turn itself off to avoid busy wait
-    //     // const auto& scheduler_system =
-    //     global->ECS->get_system<SchedulerSystemECS>();
-    //     // scheduler_system->sleep_unregistered_system<GravityBufferHandler>();
-    //     // scheduler_system->awake_system<GravityHandler>();
-    // }
-}
 
 void GravityUpdater::gravity_update() {
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
@@ -66,15 +42,6 @@ void GravityUpdater::update_gravity(Body& body) {
         .component_filter = Filter::None
     };
 
-    if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT)) {
-        if (160 < abs(player_body.rotation)
-            && abs(player_body.rotation) < 180) {
-            player_body.inverse_direction = true;
-        } else if (0 < abs(player_body.rotation)
-                   && abs(player_body.rotation) < 20) {
-            player_body.inverse_direction = false;
-        }
-    }
     // --------------------------------------------------------------------
 
     if (global->ECS->filter(planet_id, query_parallel)) {
@@ -101,8 +68,6 @@ void GravityUpdater::update_gravity(Body& body) {
     player_body.gravity_direction = gravity_direction;
 
     // --------------------------------------------------------------------
-
-    BodyMovement::hard_coded_jump();
 
     // --------------------------------------------------------------------
     Vector2 acceleration = gravity_direction * gravity_strength;

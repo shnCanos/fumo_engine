@@ -3,6 +3,17 @@
 
 extern std::unique_ptr<GlobalState> global;
 
+// bool IsKeyStillDown(int key) {
+//     bool still_down = false;
+//
+//     if ((key > 0) && (key < MAX_KEYBOARD_KEYS))
+//     {
+//         if ((CORE.Input.Keyboard.previousKeyState[key] == 1) && (CORE.Input.Keyboard.currentKeyState[key] == 1)) still_down = true;
+//     }
+//
+//     return still_down;
+//
+// }
 Vector2 Vector2ScaleDivision(Vector2 v, float scale) {
     Vector2 result = {v.x / scale, v.y / scale};
     return result;

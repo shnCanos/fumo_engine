@@ -1,32 +1,34 @@
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
+
 #include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
 #include "fumo_engine/core/global_state.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
+// RULES:
+// - give priority to field change
+// - don't change fields if the player is on the ground
+// - only allow picking candidates again if the player touches the ground
 void GravityFieldHandler::find_gravity_field() {
-    // RULES:
-    // - give priority to field change
-    // - don't change fields if the player is on the ground
-    // - only allow picking candidates again if the player touches the ground
-
-    std::vector<EntityId> candidate_planets;
-    candidate_planets.reserve(10);
-
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
 
     if (!player_state.can_swap_orbits || player_state.on_ground) {
         return;
     }
 
-    EntityQuery query_parallel{
+    std::vector<EntityId> candidate_planets;
+    candidate_planets.reserve(10);
+
+    const auto& player_id = global->player_id;
+    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
+
+    EntityQuery query_parallel {
         .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
-        .component_filter = Filter::All};
+        .component_filter = Filter::All
+    };
 
     for (const auto& planet_id : sys_entities) {
-
         const auto& body_planet = global->ECS->get_component<Body>(planet_id);
 
         if (global->ECS->filter(planet_id, query_parallel)) {
@@ -41,8 +43,8 @@ void GravityFieldHandler::find_gravity_field() {
             const auto& circular_field =
                 global->ECS->get_component<CircularGravityField>(planet_id);
 
-            if (circular_field.is_inside_field(player_body, player_shape,
-                                               body_planet)) {
+            if (circular_field
+                    .is_inside_field(player_body, player_shape, body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
         }
@@ -58,52 +60,36 @@ void GravityFieldHandler::find_gravity_field() {
     for (const auto& planet_id : candidate_planets) {
         if (planet_id != player_state.player_owning_field) {
             player_state.player_owning_field = planet_id;
-            PRINT(candidate_planets.size())
-            // if (global->ECS->filter(planet_id, query_parallel)) {
-            // PRINT("SWITCHING TO A PARALLEL FIELD")
-            // }
-            // PRINT("CIRCULAR FIELD SWITCH")
-            // --------------------------------------------------------------------------
-            // check if you want to cancel the jump this way later on
-            // solution:
-            // - the jump only moves up, the gravity pulls it down
-            // (im not sure if this is feasible to get a  nice jump curve)
-            // - i dont think it is feasible to find a good gravity value
-            // that makes the jump as smooth as we want it to be,
-            // but we can try
-            // player_state.jumping = false;
-            // -------------------------------------------------------------------------
 
-            // FIXME: add this back when the code is working (gravity handler has been
-            // redone)
-            //
-            // player_flag.swapped_orbits = true;
-            player_state.can_swap_orbits = false;
+            global->event_handler->add_event(
+                {.event = EVENT_::ENTITY_SWAPPED_ORBITS, .entity_id = player_id}
+            );
 
-            // const auto& scheduler_system =
-            // global->ECS->get_system<SchedulerSystemECS>(); scheduler_system
-            //     ->awake_unregistered_system_priority<GravityBufferHandler, 8>();
-            // scheduler_system->sleep_system<GravityHandler>();
             return;
         }
     }
 }
 
-bool ParallelGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape) const {
-
-    Collision collision =
-        PlayerToRectCollision(player_shape, player_body, field_rectangle,
-                              Body{.position = {field_rectangle.x, field_rectangle.y}});
+bool ParallelGravityField::is_inside_field(
+    const Body& player_body,
+    const PlayerShape& player_shape
+) const {
+    Collision collision = PlayerToRectCollision(
+        player_shape,
+        player_body,
+        field_rectangle,
+        Body {.position = {field_rectangle.x, field_rectangle.y}}
+    );
 
     // if overlap == 0, then there was no collision
     return (collision.overlap != 0);
 }
 
-bool CircularGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape,
-                                           const Body& circular_body) const {
-
+bool CircularGravityField::is_inside_field(
+    const Body& player_body,
+    const PlayerShape& player_shape,
+    const Body& circular_body
+) const {
     // -------------------------------------------------------------------------------
     // check for collisions with capsule
     // -------------------------------------------------------------------------------

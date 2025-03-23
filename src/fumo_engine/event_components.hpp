@@ -1,6 +1,9 @@
 #ifndef FLAG_COMPONENTS_HPP
 #define FLAG_COMPONENTS_HPP
+#include <memory>
+
 #include "fumo_engine/core/engine_constants.hpp"
+#include "fumo_engine/core/system_base.hpp"
 #include "raylib.h"
 
 // slowly rotate player to the new gravity direction
@@ -17,27 +20,27 @@ enum struct EVENT_ {
     //-----------------------------------------------------------------
     // input handling
     ENTITY_JUMPED,
-    ENTITY_MOVED_LEFT,
-    ENTITY_MOVED_RIGHT,
-    ENTITY_MOVED_UP,
-    ENTITY_MOVED_DOWN,
+    ENTITY_MOVED,
     ENTITY_IDLE,
     //-----------------------------------------------------------------
+    ENTITY_COLLIDED,
+    //-----------------------------------------------------------------
     ENTITY_SWAPPED_ORBITS,
-    ENTITY_FELL_FROM_GROUND,
+    // ENTITY_FELL_FROM_GROUND,
 
 };
 
 struct Event {
     EVENT_ event;
     EntityId entity_id;
+    std::shared_ptr<System> delegate_system;
 };
 
 struct EntityState {
-
     bool on_ground = true;
     bool jumping = false;
     bool can_swap_orbits = true;
+    bool can_jump = true;
     bool idle = true;
 
     EntityId player_owning_field = NO_ENTITY_FOUND;
@@ -73,6 +76,7 @@ struct Render {
 struct ColliderObjectFlag {
     // identifies planets and rectangles and such shapes
 };
+
 struct GravFieldFlag {
     // if it has a field of any type
 };

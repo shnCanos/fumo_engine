@@ -4,42 +4,24 @@
 extern std::unique_ptr<GlobalState> global;
 
 void EntityEventHandler::handle_events() {
-    // also handles state and links it to events
-
     while (!event_queue.empty()) {
-        // associate each event to the change of state we are looking for from it
         const Event& event = event_queue.front();
-        PRINT(event.event);
         handle_event(event);
         event_queue.pop();
     }
-    // ---------------------------------------------------------------------------
-    // handle state related stuff after events changed state
 }
 
 void EntityEventHandler::handle_event(const Event& event) {
-    // note to self:
-    // -> switch cases fall through if you do not add breaks
-    // -> this means you can chain stuff inside a switch on purpose
     switch (event.event) {
         case EVENT_::ENTITY_JUMPED:
+            // only pop when we are allowed to jump again
             EventHandler::jumped(event);
             break;
 
-        case EVENT_::ENTITY_MOVED_LEFT:
-            EventHandler::move_left(event);
-            break;
-
-        case EVENT_::ENTITY_MOVED_RIGHT:
-            EventHandler::move_right(event);
-            break;
-
-        case EVENT_::ENTITY_MOVED_UP:
-            EventHandler::move_up(event);
-            break;
-
-        case EVENT_::ENTITY_MOVED_DOWN:
-            EventHandler::move_down(event);
+        case EVENT_::ENTITY_MOVED:
+            // handles all 4 move directions
+            // lasting_event_vector.push_back(event);
+            event.delegate_system->sys_call();
             break;
 
         case EVENT_::ENTITY_IDLE:
@@ -47,9 +29,12 @@ void EntityEventHandler::handle_event(const Event& event) {
             break;
 
         case EVENT_::ENTITY_SWAPPED_ORBITS:
+            EventHandler::swapped_orbits(event);
             break;
 
-        case EVENT_::ENTITY_FELL_FROM_GROUND:
+        case EVENT_::ENTITY_COLLIDED:
+            EventHandler::collided(event);
+
             break;
     }
 }

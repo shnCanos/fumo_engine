@@ -3,7 +3,13 @@
 #include "raylib.h"
 
 extern std::unique_ptr<GlobalState> global;
-int key_down_event(int Key, EVENT_ event, EntityId id);
+int key_down_event(const int& Key, const EVENT_& event, const EntityId& id);
+int key_down_event_moved(
+    const int& Key,
+    const EVENT_& event,
+    const EntityId& id,
+    const DIRECTION& direction
+);
 
 void PlayerInputHandler::handle_input() {
     const auto& player_id = global->player_id;
@@ -14,20 +20,60 @@ void PlayerInputHandler::handle_input() {
     int key_was_pressed = 0;
 
     key_was_pressed += key_down_event(KEY_SPACE, EVENT_::ENTITY_JUMPED, player_id);
-    key_was_pressed += key_down_event(KEY_LEFT, EVENT_::ENTITY_MOVED_LEFT, player_id);
-    key_was_pressed += key_down_event(KEY_RIGHT, EVENT_::ENTITY_MOVED_RIGHT, player_id);
-    key_was_pressed += key_down_event(KEY_DOWN, EVENT_::ENTITY_MOVED_DOWN, player_id);
-    key_was_pressed += key_down_event(KEY_UP, EVENT_::ENTITY_MOVED_UP, player_id);
+
+    if (key_down_event_moved(
+            KEY_LEFT,
+            EVENT_::ENTITY_MOVED,
+            player_id,
+            DIRECTION::LEFT
+        )) {
+        return;
+    }
+    if (key_down_event_moved(
+            KEY_RIGHT,
+            EVENT_::ENTITY_MOVED,
+            player_id,
+            DIRECTION::RIGHT
+        )) {
+        return;
+    }
+    if (key_down_event_moved(
+            KEY_DOWN,
+            EVENT_::ENTITY_MOVED,
+            player_id,
+            DIRECTION::DOWN
+        )) {
+        return;
+    }
+
+    if (key_down_event_moved(KEY_UP, EVENT_::ENTITY_MOVED, player_id, DIRECTION::UP)) {
+        return;
+    }
 
     if (!key_was_pressed) {
         global->event_handler->add_event({EVENT_::ENTITY_IDLE, player_id});
     }
 }
 
-int key_down_event(int Key, EVENT_ event, EntityId id) {
+int key_down_event(const int& Key, const EVENT_& event, const EntityId& id) {
     if (IsKeyDown(Key)) {
+        global->event_handler->add_event({.event = event, .entity_id = id});
+        return 1;
+    }
+    return 0;
+}
+
+int key_down_event_moved(
+    const int& Key,
+    const EVENT_& event,
+    const EntityId& id,
+    const DIRECTION& direction
+) {
+    if (IsKeyDown(Key)) {
+        const auto& moved_wrapper = global->ECS->get_system<MovedWrapper>();
+        moved_wrapper->direction = direction;
         global->event_handler->add_event(
-            {.event = event, .entity_id = id}
+            {.event = event, .entity_id = id, .delegate_system = moved_wrapper}
         );
         return 1;
     }

@@ -30,9 +30,6 @@ int main(void) {
         global->ECS->run_systems();
         // events are handled after all systems are ran
         global->handle_events();
-        // const auto& state_handler = global->ECS->get_system<StateHandler>();
-        // state_handler->handle_states();
-        // state_handler->end_of_frame_update();
 
         // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {

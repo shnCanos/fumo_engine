@@ -4,13 +4,6 @@
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_engine/components.hpp"
 
-struct GravityBufferHandler : System {
-
-    void sys_call() override { wait_for_touching_ground(); }
-
-    void wait_for_touching_ground();
-};
-
 struct GravityUpdater : System {
 
     // EntityId player_owning_planet = NO_ENTITY_FOUND;
