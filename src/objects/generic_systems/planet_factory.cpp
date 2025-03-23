@@ -21,9 +21,9 @@ void LevelEntityFactory::delete_planet(EntityId entity_id) {
     // this is way too coupled by saving it outside of the ECS
     // like we are doing right now
     // const auto& gravity_updater = global->ECS->get_system<GravityUpdater>();
-    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
-    if (player_shape.player_owning_field == entity_id) {
-        player_shape.player_owning_field = NO_ENTITY_FOUND;
+    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
+    if (player_state.player_owning_field == entity_id) {
+        player_state.player_owning_field = NO_ENTITY_FOUND;
     }
 }
 

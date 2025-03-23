@@ -12,5 +12,7 @@
 #include "fumo_engine/core/fumo_containers.hpp"
 #include "objects/rendering_systems/renderers.hpp"
 #include "fumo_engine/core/scheduling_systems.hpp"
+#include "objects/generic_systems/systems.hpp"
+#include "objects/level_systems/input_handling_systems.hpp"
 
 #endif

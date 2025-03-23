@@ -26,11 +26,11 @@ int main(void) {
         ClearBackground(BLACK);
         BeginDrawing();
 
-        global->camera->zoom += ((float)GetMouseWheelMove() * 0.05f);
-
         global->frametime = GetFrameTime();
 
         global->ECS->run_systems();
+        // events are handled after all systems are ran
+        global->handle_events();
 
         // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {
@@ -50,5 +50,3 @@ int main(void) {
 
     return 0;
 }
-
-

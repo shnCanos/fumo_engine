@@ -1,11 +1,10 @@
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/core/scheduling_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
-void GravityHandler::find_gravity_field() {
+void GravityFieldHandler::find_gravity_field() {
     // RULES:
     // - give priority to field change
     // - don't change fields if the player is on the ground
@@ -16,15 +15,9 @@ void GravityHandler::find_gravity_field() {
 
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
-    auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
+    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
 
-    if (player_body.on_ground) {
-        player_body.iterations = 0;
-        player_body.going_down = false;
-        player_body.going_down = false;
-    }
-
-    if (!player_flag.can_swap_orbits) {
+    if (!player_state.can_swap_orbits || player_state.on_ground) {
         return;
     }
 
@@ -47,7 +40,9 @@ void GravityHandler::find_gravity_field() {
             // methods for circular gravity fields
             const auto& circular_field =
                 global->ECS->get_component<CircularGravityField>(planet_id);
-            if (circular_field.is_inside_field(player_body, player_shape, body_planet)) {
+
+            if (circular_field.is_inside_field(player_body, player_shape,
+                                               body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
         }
@@ -61,12 +56,12 @@ void GravityHandler::find_gravity_field() {
     // dont add more than 2 fields, if you do, change the code to support that
 
     for (const auto& planet_id : candidate_planets) {
-        if (planet_id != player_shape.player_owning_field) {
-            player_shape.player_owning_field = planet_id;
+        if (planet_id != player_state.player_owning_field) {
+            player_state.player_owning_field = planet_id;
             PRINT(candidate_planets.size())
-            if (global->ECS->filter(planet_id, query_parallel)) {
-                // PRINT("SWITCHING TO A PARALLEL FIELD")
-            }
+            // if (global->ECS->filter(planet_id, query_parallel)) {
+            // PRINT("SWITCHING TO A PARALLEL FIELD")
+            // }
             // PRINT("CIRCULAR FIELD SWITCH")
             // --------------------------------------------------------------------------
             // check if you want to cancel the jump this way later on
@@ -76,13 +71,14 @@ void GravityHandler::find_gravity_field() {
             // - i dont think it is feasible to find a good gravity value
             // that makes the jump as smooth as we want it to be,
             // but we can try
-            player_body.jumping = false;
+            // player_state.jumping = false;
             // -------------------------------------------------------------------------
 
             // FIXME: add this back when the code is working (gravity handler has been
             // redone)
             //
-            player_flag.can_swap_orbits = false;
+            // player_flag.swapped_orbits = true;
+            player_state.can_swap_orbits = false;
 
             // const auto& scheduler_system =
             // global->ECS->get_system<SchedulerSystemECS>(); scheduler_system

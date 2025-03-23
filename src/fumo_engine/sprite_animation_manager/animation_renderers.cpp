@@ -1,6 +1,5 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
-#include "fumo_engine/components.hpp"
 #include "raylib.h"
 #include "sprite_and_animation_systems.hpp"
 #include <cstdlib>
@@ -8,7 +7,6 @@
 extern std::unique_ptr<GlobalState> global;
 
 void AnimationRenderer::draw_animations() {
-    const auto& animation_player = global->ECS->get_system<AnimationPlayer>();
     for (auto entity_id : sys_entities) {
         const auto& animation_info =
             global->ECS->get_component<AnimationInfo>(entity_id);

@@ -1,6 +1,5 @@
 #include "player_collisions.hpp"
 #include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
-#include "fumo_engine/components.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "raymath.h"
 
@@ -12,7 +11,7 @@ void PlayerCollisionRunner::check_collisions() {
 
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_flag = global->ECS->get_component<PlayerFlag>(global->player_id);
+    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
 
     EntityQuery query_rectangle{.component_mask =
                                     global->ECS->make_component_mask<Rectangle>(),
@@ -36,13 +35,13 @@ void PlayerCollisionRunner::check_collisions() {
         }
     }
 
-    // PRINT(collision_happened)
-    // if we dont collide with any object this frame,
-    // then we were NOT on the ground
-    player_body.on_ground = collision_happened;
+    player_state.on_ground = collision_happened;
+    // if (collision_happened) {
+    // }
 
-    if (!player_flag.can_swap_orbits) {
-        player_flag.can_swap_orbits = collision_happened;
+    if (!player_state.can_swap_orbits) {
+        // we can swap again if we collide with an object
+        player_state.can_swap_orbits = collision_happened;
     }
 }
 

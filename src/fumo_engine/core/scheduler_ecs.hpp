@@ -1,38 +1,19 @@
 #ifndef SCHEDULER_ECS_HPP
 #define SCHEDULER_ECS_HPP
+#include <memory>
+#include <ostream>
+
 #include "constants.hpp"
 #include "entity_query.hpp"
 #include "fumo_engine/core/ECS.hpp"
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
-#include <memory>
-#include <ostream>
-// template <class T, class S, class C>
-// S& Container(std::priority_queue<T, S, C>& q) {
-//     struct HackedQueue : private std::priority_queue<T, S, C> {
-//         static S& Container(std::priority_queue<T, S, C>& q) {
-//             return q.*&HackedQueue::c;
-//         }
-//     };
-//     return HackedQueue::Container(q);
-// }
-// template<class T>
-// class PQV : public std::priority_queue<T> {
-//   public:
-//     typedef std::vector<T> TVec;
-//     TVec getVector() {
-//         TVec r(this->c.begin(), this->c.end());
-//         // c is already a heap
-//         sort_heap(r.begin(), r.end(), this->comp);
-//         // Put it into priority-queue order:
-//         reverse(r.begin(), r.end());
-//         return r;
-//     }
-// };
 
 struct SystemCompare {
-    inline bool operator()(const std::shared_ptr<System>& sysA,
-                           const std::shared_ptr<System>& sysB) const {
+    inline bool operator()(
+        const std::shared_ptr<System>& sysA,
+        const std::shared_ptr<System>& sysB
+    ) const {
         return sysA->priority < sysB->priority;
     }
 };
@@ -40,32 +21,48 @@ struct SystemCompare {
 class SchedulerECS {
   private:
     friend struct SchedulerSystemECS;
-    //------------------------------------------------------------------------------
-    std::multiset<std::shared_ptr<System>, SystemCompare> system_scheduler{};
+    //------------------------------------------------------------------
+    std::multiset<std::shared_ptr<System>, SystemCompare> system_scheduler {};
     std::multiset<std::shared_ptr<System>, SystemCompare>
-        unregistered_system_scheduler{};
-
-    // NOTE: if the system is not awake, we put it in unscheduled_systems;
-    // (it is stored with the other systems that never want to be scheduled)
-    // std::unordered_map<std::string_view, std::shared_ptr<System>>
-    // unscheduled_systems{};
-    //------------------------------------------------------------------------------
+        unregistered_system_scheduler {};
+    //------------------------------------------------------------------
     std::unique_ptr<ECS> ecs;
 
     // TODO: check if you really need this extra map later (using it for printing rn)
     // (i think it might be unnecessary overhead that slows down the ECS)
     std::unordered_map<std::string_view, std::shared_ptr<System>>
-        all_scheduled_unregistered_systems_debug{};
+        all_scheduled_unregistered_systems_debug {};
     std::unordered_map<std::string_view, std::shared_ptr<System>>
-        all_scheduled_systems_debug{};
-    std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug{};
+        all_scheduled_systems_debug {};
+    std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug {};
 
   public:
     void initialize() {
         ecs = std::make_unique<ECS>();
         ecs->initialize();
     }
-    // --------------------------------------------------------------------------------------
+
+    //------------------------------------------------------------------
+    void run_systems() {
+        // we copy every frame, so that changes to the
+        // scheduler only apply on the next loop iteration
+        std::multiset<std::shared_ptr<System>, SystemCompare>
+            copy_unregistered_scheduler(unregistered_system_scheduler);
+        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
+            system_scheduler
+        );
+
+        // run unregistered systems
+        for (const auto& system_ptr : copy_unregistered_scheduler) {
+            system_ptr->sys_call();
+        }
+        // run registered systems
+        for (const auto& system_ptr : copy_scheduler) {
+            system_ptr->sys_call();
+        }
+    }
+
+    //------------------------------------------------------------------
     // entity stuff
     [[nodiscard]] EntityId create_entity() {
         // added "scheduled" to allude to the fact this action only happens by
@@ -82,46 +79,34 @@ class SchedulerECS {
         ecs->destroy_entity(entity_id);
         all_entity_ids_debug[entity_id] = NO_ENTITY_FOUND;
     }
-    // get all matching entities for these types
-    // template<typename ...Types>
-    // [[nodiscard]] EntityId get_entities() {
-    //     ComponentMask component_mask = make_component_mask<Types...>();
-    // }
-    // template<typename ...Types>
-    // [[nodiscard]] EntityId get_entity() {
-    //     ComponentMask component_mask = make_component_mask<Types...>();
-    // }
-    // // useful when we know we only have one entity or are looking for a flag struct
-    // template<typename T>
-    // [[nodiscard]] EntityId get_flagged_entity() {
-    //
-    //     ComponentMask component_mask = 0;
-    //     component_mask |= get_component_id<T>();
-    // }
-    // --------------------------------------------------------------------------------------
 
-    // --------------------------------------------------------------------------------------
+    //------------------------------------------------------------------
     // component stuff
     template<typename T>
     void register_component() {
         ecs->register_component<T>();
     }
+
     // TODO: consider adding components in bulk when creating entities
-    // to minimize the number of update calls we make to systems (this really would help)
+    // to minimize the number of update calls we make to systems (this really would
+    // help)
     template<typename T>
     void entity_add_component(const EntityId& entity_id, T component) {
         // scheduler.scheduled_entity_component_masks[entity_id] =
         ecs->entity_add_component(entity_id, component);
     }
+
     template<typename T> // remove from entity
     void entity_remove_component(const EntityId& entity_id) {
         // scheduler.scheduled_entity_component_masks[entity_id] =
         ecs->entity_remove_component<T>(entity_id);
     }
+
     template<typename T>
     [[nodiscard]] T& get_component(const EntityId& entity_id) {
         return ecs->get_component<T>(entity_id);
     }
+
     // template<typename T>
     // void check_for_component(const EntityId& entity_id) {
     //     return ecs->check_for_component<T>(entity_id);
@@ -130,13 +115,13 @@ class SchedulerECS {
     [[nodiscard]] ComponentId get_component_id() {
         return ecs->get_component_id<T>();
     }
+
     // --------------------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------------------
     // system stuff
     template<typename T, Priority priority, typename... Types>
     void register_system(EntityQuery entity_query, Types&... args) {
-
         std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->register_system<T>(entity_query, system_ptr);
         system_ptr->priority = priority;
@@ -161,7 +146,6 @@ class SchedulerECS {
 
     template<typename T, Priority priority, typename... Types>
     void add_unregistered_system(Types&... args) {
-
         const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->add_unregistered_system(system_ptr);
         system_ptr->priority = priority;
@@ -173,6 +157,7 @@ class SchedulerECS {
         std::string_view t_name = libassert::type_name<T>();
         all_scheduled_unregistered_systems_debug.insert({t_name, system_ptr});
     }
+
     // this system wont be called in run_systems() call
     template<typename T, typename... Types>
     void add_unregistered_system_unscheduled(Types&... args) {
@@ -182,26 +167,6 @@ class SchedulerECS {
 
         // unregistered_system_scheduler.insert(system_ptr);
     }
-
-    //------------------------------------------------------------------
-    void run_systems() {
-        // NOTE: we copy every frame so that changes to the
-        // scheduler only apply on the next loop iteration
-        std::multiset<std::shared_ptr<System>, SystemCompare>
-            copy_unregistered_scheduler(unregistered_system_scheduler);
-        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
-            system_scheduler);
-
-        // run unregistered systems
-        for (const auto& system_ptr : copy_unregistered_scheduler) {
-            system_ptr->sys_call();
-        }
-        // run registered systems
-        for (const auto& system_ptr : copy_scheduler) {
-            system_ptr->sys_call();
-        }
-    }
-    //------------------------------------------------------------------
 
     // returns the system cast from the System interface
     template<typename T>
@@ -222,13 +187,15 @@ class SchedulerECS {
   private:
     template<typename T>
     void add_id_to_component_mask(ComponentMask& component_mask) {
-
         auto var = std::is_base_of_v<System, T>;
-        DEBUG_ASSERT(var != true,
-                     "cant add a system to another system's component mask.");
+        DEBUG_ASSERT(
+            var != true,
+            "cant add a system to another system's component mask."
+        );
 
         component_mask |= 1 << get_component_id<T>();
     }
+
     // --------------------------------------------------------------------------------------
   public:
     // filtering methods for entity ids
@@ -244,8 +211,10 @@ class SchedulerECS {
         for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
             // go through all components
             if (component_mask & (1 << id)) {
-                std::string_view component_name = ecs->get_name_of_component_id(id);
-                std::cerr << libassert::highlight_stringify(component_name) << " ";
+                std::string_view component_name =
+                    ecs->get_name_of_component_id(id);
+                std::cerr << libassert::highlight_stringify(component_name)
+                          << " ";
             }
         }
     }
@@ -258,6 +227,7 @@ class SchedulerECS {
         debug_print_scheduler();
         std::cerr << '\n' << '\n';
     }
+
     void debug_print_scheduler() {
         PRINT(system_scheduler);
         PRINT(all_scheduled_unregistered_systems_debug);
@@ -265,13 +235,15 @@ class SchedulerECS {
             auto const& t_name = pair.first;
             auto const& system = pair.second;
             std::cerr << libassert::highlight_stringify(t_name) << " -----> "
-                      << libassert::highlight_stringify(system->priority) << std::endl;
+                      << libassert::highlight_stringify(system->priority)
+                      << std::endl;
         }
         for (auto const& pair : all_scheduled_systems_debug) {
             auto const& t_name = pair.first;
             auto const& system = pair.second;
             std::cerr << libassert::highlight_stringify(t_name) << " -----> "
-                      << libassert::highlight_stringify(system->priority) << std::endl;
+                      << libassert::highlight_stringify(system->priority)
+                      << std::endl;
         }
     }
 };

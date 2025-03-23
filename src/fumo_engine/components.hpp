@@ -1,7 +1,6 @@
 #ifndef COMPONENTS_HPP
 #define COMPONENTS_HPP
 #include "constants.hpp"
-#include "fumo_engine/core/engine_constants.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <string_view>
@@ -11,14 +10,11 @@ struct Body {
     float rotation{}; // NOTE: in degrees?
     Vector2 position = screenCenter;
     Vector2 velocity{0.0f, 0.0f};
-    Vector2 acceleration{0.0f, 0.0f};
     Vector2 gravity_direction = {0.0f, 1.0f};
     Vector2 x_direction = {-gravity_direction.y, gravity_direction.x};
-    bool inverse_direction = false;
 
+    bool inverse_direction = false;
     // player events and state
-    bool on_ground = true;
-    bool jumping = false;
 
     // NOTE: follows the gravity direction, not the vertical player direction
     [[nodiscard]] Vector2 get_y_velocity() {
@@ -27,17 +23,15 @@ struct Body {
     [[nodiscard]] float get_dot_y_velocity() {
         return Vector2DotProduct(velocity, gravity_direction);
     }
-    [[nodiscard]] float get_dot_x_velocity() {
-        return Vector2DotProduct(velocity, {gravity_direction.y, -gravity_direction.x});
+    [[nodiscard]] Vector2 get_x_velocity() {
+        return x_direction * Vector2DotProduct(velocity, x_direction);
     }
     void scale_velocity(float scale) { velocity += gravity_direction * scale; }
 
     // -------------------------------------------------------------------------------
     // trash to delete
-    bool going_up;
-    bool going_down;
     int iterations{};
-    int count{};
+    Vector2 acceleration{0.0f, 0.0f};
     // -------------------------------------------------------------------------------
 };
 
@@ -47,7 +41,6 @@ struct Circle {
 
 struct PlayerShape {
     // TODO: move this to the PlayerFlag
-    EntityId player_owning_field = NO_ENTITY_FOUND;
 
     float radius;
     Vector2 top_circle_center;
@@ -103,43 +96,6 @@ struct CircularGravityField {
     void update_gravity(Body& player_body, const Body& body_planet);
 };
 
-// -------------------------------------------------------------------------------
-// flag structs
-struct Level1Tag {
-    // identify objects in level 1
-    // NOTE: general idea for how levels work:
-    //
-    // we create all the entities a level will need, then we store them in some
-    // level manager thing that deals with them, and knows what belongs where
-    // it also adds the OnScreen component to entities so other systems
-    // can know what entities they should be updating
-    // and it manages the screen transitions
-};
-
-struct OnScreen {
-    // given to entities that are currently on screen
-    // (used by systems that only care about what should be on the screen)
-};
-
-struct Render {
-    Color color;
-};
-
-struct PlayerFlag {
-    // used to identify the player uniquely by associating this struct
-    // to an entity id
-    bool can_swap_orbits = true;
-};
-struct ColliderObjectFlag {
-    // identifies planets and rectangles and such shapes
-};
-struct GravFieldFlag {
-    // if it has a field of any type
-};
-
-struct OutlineRectFlag {};
-
-// -------------------------------------------------------------------------------
 
 // NOTE: to make a really modular and reusable timer class,
 // consider using std::function to send in a function call

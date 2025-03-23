@@ -5,7 +5,7 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-Vector2 starter_position = {screenCenter.x - 150.0f, screenCenter.y + 400};
+Vector2 starter_position = {0.0f, screenCenter.y + 400};
 float previous_width = 500.0f;
 
 void make_some_rects();
@@ -36,11 +36,11 @@ void make_some_rects() {
         // make first planet that owns the player
         EntityId id_planet = planet_factory->create_rect_planet(starter_position);
 
-        auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
-        player_shape.player_owning_field = id_planet;
+        auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
+        player_state.player_owning_field = id_planet;
 
         Rectangle& rect_planet = global->ECS->get_component<Rectangle>(id_planet);
-        rect_planet.width = rect_planet.width * 2;
+        rect_planet.width = rect_planet.width * 4;
         previous_width = rect_planet.width;
 
         ParallelGravityField& rect_field =

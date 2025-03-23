@@ -2,7 +2,6 @@
 #define PLAYER_GENERAL_SYSTEMS_HPP
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
-#include "fumo_engine/components.hpp"
 
 class PlayerInitializer : public System {
   public:
@@ -15,22 +14,7 @@ struct PlayerInputHandler : System {
     void sys_call() override { handle_input(); }
 
     void handle_input();
-};
-
-struct PlayerEndFrameUpdater : System {
-
-    void sys_call() override { end_of_frame_update(); }
-    void end_of_frame_update();
-    void reset_state();
-};
-
-struct JumpBufferHandler : System {
-
-    Body entity_body{};
-
-    void sys_call() override { update_jump_buffer(); }
-    void update_jump_buffer();
-    void assign_entity_to_buffer(Body& new_entity_body) { entity_body = new_entity_body; }
+    void process_input(int key);
 };
 
 #endif

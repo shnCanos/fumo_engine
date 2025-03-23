@@ -4,7 +4,7 @@ set(FETCHCONTENT_QUIET FALSE)
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_LIST_DIR} NAME)
 project(${PROJECT_NAME}
 	VERSION 1.0.0
-	DESCRIPTION "solar system gamign"
+	DESCRIPTION "fumo_engine"
 	# HOMEPAGE_URL "none"
 	LANGUAGES C CXX
 	# CMAKE_BUILD_TYPE Debug
@@ -76,14 +76,13 @@ if(USE_RAYLIB)
     add_git_dependency(
         ${dep}
         https://github.com/raysan5/raylib.git
-        HEAD
+        "master"
     )
     
     FetchContent_GetProperties(${dep})
     if(NOT ${dep}_POPULATED)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/external/raylib/config.h ${CMAKE_CURRENT_SOURCE_DIR}/build/_deps/raylib-src/src/config.h COPYONLY)
-        FetchContent_Populate(${dep})
-        
+        FetchContent_MakeAvailable(${dep})
         add_subdirectory(${${dep}_SOURCE_DIR} ${${dep}_BINARY_DIR})
     endif()
         

@@ -1,6 +1,5 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
-#include "fumo_engine/components.hpp"
 #include "raylib.h"
 
 extern std::unique_ptr<GlobalState> global;
@@ -64,6 +63,6 @@ void load_player_textures() {
 //
 //     const auto& animation_player = global->ECS->get_system<AnimationPlayer>();
 //
-//     animation_player->play(global->ECS->get_component<AnimationInfo>(global->player_id),
+//     AnimationPlayer::play(global->ECS->get_component<AnimationInfo>(global->player_id),
 //                            "scarfy");
 // }

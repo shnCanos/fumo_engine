@@ -1,13 +1,9 @@
-// clang-format off
-#include "fumo_engine/core/event_manager.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/components.hpp"
 #include "raylib.h"
-#include "systems.hpp"
 #include "raymath.h"
+#include "systems.hpp"
 #include <cerrno>
 #include <sched.h>
-// clang-format on
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -44,7 +40,12 @@ void BodyMovement::move_horizontally(Body& body, float amount) {
     body.velocity += body.x_direction * amount * movement_scaling;
 }
 
+float scaling = -980.0f * 3;
+float default_scaling = -980.0f * 3;
+float going_down_scaling = -980.0f;
+float default_going_down_scaling = -980.0f;
 void BodyMovement::jump(Body& body) {
+    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
 
     // TODO:
     // Bonus Air Time
@@ -52,95 +53,55 @@ void BodyMovement::jump(Body& body) {
     // Fast Falling
     // Lerp the jump movement
 
-    // body.velocity = Vector2Negate(body.gravity_direction * 2000.0f);
+    if (player_state.jumping) {
+        // allow player to jump right after touching the ground
+        // (reset previous jump if we touch ground again and jump)
+        scaling = default_scaling;
+        going_down_scaling = default_going_down_scaling;
+        body.iterations = 0;
+    }
 
     body.velocity += Vector2Negate(body.gravity_direction) * jump_scaling;
-    body.jumping = true;
-    body.going_up = true;
-    body.on_ground = false;
-    // auto scheduler_ecs = global->ECS->get_system<SchedulerSystemECS>();
-    // scheduler_ecs->awake_system<JumpPhysicsHandler>();
-
-    // NOTE: finally need the system awake thing naisu
+    player_state.jumping = true;
+    player_state.on_ground = false;
 }
 
-// bool JumpPhysicsHandler::hard_coded_jump() {
-//     // NOTE: this code is for testing and will be removed later
-//
-//     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-//     if (player_body.jumping) {
-//         // going up smoothing
-//         if (player_body.going_up) {
-//             player_body.iterations++;
-//             player_body.scale_velocity(-52.0f /
-//                                        (player_body.iterations ));
-//             if (player_body.iterations < 10) {
-//                 return true;
-//             }
-//
-//             player_body.scale_velocity(-0.5f /
-//                                        (player_body.iterations ));
-//
-//             if (player_body.iterations == 24) {
-//                 player_body.going_up = false;
-//                 player_body.going_down = true;
-//                 player_body.iterations = 0;
-//             }
-//         }
-//         // going down smoothing
-//         if (player_body.going_down) {
-//             // 25000 at least downwards
-//             player_body.iterations++;
-//             player_body.scale_velocity(52.0f * player_body.iterations);
-//
-//             if (player_body.iterations == 10) {
-//                 player_body.jumping = false;
-//                 player_body.going_down = false;
-//                 player_body.iterations = 0;
-//                 // const auto& scheduler_system =
-//                 //     global->ECS->get_system<SchedulerSystemECS>();
-//                 // scheduler_system->sleep_system<JumpPhysicsHandler>();
-//             }
-//         }
-//         return true;
-//     }
-//     return false;
-// }
-float scaling = -980.0f * 3;
-float default_scaling = -980.0f * 3;
-float going_down_scaling = -980.0f;
-void JumpPhysicsHandler::hard_coded_jump() {
+void BodyMovement::hard_coded_jump() {
     // NOTE: this code is for testing and will be removed later
 
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
 
     // going up smoothing
-    // FIXME: finish the jump code
-    // finish fixing gravity fields
-    // finish making level 0
-    if (player_body.jumping) {
+    if (player_state.jumping) {
         player_body.iterations++;
 
         if (player_body.iterations < 6) {
             player_body.scale_velocity(scaling);
             scaling /= 1.1f;
-        } else {
+        } else if (player_body.iterations < 24) {
             player_body.scale_velocity(scaling);
-            scaling /= 1.2f;
+            scaling /= 1.1f;
         }
 
-        if (player_body.iterations > 12) {
+        if (player_body.iterations >= 24) {
 
-            player_body.iterations++;
             player_body.scale_velocity(going_down_scaling);
-            going_down_scaling /= 1.1f;
+            going_down_scaling /= 1.2f;
 
-            if (player_body.iterations == 24) {
+            if (player_body.iterations == 46) {
 
                 player_body.iterations = 0;
-                player_body.jumping = false;
+                player_state.jumping = false;
                 scaling = default_scaling;
+                going_down_scaling = default_going_down_scaling;
             }
+            return;
+        }
+        if (player_body.get_dot_y_velocity() < 0) {
+            // used up to iteration 24
+            // we stopped going upwards
+            if (scaling > going_down_scaling) scaling = going_down_scaling;
         }
     }
 }
