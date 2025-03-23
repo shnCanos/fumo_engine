@@ -17,8 +17,25 @@ void StateHandler::handle_state(
     const EntityId& entity_id,
     const EntityState& entity_state
 ) {
-    // FIXME: add a method for updating all EntityStates based on
-    // matching each state so we get the behavior we want
+    auto& player_body = global->ECS->get_component<Body>(entity_id);
+    auto& player_animation = global->ECS->get_component<AnimationInfo>(entity_id);
+    auto& player_state = global->ECS->get_component<EntityState>(entity_id);
+
+    if (player_state.jumping) {
+        if (player_animation.frame_progress != player_animation.sprite_frame_count) {
+            AnimationPlayer::play(player_animation, "jump");
+        }
+    }
+
+    if (!player_state.jumping && !player_state.on_ground) {
+        AnimationPlayer::play(player_animation, "jump");
+
+        player_animation.frame_progress = 3;
+        player_animation.current_region_rect.x =
+            player_animation.current_region_rect.width
+            * player_animation.frame_progress;
+        player_animation.is_running = true;
+    }
 }
 
 void StateHandler::end_of_frame_update() {

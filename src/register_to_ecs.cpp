@@ -58,26 +58,21 @@ void register_systems_scheduled() {
     });
 
     global->ECS->register_system<PlayerCollisionRunner, 3>(EntityQuery {
-        .component_mask =
-            global->ECS->make_component_mask<ColliderObjectFlag>(),
+        .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
         .component_filter = Filter::Any
     });
 
-    global->ECS->register_system<StateHandler, MAX_PRIORITY - 1>(
-        EntityQuery {
-            .component_mask =
-                global->ECS->make_component_mask<ColliderObjectFlag>(),
-            .component_filter = Filter::Any
-        }
-    );
+    global->ECS->register_system<StateHandler, MAX_PRIORITY - 1>(EntityQuery {
+        .component_mask = global->ECS->make_component_mask<EntityState>(),
+        .component_filter = Filter::All
+    });
 
     //--------------------------------------------------------------------------------------
     // misc systems
 
     global->ECS->register_system<DebugLevelEditor, 5>(EntityQuery {
         .component_mask =
-            global->ECS->make_component_mask<GravFieldFlag, ColliderObjectFlag>(
-            ),
+            global->ECS->make_component_mask<GravFieldFlag, ColliderObjectFlag>(),
         .component_filter = Filter::Any
     });
     // global->ECS->register_system<TimerHandler, 7>(
@@ -87,14 +82,12 @@ void register_systems_scheduled() {
     //--------------------------------------------------------------------------------------
     // render everything at the end
     global->ECS->register_system<ObjectRenderer, MAX_PRIORITY>(EntityQuery {
-        .component_mask =
-            global->ECS->make_component_mask<ColliderObjectFlag>(),
+        .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
         .component_filter = Filter::All
     });
 
     global->ECS->register_system<AnimationRenderer, MAX_PRIORITY>(EntityQuery {
-        .component_mask =
-            global->ECS->make_component_mask<Body, AnimationInfo>(),
+        .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
         .component_filter = Filter::All
     });
 
@@ -110,12 +103,8 @@ void register_systems_scheduled() {
 }
 
 void register_unregistered_systems_unscheduled() {
-    global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(
-        global->ECS
-    );
+    global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
     // global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
     // global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<LevelEntityFactory>();
-    global->ECS->add_unregistered_system_unscheduled<PlayerInitializer>();
 }
-

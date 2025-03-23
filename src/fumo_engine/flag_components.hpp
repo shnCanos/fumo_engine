@@ -15,13 +15,16 @@ constexpr uint64_t MAX_EVENTS = 64;
 // state and event components
 enum struct EVENT_ {
     //-----------------------------------------------------------------
+    // input handling
     ENTITY_JUMPED,
     ENTITY_MOVED_LEFT,
     ENTITY_MOVED_RIGHT,
+    ENTITY_MOVED_UP,
+    ENTITY_MOVED_DOWN,
+    ENTITY_IDLE,
+    //-----------------------------------------------------------------
     ENTITY_SWAPPED_ORBITS,
     ENTITY_FELL_FROM_GROUND,
-    //-----------------------------------------------------------------
-    NO_KEY_PRESSED,
 
 };
 

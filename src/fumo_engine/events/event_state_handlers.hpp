@@ -30,6 +30,9 @@ namespace EventHandler {
 void move_left(const Event& event);
 void move_right(const Event& event);
 void jumped(const Event& event);
+void move_up(const Event& event);
+void move_down(const Event& event);
+void idle(const Event& event);
 
 } // namespace EventHandler
 

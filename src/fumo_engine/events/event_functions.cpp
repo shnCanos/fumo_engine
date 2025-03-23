@@ -7,6 +7,15 @@ extern std::unique_ptr<GlobalState> global;
 
 namespace EventHandler {
 
+void jumped(const Event& event) {
+    auto& player_body = global->ECS->get_component<Body>(event.entity_id);
+    auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
+
+    if (player_state.on_ground) {
+        BodyMovement::jump(player_body);
+    }
+}
+
 void move_left(const Event& event) {
     auto& player_body = global->ECS->get_component<Body>(event.entity_id);
     auto& player_animation = global->ECS->get_component<AnimationInfo>(event.entity_id);
@@ -29,15 +38,22 @@ void move_right(const Event& event) {
     BodyMovement::move_horizontally(player_body, 1.0f);
 }
 
-void jumped(const Event& event) {
+void move_up(const Event& event) {
     auto& player_body = global->ECS->get_component<Body>(event.entity_id);
+    BodyMovement::move_vertically(player_body, 1.0f);
+}
+
+void move_down(const Event& event) {
+    auto& player_body = global->ECS->get_component<Body>(event.entity_id);
+    BodyMovement::move_vertically(player_body, -1.0f);
+}
+
+void idle(const Event& event) {
     auto& player_animation = global->ECS->get_component<AnimationInfo>(event.entity_id);
     auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
 
-    if (player_state.jumping) {
-        if (player_animation.frame_progress != player_animation.sprite_frame_count) {
-            AnimationPlayer::play(player_animation, "jump");
-        }
+    if (player_state.on_ground) {
+        AnimationPlayer::play(player_animation, "idle");
     }
 }
 
