@@ -33,6 +33,7 @@ void register_components() {
     global->ECS->register_component<OutlineRectFlag>();
 
     global->ECS->register_component<EntityState>();
+    global->ECS->register_component<MovedEventData>();
     // global->ECS->register_component<Event>();
 
     // global->ECS->register_component<Level1Tag>();

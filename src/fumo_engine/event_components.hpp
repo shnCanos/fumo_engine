@@ -4,6 +4,7 @@
 
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
+#include "objects/generic_systems/systems.hpp"
 #include "raylib.h"
 
 // slowly rotate player to the new gravity direction
@@ -27,7 +28,6 @@ enum struct EVENT_ {
     //-----------------------------------------------------------------
     ENTITY_SWAPPED_ORBITS,
     // ENTITY_FELL_FROM_GROUND,
-
 };
 
 struct Event {
@@ -44,6 +44,12 @@ struct EntityState {
     bool idle = true;
 
     EntityId player_owning_field = NO_ENTITY_FOUND;
+};
+
+struct MovedEventData {
+    DIRECTION direction;
+    DIRECTION previous_direction = DIRECTION::NO_DIRECTION;
+    DIRECTION continue_in_direction;
 };
 
 //-----------------------------------------------------------------

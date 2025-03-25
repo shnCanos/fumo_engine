@@ -1,4 +1,3 @@
-
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/events/event_state_handlers.hpp"
 #include "objects/generic_systems/systems.hpp"
@@ -36,8 +35,15 @@ void idle(const Event& event) {
 
     // reset moved_wrapper so we can allow for smoother controls,
     // whilc also not breaking the direction of the movement when we stop
-    const auto& moved_wrapper = global->ECS->get_system<MovedWrapper>();
-    moved_wrapper->previous_direction = DIRECTION::NO_DIRECTION;
+    EntityQuery query_moved_event {
+        .component_mask = global->ECS->make_component_mask<MovedEventData>(),
+        .component_filter = Filter::All};
+
+    if (global->ECS->filter(event.entity_id, query_moved_event)) {
+        auto& moved_event_data =
+            global->ECS->get_component<MovedEventData>(event.entity_id);
+        moved_event_data.previous_direction = DIRECTION::NO_DIRECTION;
+    }
 }
 
 void swapped_orbits(const Event& event) {
@@ -84,7 +90,7 @@ DIRECTION opposite_direction(DIRECTION direction) {
 }
 
 ACCEPT find_acceptance_state(float rotation) {
-    // PRINT(rotation)
+    PRINT(rotation)
     if (-135 <= rotation && rotation <= -45) {
         return ACCEPT::VERTICAL_INVERT;
     }
@@ -103,9 +109,14 @@ ACCEPT find_acceptance_state(float rotation) {
 void MovedWrapper::moved_event() {
     auto& player_body = global->ECS->get_component<Body>(entity_id);
     auto& player_state = global->ECS->get_component<EntityState>(entity_id);
+    auto& move_event_data = global->ECS->get_component<MovedEventData>(entity_id);
 
     const auto& grav_direction = player_body.gravity_direction;
     const auto& rotation = player_body.rotation;
+
+    DIRECTION previous_direction = move_event_data.previous_direction;
+    DIRECTION direction = move_event_data.direction;
+    DIRECTION continue_in_direction = move_event_data.continue_in_direction;
 
     //--------------------------------------------------------------------------------------
     // previous frame checking (for more responsive player controller)

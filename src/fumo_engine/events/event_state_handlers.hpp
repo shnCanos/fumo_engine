@@ -4,7 +4,6 @@
 
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_engine/event_components.hpp"
-#include "objects/generic_systems/systems.hpp"
 
 // NOTE: while this is ONLY for the player,
 // this class might be generalized to any entity in the future
@@ -24,12 +23,10 @@ class EntityEventHandler {
   private:
     void handle_events();
     void handle_event(const Event& event);
-    //--------------------------------------------------------------------------------------
-    // event handling
-    //--------------------------------------------------------------------------------------
 };
 
 namespace EventHandler {
+
 
 void jumped(const Event& event);
 void idle(const Event& event);
@@ -49,10 +46,8 @@ struct StateHandler: System {
 };
 
 struct MovedWrapper: System {
-    DIRECTION direction;
+
     EntityId entity_id;
-    DIRECTION previous_direction = DIRECTION::NO_DIRECTION;
-    DIRECTION continue_in_direction;
 
     void sys_call() override {
         moved_event();

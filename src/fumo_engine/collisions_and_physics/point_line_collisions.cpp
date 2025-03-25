@@ -1,13 +1,15 @@
 #include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
+
 #include "fumo_engine/core/global_state.hpp"
 #include "raymath.h"
 extern std::unique_ptr<GlobalState> global;
 
-void weird_debug_print(std::pair<float, Vector2> closest_pair,
-                       std::pair<float, Vector2> bottom_pair,
-                       std::pair<float, Vector2> left_pair,
-                       std::pair<float, Vector2> right_pair,
-                       std::pair<float, Vector2> top_pair) {
+void weird_debug_print(
+    std::pair<float, Vector2> closest_pair,
+    std::pair<float, Vector2> bottom_pair,
+    std::pair<float, Vector2> left_pair,
+    std::pair<float, Vector2> right_pair,
+    std::pair<float, Vector2> top_pair) {
     // -------------------------------------------------------------------------------
     // DEBUG
     BeginMode2D(*global->camera);
@@ -52,9 +54,10 @@ void weird_debug_print(std::pair<float, Vector2> closest_pair,
 //
 //     return Distance;
 // }
-[[nodiscard]] std::pair<float, Vector2>
-PointToLineDistanceAndIntersection(const Vector2& Point, const Vector2& LineStart,
-                                   const Vector2& LineEnd) {
+[[nodiscard]] std::pair<float, Vector2> PointToLineDistanceAndIntersection(
+    const Vector2& Point,
+    const Vector2& LineStart,
+    const Vector2& LineEnd) {
     // draw a perpendicular line from the point towards the input line
     // Example:   LineStart
     //               |
@@ -88,7 +91,6 @@ PointToLineDistanceAndIntersection(const Vector2& Point, const Vector2& LineStar
     float d1 = Vector2Distance(Intersection, LineStart);
     float d2 = Vector2Distance(Intersection, LineEnd);
     if (d1 + d2 >= LineMag - buffer && d1 + d2 <= LineMag + buffer) {
-
         float Distance = Vector2Distance(Point, Intersection);
         // --------------------------------------------------------------------
         // find the distance from the point to the line intersection
@@ -99,9 +101,9 @@ PointToLineDistanceAndIntersection(const Vector2& Point, const Vector2& LineStar
     return {0, {0.0f, 0.0f}}; // closest point does not fall along the line
 }
 
-[[nodiscard]] std::pair<float, Vector2>
-PointToLineDistanceAndIntersection(const Vector2& Point,
-                                   const std::pair<Vector2, Vector2>& line) {
+[[nodiscard]] std::pair<float, Vector2> PointToLineDistanceAndIntersection(
+    const Vector2& Point,
+    const std::pair<Vector2, Vector2>& line) {
     float LineMag;
     float U;
     Vector2 Intersection;
@@ -110,9 +112,9 @@ PointToLineDistanceAndIntersection(const Vector2& Point,
 
     LineMag = Vector2Distance(LineEnd, LineStart);
 
-    U = (((Point.x - LineStart.y) * (LineEnd.x - LineStart.x)) +
-         ((Point.y - LineStart.y) * (LineEnd.x - LineStart.y))) /
-        (LineMag * LineMag);
+    U = (((Point.x - LineStart.y) * (LineEnd.x - LineStart.x))
+         + ((Point.y - LineStart.y) * (LineEnd.x - LineStart.y)))
+        / (LineMag * LineMag);
 
     if (U < 0.0f || U > 1.0f)
         return {0.0f, {0.0f, 0.0f}}; // closest point does not fall along the line
@@ -135,7 +137,7 @@ closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances) 
     // with a circle
     // we pick the closest side to the circle center
 
-    std::pair<float, Vector2> min_pair{6969696, {0.0f, 0.0f}};
+    std::pair<float, Vector2> min_pair {6969696, {0.0f, 0.0f}};
 
     for (const auto& pair : distances) {
         const auto& dist = pair.first;
@@ -148,10 +150,11 @@ closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances) 
     }
     return min_pair;
 }
-[[nodiscard]] Vector2 closest_point(const Vector2 target,
-                                    const std::vector<Vector2>& points) {
-    Vector2 closest_point{6969, 6969};
-    float min_distance{696969};
+
+[[nodiscard]] Vector2
+closest_point(const Vector2 target, const std::vector<Vector2>& points) {
+    Vector2 closest_point {6969, 6969};
+    float min_distance {696969};
 
     for (const auto& point : points) {
         float dist = Vector2Distance(target, point);
@@ -162,40 +165,19 @@ closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances) 
     }
     return closest_point;
 }
-// [[nodiscard]] Vector2 LineToLineIntersection(const std::pair<Vector2, Vector2>& line1,
-//                                              const std::pair<Vector2, Vector2>& line2)
-//                                              {
-//
-//     // calculate the distance to intersection point
-//
-//     Vector2 intersection{0.0f, 0.0f};
-//
-//     float uA = ((line2.second.x - line2.first.x) * (line1.first.y - line2.first.y) -
-//                 (line2.second.y - line2.first.y) * (line1.first.x - line2.first.x)) /
-//                ((line2.second.y - line2.first.y) * (line1.second.x - line1.first.x) -
-//                 (line2.second.x - line2.first.x) * (line1.second.y - line1.first.y));
-//
-//     float uB = ((line1.second.x - line1.first.x) * (line1.first.y - line2.first.y) -
-//                 (line1.second.y - line1.first.y) * (line1.first.x - line2.first.x)) /
-//                ((line2.second.y - line2.first.y) * (line1.second.x - line1.first.x) -
-//                 (line2.second.x - line2.first.x) * (line1.second.y - line1.first.y));
-//
-//     // if uA and uB are between 0-1, lines are colliding
-//     if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
-//         intersection.x = line1.first.x + (uA * (line1.second.x - line1.first.x));
-//         intersection.y = line1.first.y + (uA * (line1.second.y - line1.first.y));
-//     }
-//     return intersection;
-// }
-[[nodiscard]] std::pair<float, Vector2>
-CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& radius,
-                                    const Rectangle& rect, const Body& rect_body) {
+
+[[nodiscard]] std::pair<float, Vector2> CircleToRectDistanceAndIntersection(
+    const Vector2& circle_center,
+    const float& radius,
+    const Rectangle& rect,
+    const Body& rect_body) {
     Vector2 TopLeft = {rect_body.position.x, rect_body.position.y};
     Vector2 TopRight = {rect_body.position.x + rect.width, rect_body.position.y};
     Vector2 BottomLeft = {rect_body.position.x, rect_body.position.y + rect.height};
-    Vector2 BottomRight = {rect_body.position.x + rect.width,
-                           rect_body.position.y + rect.height};
-    std::vector<Vector2> points{TopLeft, TopRight, BottomLeft, BottomRight};
+    Vector2 BottomRight = {
+        rect_body.position.x + rect.width,
+        rect_body.position.y + rect.height};
+    std::vector<Vector2> points {TopLeft, TopRight, BottomLeft, BottomRight};
 
     float intersection_distance;
     Vector2 closest_corner;
@@ -270,16 +252,19 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
 //  this means we want to move the circle away from the corner, so we take
 //  the closest corner and solve for that
 // -------------------------------------------------------------------------------
-[[nodiscard]] Collision PlayerToRectCollision(const PlayerShape& player_shape,
-                                              const Body& player_body,
-                                              const Rectangle& rectangle,
-                                              const Body& rectangle_body) {
+[[nodiscard]] Collision PlayerToRectCollision(
+    const PlayerShape& player_shape,
+    const Body& player_body,
+    const Rectangle& rectangle,
+    const Body& rectangle_body) {
     std::pair<float, Vector2> closest_dist_intersection = {0.0f, {0.0f, 0.0f}};
     Collision collision = {0.0f, {0.0f, 0.0f}};
     // -------------------------------------------------------------------------------
     // try the bottom circle for collisions
     closest_dist_intersection = CircleToRectDistanceAndIntersection(
-        player_shape.bottom_circle_center, player_shape.radius, rectangle,
+        player_shape.bottom_circle_center,
+        player_shape.radius,
+        rectangle,
         rectangle_body);
 
     if (closest_dist_intersection.first != 0.0f) {
@@ -302,7 +287,10 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
     // -------------------------------------------------------------------------------
     // // try the top circle for collisions
     closest_dist_intersection = CircleToRectDistanceAndIntersection(
-        player_shape.top_circle_center, player_shape.radius, rectangle, rectangle_body);
+        player_shape.top_circle_center,
+        player_shape.radius,
+        rectangle,
+        rectangle_body);
 
     if (closest_dist_intersection.first != 0.0f) {
         // this means we collided with the top circle
@@ -311,7 +299,6 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
         // DrawCircleV(closest_dist_intersection.second, default_radius, BLUE);
         // EndMode2D();
         if (closest_dist_intersection.first < player_shape.radius) {
-
             collision.overlap = player_shape.radius - closest_dist_intersection.first;
             collision.push =
                 player_shape.top_circle_center - closest_dist_intersection.second;
@@ -320,13 +307,14 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
     return collision;
 }
 
-[[nodiscard]] Collision PlayerToCircleCollision(const PlayerShape& player_shape,
-                                                const Body& player_body,
-                                                const Circle& circle_shape,
-                                                const Body& circle_body) {
+[[nodiscard]] Collision PlayerToCircleCollision(
+    const PlayerShape& player_shape,
+    const Body& player_body,
+    const Circle& circle_shape,
+    const Body& circle_body) {
     float radius_sum = player_shape.radius + circle_shape.radius;
     float overlap = 0.0f;
-    Vector2 push_direction{0.0f, 0.0f};
+    Vector2 push_direction {0.0f, 0.0f};
     // -------------------------------------------------------------------------------
     // bottom circle collision check
     float bottom_distance =
@@ -353,11 +341,12 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
     //
     // -------------------------------------------------------------------------------
     // capsule sides collision check
-    const auto left_line_distance_pair =
-        PointToLineDistanceAndIntersection(circle_body.position, player_shape.left_line);
+    const auto left_line_distance_pair = PointToLineDistanceAndIntersection(
+        circle_body.position,
+        player_shape.left_line);
 
-    if (left_line_distance_pair.first != 0 &&
-        left_line_distance_pair.first < circle_shape.radius) {
+    if (left_line_distance_pair.first != 0
+        && left_line_distance_pair.first < circle_shape.radius) {
         // collided with left_line
         overlap = circle_shape.radius - left_line_distance_pair.first;
         push_direction = left_line_distance_pair.second - circle_body.position;
@@ -365,10 +354,11 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& r
     }
 
     const auto right_line_distance_pair = PointToLineDistanceAndIntersection(
-        circle_body.position, player_shape.right_line);
+        circle_body.position,
+        player_shape.right_line);
 
-    if (right_line_distance_pair.first != 0 &&
-        right_line_distance_pair.first < circle_shape.radius) {
+    if (right_line_distance_pair.first != 0
+        && right_line_distance_pair.first < circle_shape.radius) {
         // collided with right_line
         overlap = circle_shape.radius - right_line_distance_pair.first;
         push_direction = right_line_distance_pair.second - circle_body.position;

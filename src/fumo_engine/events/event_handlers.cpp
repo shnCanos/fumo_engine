@@ -20,7 +20,6 @@ void EntityEventHandler::handle_event(const Event& event) {
 
         case EVENT_::ENTITY_MOVED:
             // handles all 4 move directions
-            // lasting_event_vector.push_back(event);
             event.delegate_system->sys_call();
             break;
 
@@ -34,7 +33,8 @@ void EntityEventHandler::handle_event(const Event& event) {
 
         case EVENT_::ENTITY_COLLIDED:
             EventHandler::collided(event);
-
             break;
+        // case EVENT_::ENTITY_FELL_FROM_GROUND:
+        //     break;
     }
 }
