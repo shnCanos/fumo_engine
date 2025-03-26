@@ -48,10 +48,13 @@ void StateHandler::end_of_frame_update() {
     UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
     //-----------------------------------------------------------------
     // apply movement changes to the player
-    player_body.x_direction = {player_body.gravity_direction.y,
-                               -player_body.gravity_direction.x};
-    player_body.rotation =
-        std::atan2(player_body.x_direction.y, player_body.x_direction.x) * RAD2DEG;
+    if (player_state.can_swap_orbits) {
+        player_body.x_direction = {player_body.gravity_direction.y,
+                                   -player_body.gravity_direction.x};
+        player_body.rotation =
+            std::atan2(player_body.x_direction.y, player_body.x_direction.x)
+            * RAD2DEG;
+    }
 
     if (player_state.on_ground) {
         // dont move in the GRAVITY direction while player is on the ground
@@ -68,9 +71,7 @@ void StateHandler::end_of_frame_update() {
             player_body.get_y_velocity() * 3 / 4 + player_body.get_x_velocity();
     }
     // FIXME:
-    //-----------------------------------------------------------------
-
-    // PRINT(player_body.get_dot_y_velocity());
+    // -----------------------------------------------------------------
 
     player_body.position += player_body.velocity * global->frametime;
     player_shape.update_capsule_positions(player_body);

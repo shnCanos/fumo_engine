@@ -68,22 +68,12 @@ void BodyMovement::hard_coded_jump() {
     auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
 
-    // if (player_state.jumping) {
-    //     if(IsKeyDown(KEY_SPACE)) {
-    //         player_body.velocity
-    //
-    //     }
-    //
-    // }
-
     if (IsKeyReleased(KEY_SPACE)) {
         if (player_body.iterations < 30) {
             player_body.iterations = 40;
 
             going_down_scaling = scaling;
         }
-        // player_state.jumping = false;
-        // scaling = default_scaling;
     }
 
     // going up smoothing
@@ -116,12 +106,6 @@ void BodyMovement::hard_coded_jump() {
         player_state.jumping = false;
         scaling = default_scaling;
         going_down_scaling = default_going_down_scaling;
-        // if (player_body.get_dot_y_velocity() < 0) {
-        //     // used up to iteration 24
-        //     // we stopped going upwards
-        //     if (scaling > going_down_scaling)
-        //         scaling = going_down_scaling;
-        // }
     }
 }
 

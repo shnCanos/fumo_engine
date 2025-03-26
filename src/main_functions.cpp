@@ -2,6 +2,22 @@
 #include "fumo_engine/core/global_state.hpp"
 
 extern std::unique_ptr<GlobalState> global;
+DIRECTION opposite_direction(DIRECTION direction) {
+    if (direction == DIRECTION::LEFT) {
+        return DIRECTION::RIGHT;
+    }
+    if (direction == DIRECTION::RIGHT) {
+        return DIRECTION::LEFT;
+    }
+    if (direction == DIRECTION::UP) {
+        return DIRECTION::DOWN;
+    }
+    if (direction == DIRECTION::DOWN) {
+        return DIRECTION::UP;
+    }
+    PANIC("UNREACHABLE OR GAVE PREVIOUS_DIRECTION (FIX THIS)");
+    std::unreachable();
+}
 
 // bool IsKeyStillDown(int key) {
 //     bool still_down = false;
