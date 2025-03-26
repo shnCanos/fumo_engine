@@ -48,7 +48,7 @@ void load_player_textures() {
         SpriteSheet2D{.texture_sheet = back_sheet,
                       .sprite_sheet_name = "run_backwards",
                       .sprite_frame_count = 8,
-                      .base_frame_speed = 5,
+                      .base_frame_speed = 6,
                       .base_region_rect = {.x = 0.0f,
                                            .y = 0.0f,
                                            .width = (float)back_sheet.width / -8.0f,

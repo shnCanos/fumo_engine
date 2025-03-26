@@ -17,6 +17,7 @@ void jumped(const Event& event) {
         // cancel previous jump if we were in the middle of it
         player_body.iterations = 0;
     }
+
     if (player_state.on_ground) {
         player_state.jumping = true;
         player_state.on_ground = false;
@@ -26,7 +27,8 @@ void jumped(const Event& event) {
 }
 
 void idle(const Event& event) {
-    auto& player_animation = global->ECS->get_component<AnimationInfo>(event.entity_id);
+    auto& player_animation =
+        global->ECS->get_component<AnimationInfo>(event.entity_id);
     auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
 
     if (player_state.on_ground) {
@@ -89,12 +91,28 @@ DIRECTION opposite_direction(DIRECTION direction) {
     std::unreachable();
 }
 
+// ACCEPT find_acceptance_state(float rotation) {
+//     PRINT(rotation)
+//     if (-135 <= rotation && rotation <= -45) {
+//         return ACCEPT::VERTICAL_INVERT;
+//     }
+//     if (45 <= rotation && rotation <= 135) {
+//         return ACCEPT::VERTICAL;
+//     }
+//     if (-45 <= rotation && rotation <= 45) {
+//         return ACCEPT::HORIZONTAL;
+//     }
+//     if (135 <= rotation || rotation <= -135) {
+//         return ACCEPT::HORIZONTAL_INVERT;
+//     }
+//     std::unreachable();
+// }
 ACCEPT find_acceptance_state(float rotation) {
     PRINT(rotation)
     if (-135 <= rotation && rotation <= -45) {
         return ACCEPT::VERTICAL_INVERT;
     }
-    if (45 <= rotation && rotation <= 135) {
+    if (-180 <= rotation && rotation <= 0) {
         return ACCEPT::VERTICAL;
     }
     if (-45 <= rotation && rotation <= 45) {
@@ -106,6 +124,29 @@ ACCEPT find_acceptance_state(float rotation) {
     std::unreachable();
 }
 
+[[nodiscard]] Vector2 direction_to_vector(DIRECTION direction) {
+    switch (direction) {
+        case DIRECTION::LEFT:
+            return {-1.0f, 0.0f};
+        case DIRECTION::RIGHT:
+            return {1.0f, 0.0f};
+        case DIRECTION::UP:
+            return {0.0f, -1.0f};
+        case DIRECTION::DOWN:
+            return {0.0f, 1.0f};
+        default:
+            PRINT("sent to unreachable code NO_DIRECTION");
+            std::unreachable();
+            break;
+    }
+}
+
+DIRECTION find_real_direction(DIRECTION direction, const Body& body) {
+    Vector2 vec_direction = direction_to_vector(direction);
+    return (Vector2DotProduct(vec_direction, body.x_direction) > 0) ? DIRECTION::RIGHT
+                                                                    : DIRECTION::LEFT;
+}
+
 void MovedWrapper::moved_event() {
     auto& player_body = global->ECS->get_component<Body>(entity_id);
     auto& player_state = global->ECS->get_component<EntityState>(entity_id);
@@ -114,91 +155,31 @@ void MovedWrapper::moved_event() {
     const auto& grav_direction = player_body.gravity_direction;
     const auto& rotation = player_body.rotation;
 
-    DIRECTION previous_direction = move_event_data.previous_direction;
-    DIRECTION direction = move_event_data.direction;
-    DIRECTION continue_in_direction = move_event_data.continue_in_direction;
+    DIRECTION& previous_direction = move_event_data.previous_direction;
+    DIRECTION& direction = move_event_data.direction;
+    DIRECTION& continue_in_direction = move_event_data.continue_in_direction;
 
     //--------------------------------------------------------------------------------------
     // previous frame checking (for more responsive player controller)
+    PRINT(previous_direction);
+    PRINT(direction);
+
     if (previous_direction == direction) {
         // allow player to hold a key and continue moving along the planet
         BodyMovement::move(entity_id, continue_in_direction);
         return;
+
     } else if (previous_direction == opposite_direction(direction)) {
         // also allow them to switch to the other key too without losing control
-        BodyMovement::move(entity_id, opposite_direction(continue_in_direction));
+        continue_in_direction = opposite_direction(continue_in_direction);
+        previous_direction = direction;
+        BodyMovement::move(entity_id, continue_in_direction);
         return;
     }
     //--------------------------------------------------------------------------------------
 
-    ACCEPT filter = find_acceptance_state(rotation);
-
-    switch (direction) {
-        case DIRECTION::LEFT:
-            switch (filter) {
-                case ACCEPT::HORIZONTAL: {
-                    BodyMovement::move(entity_id, DIRECTION::LEFT);
-                    previous_direction = direction;
-                    continue_in_direction = DIRECTION::LEFT;
-                    break;
-                }
-                case ACCEPT::HORIZONTAL_INVERT:
-                    BodyMovement::move(entity_id, DIRECTION::RIGHT);
-                    previous_direction = direction;
-                    continue_in_direction = DIRECTION::RIGHT;
-                default:
-                    break;
-            }
-            break;
-        case DIRECTION::RIGHT:
-            switch (filter) {
-                case ACCEPT::HORIZONTAL: {
-                    BodyMovement::move(entity_id, DIRECTION::RIGHT);
-                    previous_direction = direction;
-                    continue_in_direction = DIRECTION::RIGHT;
-                    break;
-                }
-                case ACCEPT::HORIZONTAL_INVERT:
-                    BodyMovement::move(entity_id, DIRECTION::LEFT);
-                    previous_direction = direction;
-                    continue_in_direction = DIRECTION::LEFT;
-                default:
-                    break;
-            }
-            break;
-        case DIRECTION::UP:
-            switch (filter) {
-                case ACCEPT::VERTICAL:
-                    BodyMovement::move(entity_id, DIRECTION::LEFT);
-                    previous_direction = direction;
-                    continue_in_direction = DIRECTION::LEFT;
-                    break;
-                case ACCEPT::VERTICAL_INVERT:
-                    BodyMovement::move(entity_id, DIRECTION::RIGHT);
-                    continue_in_direction = DIRECTION::RIGHT;
-                    previous_direction = direction;
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case DIRECTION::DOWN:
-            switch (filter) {
-                case ACCEPT::VERTICAL:
-                    BodyMovement::move(entity_id, DIRECTION::RIGHT);
-                    previous_direction = direction;
-                    continue_in_direction = DIRECTION::RIGHT;
-                    break;
-
-                case ACCEPT::VERTICAL_INVERT:
-                    BodyMovement::move(entity_id, DIRECTION::LEFT);
-                    previous_direction = direction;
-                    continue_in_direction = DIRECTION::LEFT;
-                    break;
-                default:
-                    break;
-            }
-        default:
-            break;
-    }
+    DIRECTION real_direction = find_real_direction(direction, player_body);
+    continue_in_direction = real_direction;
+    previous_direction = direction;
+    BodyMovement::move(entity_id, real_direction);
 }

@@ -1,9 +1,10 @@
 #ifndef POINT_LINE_COLLISIONS_HPP
 #define POINT_LINE_COLLISIONS_HPP
-#include "fumo_engine/components.hpp"
-#include "raylib.h"
 #include <utility>
 #include <vector>
+
+#include "fumo_engine/components.hpp"
+#include "raylib.h"
 
 struct Collision {
     float overlap;
@@ -14,7 +15,8 @@ struct Collision {
 // LineStart,
 //                                         const Vector2& LineEnd);
 [[nodiscard]] std::pair<float, Vector2>
-PointToLineDistanceAndIntersection(const Vector2& Point, const Vector2& LineStart,
+PointToLineDistanceAndIntersection(const Vector2& Point,
+                                   const Vector2& LineStart,
                                    const Vector2& LineEnd);
 [[nodiscard]] std::pair<float, Vector2>
 PointToLineDistanceAndIntersection(const Vector2& Point,
@@ -27,8 +29,10 @@ closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances);
 //                                              const std::pair<Vector2, Vector2>&
 //                                              line2);
 [[nodiscard]] std::pair<float, Vector2>
-CircleToRectDistanceAndIntersection(const Vector2& circle_center, const float& radius,
-                                    const Rectangle& rect, const Body& rect_body);
+CircleToRectDistanceAndIntersection(const Vector2& circle_center,
+                                    const float& radius,
+                                    const Rectangle& rect,
+                                    const Body& rect_body);
 
 [[nodiscard]] Collision PlayerToRectCollision(const PlayerShape& player_shape,
                                               const Body& player_body,

@@ -13,13 +13,15 @@ void StateHandler::handle_states() {
     end_of_frame_update();
 }
 
-void StateHandler::handle_state(
-    const EntityId& entity_id,
-    const EntityState& entity_state
-) {
+void StateHandler::handle_state(const EntityId& entity_id,
+                                const EntityState& entity_state) {
     auto& player_body = global->ECS->get_component<Body>(entity_id);
     auto& player_animation = global->ECS->get_component<AnimationInfo>(entity_id);
     auto& player_state = global->ECS->get_component<EntityState>(entity_id);
+    auto& moved_event_data = global->ECS->get_component<MovedEventData>(entity_id);
+    // if we face left, then we invert the sprite
+    player_body.inverse_direction =
+        (moved_event_data.continue_in_direction == DIRECTION::LEFT);
 
     if (player_state.jumping) {
         if (player_animation.frame_progress != player_animation.sprite_frame_count) {
@@ -46,10 +48,8 @@ void StateHandler::end_of_frame_update() {
     UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
     //-----------------------------------------------------------------
     // apply movement changes to the player
-    player_body.x_direction = {
-        player_body.gravity_direction.y,
-        -player_body.gravity_direction.x
-    };
+    player_body.x_direction = {player_body.gravity_direction.y,
+                               -player_body.gravity_direction.x};
     player_body.rotation =
         std::atan2(player_body.x_direction.y, player_body.x_direction.x) * RAD2DEG;
 
