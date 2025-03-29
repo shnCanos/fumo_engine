@@ -3,7 +3,6 @@
 #include "constants.hpp"
 #include "fumo_engine/core/entity_query.hpp"
 #include "system_base.hpp"
-#include <libassert/assert.hpp>
 #include <string_view>
 #include <unordered_map>
 

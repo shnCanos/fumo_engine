@@ -34,6 +34,8 @@ void EntityEventHandler::handle_event(const Event& event) {
         case EVENT_::ENTITY_COLLIDED:
             EventHandler::collided(event);
             break;
+        case EVENT_::ENTITY_DASHED:
+            break;
     }
 }
 

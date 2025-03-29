@@ -2,7 +2,6 @@
 #define SYSTEMS_HPP
 #include "fumo_engine/components.hpp"
 #include "fumo_engine/core/system_base.hpp"
-#include "raylib.h"
 
 // class BodyMovement : public System {
 // prefer making a body movement system, instead of

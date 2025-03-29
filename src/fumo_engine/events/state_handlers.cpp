@@ -28,6 +28,9 @@ void StateHandler::handle_state(const EntityId& entity_id,
             AnimationPlayer::play(player_animation, "jump");
         }
     }
+    if (!player_state.colliding) {
+        player_state.on_ground = false;
+    }
 
     if (!player_state.jumping && !player_state.on_ground) {
         AnimationPlayer::play(player_animation, "jump");

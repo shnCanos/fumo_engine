@@ -134,7 +134,8 @@ void DebugLevelEditor::handle_input() {
         player_state.on_ground = true;
 
     } else if (IsKeyPressed(KEY_ONE)) {
-        Debugger::global_debug();
+        global->ECS->debug_print();
+        // Debugger::global_debug();
 
     } else if (IsKeyPressed(KEY_R)) {
         // resize_planet(1.25f);

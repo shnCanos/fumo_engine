@@ -23,11 +23,12 @@ enum struct EVENT_ {
     ENTITY_JUMPED,
     ENTITY_MOVED,
     ENTITY_IDLE,
+    ENTITY_DASHED,
     //-----------------------------------------------------------------
     ENTITY_COLLIDED,
-    // PLAYER_HELD_KEY_WHILE_LANDING,
-    //-----------------------------------------------------------------
     ENTITY_SWAPPED_ORBITS,
+    //-----------------------------------------------------------------
+    // PLAYER_HELD_KEY_WHILE_LANDING,
     // ENTITY_FELL_FROM_GROUND,
 };
 
@@ -44,6 +45,7 @@ struct EntityState {
     bool can_jump = true;
     bool idle = true;
     bool landed = false;
+    bool colliding = false;
 
     EntityId player_owning_field = NO_ENTITY_FOUND;
 };

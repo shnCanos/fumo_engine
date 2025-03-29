@@ -69,6 +69,7 @@ void collided(const Event& event) {
     player_state.on_ground = true;
     player_state.can_swap_orbits = true;
     player_state.can_jump = true;
+    player_state.colliding = true;
 }
 
 } // namespace EventHandler

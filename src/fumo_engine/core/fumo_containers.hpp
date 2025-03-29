@@ -3,7 +3,7 @@
 #define FUMO_CONTAINERS_HPP
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include <libassert/assert.hpp>
+// #include <libassert/assert.hpp>
 #include <string_view>
 #include <unordered_map>
 
