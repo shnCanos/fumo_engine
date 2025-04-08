@@ -1,5 +1,4 @@
-#ifndef SCHEDULING_SYSTEMS_HPP
-#define SCHEDULING_SYSTEMS_HPP
+#pragma once
 #include "constants.hpp"
 #include "fumo_engine/core/scheduler_ecs.hpp"
 #include "fumo_engine/core/system_base.hpp"
@@ -45,7 +44,6 @@ struct SchedulerSystemECS : System {
         auto& system_ptr = parent_ptr->ecs->get_system(t_name);
         system_ptr->priority = priority;
 
-        // FIXME: watch out for this assert when sleeping the entire_animation system
         DEBUG_ASSERT(
             !parent_ptr->all_scheduled_unregistered_systems_debug.contains(t_name),
             "can't awake an unregistered system that isn't asleep.", t_name);
@@ -104,7 +102,6 @@ struct SchedulerSystemECS : System {
         const auto& parent_ptr = parent_ECS.lock();
         auto& system_ptr = parent_ptr->ecs->get_system(t_name);
 
-        // FIXME: watch out for this assert when sleeping the entire_animation system
         DEBUG_ASSERT(!parent_ptr->all_scheduled_systems_debug.contains(t_name),
                      "can't awake a system that isn't asleep.", t_name);
 
@@ -137,4 +134,3 @@ struct TimerHandler : System {
 // for example it might run a series of systems for only 6 seconds, based on a game
 // condition such as obtaining an item and playing out a cutscene for example
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef COMPONENTS_HPP
-#define COMPONENTS_HPP
+#pragma once
 #include "constants.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -175,4 +174,3 @@ struct Sprite2D {
     std::string_view sprite_name;
     Rectangle region_rect;
 };
-#endif

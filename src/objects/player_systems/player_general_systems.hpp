@@ -1,5 +1,4 @@
-#ifndef PLAYER_GENERAL_SYSTEMS_HPP
-#define PLAYER_GENERAL_SYSTEMS_HPP
+#pragma once
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
 
@@ -17,4 +16,3 @@ struct PlayerInputHandler: System {
     void process_input(int key);
 };
 
-#endif

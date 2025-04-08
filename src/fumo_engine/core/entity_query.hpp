@@ -1,5 +1,8 @@
-#ifndef ENTITY_QUERY_HPP
-#define ENTITY_QUERY_HPP
+#pragma once
+
+#include <iostream>
+#include <utility>
+
 #include "engine_constants.hpp"
 // offer template specializations for the 4 kinds of component filters we can pass in
 // and create this sytems's entity query class which offers the system a query() method
@@ -22,10 +25,27 @@
 // moving on for now, when we use this more i will rethink it
 
 enum class Filter { All, Any, Only, None };
+
 class EntityQuery {
-public:
+  public:
     ComponentMask component_mask;
     Filter component_filter;
-    bool filter(ComponentMask entity_mask);
+
+    inline bool filter(ComponentMask entity_mask) {
+        switch (component_filter) {
+            case Filter::All:
+                return (entity_mask & component_mask) == component_mask;
+            case Filter::Any:
+                return (entity_mask & component_mask) != 0;
+            case Filter::Only:
+                return entity_mask == component_mask;
+            case Filter::None:
+                return (entity_mask & component_mask) == 0;
+            default:
+                std::cout << "you fucked up the filter somehow";
+                exit(-1);
+                std::unreachable();
+        }
+        std::unreachable();
+    }
 };
-#endif

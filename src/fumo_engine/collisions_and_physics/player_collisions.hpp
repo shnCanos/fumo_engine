@@ -1,5 +1,4 @@
-#ifndef PLAYER_COLLISIONS_HPP
-#define PLAYER_COLLISIONS_HPP
+#pragma once
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_engine/components.hpp"
 
@@ -14,4 +13,3 @@ class PlayerCollisionRunner : public System {
                                             const Circle& circle_shape,
                                             const Body& circle_body);
 };
-#endif

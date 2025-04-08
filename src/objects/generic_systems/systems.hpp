@@ -1,5 +1,4 @@
-#ifndef SYSTEMS_HPP
-#define SYSTEMS_HPP
+#pragma once
 #include "fumo_engine/components.hpp"
 #include "fumo_engine/core/system_base.hpp"
 
@@ -40,4 +39,3 @@ void global_debug();
 // void move_towards_position(Body& body, Vector2 position);
 // void move_vertically_fixed(Body& body, float amount);
 // void move_horizontally_fixed(Body& body, float amount);
-#endif

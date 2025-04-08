@@ -1,7 +1,4 @@
-
-#ifndef FUMO_CONTAINERS_HPP
-#define FUMO_CONTAINERS_HPP
-#include "fumo_engine/core/engine_constants.hpp"
+#pragma once
 #include "fumo_engine/core/global_state.hpp"
 // #include <libassert/assert.hpp>
 #include <string_view>
@@ -128,4 +125,3 @@ class NamedComponentContainer {
 //         return r;
 //     }
 // };
-#endif

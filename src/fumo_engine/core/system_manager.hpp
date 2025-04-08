@@ -1,5 +1,4 @@
-#ifndef SYSTEM_MANAGER_HPP
-#define SYSTEM_MANAGER_HPP
+#pragma once
 #include "constants.hpp"
 #include "fumo_engine/core/entity_query.hpp"
 #include "system_base.hpp"
@@ -100,4 +99,3 @@ class SystemManager {
         PRINT(unregistered_systems);
     }
 };
-#endif

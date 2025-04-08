@@ -1,5 +1,4 @@
-#ifndef FLAG_COMPONENTS_HPP
-#define FLAG_COMPONENTS_HPP
+#pragma once
 #include <memory>
 
 #include "fumo_engine/core/engine_constants.hpp"
@@ -46,6 +45,7 @@ struct EntityState {
     bool idle = true;
     bool landed = false;
     bool colliding = false;
+    bool falling = false;
 
     EntityId player_owning_field = NO_ENTITY_FOUND;
 };
@@ -93,4 +93,3 @@ struct GravFieldFlag {
 
 struct OutlineRectFlag {};
 
-#endif

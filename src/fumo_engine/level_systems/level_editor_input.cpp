@@ -1,7 +1,6 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/generic_systems/factory_systems.hpp"
-#include "objects/generic_systems/systems.hpp"
-#include "objects/level_systems/input_handling_systems.hpp"
+#include "fumo_engine/level_systems/input_handling_systems.hpp"
 
 const int default_rect_width = 500.0f;
 const int default_rect_height = 300.0f;

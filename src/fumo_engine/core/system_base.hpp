@@ -1,5 +1,4 @@
-#ifndef SYSTEM_BASE_HPP
-#define SYSTEM_BASE_HPP
+#pragma once
 #include "engine_constants.hpp"
 #include <set>
 // NOTE: all systems should inherit from this system
@@ -41,4 +40,3 @@ class System {
 //     EntityQuery query;
 // };
 
-#endif

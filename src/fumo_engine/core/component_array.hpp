@@ -1,5 +1,4 @@
-#ifndef COMPONENT_ARRAY_HPP
-#define COMPONENT_ARRAY_HPP
+#pragma once
 #include "engine_constants.hpp"
 #include <libassert/assert.hpp>
 #include <unordered_map>
@@ -96,4 +95,3 @@ class ComponentArray : public IComponentArray {
         }
     }
 };
-#endif

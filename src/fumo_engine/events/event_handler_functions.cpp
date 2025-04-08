@@ -18,13 +18,15 @@ void jumped(const Event& event) {
         // cancel previous jump if we were in the middle of it
         player_body.iterations = 0;
     }
+    // FIXME: add a falling event so the falling animation frame doesnt
+    // play if we jump while falling (and add a timer to limit how long
+    // you can jump after falling from a ledge (unsure how to do this properly))
 
-    if (player_state.on_ground) {
-        player_state.jumping = true;
-        player_state.on_ground = false;
-        player_state.can_jump = false;
-        BodyMovement::jump(player_body, event.entity_id);
-    }
+    player_state.jumping = true;
+    player_state.on_ground = false;
+    player_state.can_jump = false;
+    // player_state.falling = false;
+    BodyMovement::jump(player_body, event.entity_id);
 }
 
 void idle(const Event& event) {
@@ -128,7 +130,7 @@ void MovedWrapper::moved_event() {
         if (player_state.landed) {
             // allow the player to transition orbits while holding the arrow keys
             // and keep their relative position (we recalculate when we land)
-            PRINT("SHOULD FLIP HELD KEY");
+            // PRINT("SHOULD FLIP HELD KEY");
             DIRECTION real_direction = find_real_direction(direction, player_body);
             continue_in_direction = real_direction;
             previous_direction = direction;

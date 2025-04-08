@@ -1,5 +1,4 @@
-#ifndef FACTORY_SYSTEMS_HPP
-#define FACTORY_SYSTEMS_HPP
+#pragma once
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
 #include "raylib.h"
@@ -21,4 +20,3 @@ class LevelEntityFactory : public System {
     EntityId create_rect_field(Vector2 position, Vector2 grav_direction);
 };
 
-#endif

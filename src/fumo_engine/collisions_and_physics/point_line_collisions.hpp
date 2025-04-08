@@ -1,5 +1,4 @@
-#ifndef POINT_LINE_COLLISIONS_HPP
-#define POINT_LINE_COLLISIONS_HPP
+#pragma once
 #include <utility>
 #include <vector>
 
@@ -43,4 +42,3 @@ CircleToRectDistanceAndIntersection(const Vector2& circle_center,
                                                 const Body& player_body,
                                                 const Circle& circle_shape,
                                                 const Body& circle_body);
-#endif

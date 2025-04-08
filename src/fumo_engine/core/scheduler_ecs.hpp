@@ -1,16 +1,33 @@
-#ifndef SCHEDULER_ECS_HPP
-#define SCHEDULER_ECS_HPP
+#pragma once
 #include <memory>
 
 #include "entity_query.hpp"
+#include "fumo_engine/components.hpp"
 #include "fumo_engine/core/ECS.hpp"
 #include "fumo_engine/core/system_base.hpp"
+#include "fumo_engine/event_components.hpp"
+
+struct AllComponentTypes {
+    std::variant<Body,
+                 Circle,
+                 AnimationInfo,
+                 Timer,
+                 Render,
+                 Rectangle,
+                 PlayerShape,
+                 ParallelGravityField,
+                 CircularGravityField,
+                 ColliderObjectFlag,
+                 GravFieldFlag,
+                 OutlineRectFlag,
+                 EntityState,
+                 MovedEventData>
+        all_types;
+};
 
 struct SystemCompare {
-    inline bool operator()(
-        const std::shared_ptr<System>& sysA,
-        const std::shared_ptr<System>& sysB
-    ) const {
+    inline bool operator()(const std::shared_ptr<System>& sysA,
+                           const std::shared_ptr<System>& sysB) const {
         return sysA->priority < sysB->priority;
     }
 };
@@ -32,11 +49,13 @@ class SchedulerECS {
     std::unordered_map<std::string_view, std::shared_ptr<System>>
         all_scheduled_systems_debug {};
     std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug {};
+    std::vector<AllComponentTypes> all_component_types;
 
   public:
     void initialize() {
         ecs = std::make_unique<ECS>();
         ecs->initialize();
+        all_component_types.reserve(MAX_COMPONENTS);
     }
 
     //------------------------------------------------------------------
@@ -46,8 +65,7 @@ class SchedulerECS {
         std::multiset<std::shared_ptr<System>, SystemCompare>
             copy_unregistered_scheduler(unregistered_system_scheduler);
         std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
-            system_scheduler
-        );
+            system_scheduler);
 
         // run unregistered systems
         for (const auto& system_ptr : copy_unregistered_scheduler) {
@@ -81,6 +99,7 @@ class SchedulerECS {
     // component stuff
     template<typename T>
     void register_component() {
+        all_component_types.push_back(T {});
         ecs->register_component<T>();
     }
 
@@ -185,10 +204,8 @@ class SchedulerECS {
     template<typename T>
     void add_id_to_component_mask(ComponentMask& component_mask) {
         auto var = std::is_base_of_v<System, T>;
-        DEBUG_ASSERT(
-            var != true,
-            "cant add a system to another system's component mask."
-        );
+        DEBUG_ASSERT(var != true,
+                     "cant add a system to another system's component mask.");
 
         component_mask |= 1 << get_component_id<T>();
     }
@@ -204,5 +221,3 @@ class SchedulerECS {
     void debug_print();
     void debug_print_scheduler();
 };
-
-#endif

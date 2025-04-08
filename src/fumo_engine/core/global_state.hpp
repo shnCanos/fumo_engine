@@ -1,13 +1,13 @@
-#ifndef GLOBAL_STATE_HPP
-#define GLOBAL_STATE_HPP
+#pragma once
 #include <memory>
 
 #include "fumo_engine/components.hpp"
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/scheduler_ecs.hpp"
-#include "fumo_engine/events/event_state_handlers.hpp"
 #include "fumo_engine/event_components.hpp"
+#include "fumo_engine/events/event_state_handlers.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
+
 
 class GlobalState {
   public:
@@ -24,8 +24,11 @@ class GlobalState {
 
     std::unique_ptr<EntityEventHandler> event_handler;
 
-    EntityId player_id; // NOTE: storing the player id globally for now for optimisation
-        // this isnt necessary, and can be removed completely later.
+
+    EntityId
+        player_id; // NOTE: storing the player id globally for now for optimisation
+
+    // this isnt necessary, and can be removed completely later.
 
     void initialize() {
         ECS = std::make_shared<SchedulerECS>();
@@ -45,5 +48,3 @@ class GlobalState {
         // (so far we have no memory to clear so this is not necessary)
     }
 };
-
-#endif

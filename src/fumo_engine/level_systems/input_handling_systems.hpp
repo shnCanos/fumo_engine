@@ -1,5 +1,4 @@
-#ifndef INPUT_HANDLING_SYSTEMS_HPP
-#define INPUT_HANDLING_SYSTEMS_HPP
+#pragma once
 #include "fumo_engine/core/system_base.hpp"
 #include "raylib.h"
 
@@ -20,4 +19,3 @@ class DebugLevelEditor : public System {
 void reset_position();
 };
 
-#endif

@@ -1,21 +1,19 @@
-#ifndef COMPONENT_MANAGER_HPP
-#define COMPONENT_MANAGER_HPP
+#pragma once
+#include <memory>
+
 #include "component_array.hpp"
 #include "constants.hpp"
 #include "engine_constants.hpp"
 #include "system_base.hpp"
-#include <memory>
-#endif
 
 class ComponentManager {
-
   private:
     // each type needs to map to a respective id
     // NOTE: (components are never unregistered in this implementation)
     std::unordered_map<std::string_view, ComponentId> component_ids;
     std::unordered_map<std::string_view, std::shared_ptr<IComponentArray>>
         component_arrays;
-    ComponentId current_component_id{};
+    ComponentId current_component_id {};
 
     // used for printing whole entities,
     // and for getting all the components of an entity
@@ -26,7 +24,8 @@ class ComponentManager {
     template<typename T>
     void register_component() {
         std::string_view t_name = libassert::type_name<T>();
-        DEBUG_ASSERT(!component_ids.contains(t_name), "already added this component",
+        DEBUG_ASSERT(!component_ids.contains(t_name),
+                     "already registered this component",
                      component_ids);
         // assign the name a unique id (used for the component bitmasks)
         component_ids.insert({t_name, current_component_id});
@@ -38,29 +37,38 @@ class ComponentManager {
 
         current_component_id++;
     }
+
     template<typename T>
     [[nodiscard]] ComponentId get_component_id() {
         std::string_view t_name = libassert::type_name<T>();
         DEBUG_ASSERT(component_ids.contains(t_name),
                      "forgot to register component, or you asked for a system.",
-                     component_ids, current_component_id);
+                     component_ids,
+                     current_component_id);
         // we use this component id to make component bitmasks
         return component_ids[t_name];
     }
+
     template<typename T>
     T& get_component(EntityId entity_id) {
         std::string_view t_name = libassert::type_name<T>();
-        DEBUG_ASSERT(component_ids.contains(t_name), "forgot to register component",
-                     component_ids, t_name);
+        DEBUG_ASSERT(component_ids.contains(t_name),
+                     "forgot to register component",
+                     component_ids,
+                     t_name);
         std::shared_ptr<ComponentArray<T>> cast_component_array =
             std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
         return cast_component_array->get_component_data(entity_id);
     }
+
+
     template<typename T>
     void check_for_component(EntityId entity_id) {
         std::string_view t_name = libassert::type_name<T>();
-        DEBUG_ASSERT(component_ids.contains(t_name), "forgot to register component",
-                     component_ids, t_name);
+        DEBUG_ASSERT(component_ids.contains(t_name),
+                     "forgot to register component",
+                     component_ids,
+                     t_name);
     }
 
     // responible for changing the component mask of the entity
@@ -69,10 +77,13 @@ class ComponentManager {
         std::string_view t_name = libassert::type_name<T>();
         auto var = std::is_base_of_v<System, T>;
 
-        DEBUG_ASSERT(var != true, "cant register a system as a component.", t_name,
+        DEBUG_ASSERT(var != true,
+                     "cant register a system as a component.",
+                     t_name,
                      component);
 
-        DEBUG_ASSERT(component_ids.contains(t_name), "forgot to register component",
+        DEBUG_ASSERT(component_ids.contains(t_name),
+                     "forgot to register component",
                      component_ids);
 
         std::shared_ptr<ComponentArray<T>> cast_component_array =
@@ -80,12 +91,13 @@ class ComponentManager {
 
         cast_component_array->add_component_data(entity_id, component);
     }
+
     // responsible for changing the component mask of the entity
     template<typename T>
     void remove_component(EntityId entity_id) {
-
         std::string_view t_name = libassert::type_name<T>();
-        DEBUG_ASSERT(component_ids.contains(t_name), "forgot to register component",
+        DEBUG_ASSERT(component_ids.contains(t_name),
+                     "forgot to register component",
                      component_ids);
         ComponentArray<T> cast_component_array =
             std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
@@ -101,9 +113,13 @@ class ComponentManager {
             component_array->entity_destroyed(entity_id);
         }
     }
-    void debug_print() { PRINT(component_arrays); }
 
-    [[nodiscard]] std::string_view get_name_of_component_id(ComponentId component_id) {
+    void debug_print() {
+        PRINT(component_arrays);
+    }
+
+    [[nodiscard]] std::string_view
+    get_name_of_component_id(ComponentId component_id) {
         return debug_component_id_to_name[component_id];
     }
 };

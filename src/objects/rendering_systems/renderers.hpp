@@ -1,5 +1,4 @@
-#ifndef RENDERERS_HPP
-#define RENDERERS_HPP
+#pragma once
 #include "fumo_engine/core/system_base.hpp"
 
 struct ObjectRenderer : System {
@@ -14,4 +13,3 @@ struct GravFieldRenderer : System {
     void draw_fields();
 };
 
-#endif

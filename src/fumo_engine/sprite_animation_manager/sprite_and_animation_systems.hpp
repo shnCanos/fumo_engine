@@ -1,5 +1,4 @@
-#ifndef SPRITE_AND_ANIMATION_SYSTEMS_HPP
-#define SPRITE_AND_ANIMATION_SYSTEMS_HPP
+#pragma once
 #include <string_view>
 #include <unordered_map>
 
@@ -19,32 +18,24 @@ class SpriteManager {
 
   public:
     void register_sprite(SpriteSheet2D sprite_sheet) {
-        DEBUG_ASSERT(
-            !all_sprite_sheets.contains(sprite_sheet.sprite_sheet_name),
-            "this sprite has already been registered.",
-            sprite_sheet.sprite_sheet_name
-        );
-        all_sprite_sheets.insert({sprite_sheet.sprite_sheet_name, sprite_sheet}
-        );
+        DEBUG_ASSERT(!all_sprite_sheets.contains(sprite_sheet.sprite_sheet_name),
+                     "this sprite has already been registered.",
+                     sprite_sheet.sprite_sheet_name);
+        all_sprite_sheets.insert({sprite_sheet.sprite_sheet_name, sprite_sheet});
     }
 
     [[nodiscard]] const SpriteSheet2D&
     get_sprite_sheet(std::string_view sprite_name) {
-        DEBUG_ASSERT(
-            all_sprite_sheets.contains(sprite_name),
-            "this sprite hasnt been registered.",
-            sprite_name
-        );
+        DEBUG_ASSERT(all_sprite_sheets.contains(sprite_name),
+                     "this sprite hasnt been registered.",
+                     sprite_name);
         return all_sprite_sheets[sprite_name];
     }
 
-    [[nodiscard]] const Texture2D&
-    get_sprite_texture(std::string_view sprite_name) {
-        DEBUG_ASSERT(
-            all_sprite_sheets.contains(sprite_name),
-            "this sprite hasnt been registered.",
-            sprite_name
-        );
+    [[nodiscard]] const Texture2D& get_sprite_texture(std::string_view sprite_name) {
+        DEBUG_ASSERT(all_sprite_sheets.contains(sprite_name),
+                     "this sprite hasnt been registered.",
+                     sprite_name);
         return all_sprite_sheets[sprite_name].texture_sheet;
     }
 
@@ -57,31 +48,27 @@ class SpriteManager {
 };
 
 namespace AnimationPlayer {
-    // NOTE: ALWAYS replaces the current animation with the new one
-    void play(AnimationInfo& animation_info, std::string_view animation_name);
-    // void play(AnimationInfo& animation_info, std::string_view animation_name,
-    //           bool looping);
-    void queue(AnimationInfo& animation_info, std::string_view animation_name);
-    // ---------------------------------------------------------------------------
+// NOTE: ALWAYS replaces the current animation with the new one
+void play(AnimationInfo& animation_info, std::string_view animation_name);
+// void play(AnimationInfo& animation_info, std::string_view animation_name,
+//           bool looping);
+void queue(AnimationInfo& animation_info, std::string_view animation_name);
+// ---------------------------------------------------------------------------
 
-    // pauses the current animation and resets it to the initial state
-    void pause(AnimationInfo& animation_info);
-    void resume(AnimationInfo& animation_info);
-    void stop(AnimationInfo& animation_info);
-    // void play_after(std::string_view play_after_animation,
-    //                 std::string_view target_animation);
+// pauses the current animation and resets it to the initial state
+void pause(AnimationInfo& animation_info);
+void resume(AnimationInfo& animation_info);
+void stop(AnimationInfo& animation_info);
+// void play_after(std::string_view play_after_animation,
+//                 std::string_view target_animation);
 
-    // Clears all queued, unplayed animations.
-    void clear_queue();
+// Clears all queued, unplayed animations.
+void clear_queue();
 
-    void advance_animation(
-        AnimationInfo& animation_info,
-        const SpriteSheet2D& sprite_sheet
-    );
-    void replace_animation(
-        AnimationInfo& animation_info,
-        const SpriteSheet2D& sprite_sheet
-    );
+void advance_animation(AnimationInfo& animation_info,
+                       const SpriteSheet2D& sprite_sheet);
+void replace_animation(AnimationInfo& animation_info,
+                       const SpriteSheet2D& sprite_sheet);
 }; // namespace AnimationPlayer
 
 struct AnimationRenderer: System {
@@ -92,11 +79,9 @@ struct AnimationRenderer: System {
     void draw_animations();
 
   private:
-    void draw_animation(
-        const AnimationInfo& animation_info,
-        const Texture2D& sheet_texture,
-        const Body& body
-    );
+    void draw_animation(const AnimationInfo& animation_info,
+                        const Texture2D& sheet_texture,
+                        const Body& body);
 };
 
 struct EntireAnimationPlayer: System {
@@ -107,12 +92,10 @@ struct EntireAnimationPlayer: System {
         play_full_animation();
     }
 
-    // FIXME: this system is sleeping on already slept systems
+    // NOTE: this system is sleeping on already slept systems
     // if i add the check it crashes the game
-    void play_entire_animation(
-        AnimationInfo& _animation_info,
-        std::string_view _animation_name
-    ) {
+    void play_entire_animation(AnimationInfo& _animation_info,
+                               std::string_view _animation_name) {
         animation_info_ptr = &_animation_info;
         animation_name = _animation_name;
     };
@@ -121,4 +104,3 @@ struct EntireAnimationPlayer: System {
     void play_full_animation();
 };
 
-#endif

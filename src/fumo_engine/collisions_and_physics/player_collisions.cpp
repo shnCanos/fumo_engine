@@ -48,7 +48,9 @@ void PlayerCollisionRunner::check_collisions() {
     player_state.colliding = collision_happened;
     if (collision_happened) {
         global->event_handler->add_event({EVENT_::ENTITY_COLLIDED, player_id});
-    }
+        return;
+    } 
+
 }
 
 bool PlayerCollisionRunner::player_to_rect_collision_solving(

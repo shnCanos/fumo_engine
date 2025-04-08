@@ -1,11 +1,12 @@
-#ifndef ECS_HPP
-#define ECS_HPP
+#pragma once
+#include <memory>
+
 #include "engine_constants.hpp"
 #include "fumo_engine/core/component_manager.hpp"
 #include "fumo_engine/core/entity_manager.hpp"
 #include "fumo_engine/core/entity_query.hpp"
 #include "fumo_engine/core/system_manager.hpp"
-#include <memory>
+
 class ECS {
   private:
     std::unique_ptr<EntityManager> entity_manager;
@@ -18,15 +19,19 @@ class ECS {
         component_manager = std::make_unique<ComponentManager>();
         system_manager = std::make_unique<SystemManager>();
     }
+
     // --------------------------------------------------------------------------------------
     // entity stuff
-    [[nodiscard]] EntityId create_entity() { return entity_manager->create_entity(); }
+    [[nodiscard]] EntityId create_entity() {
+        return entity_manager->create_entity();
+    }
 
     void destroy_entity(EntityId entity_id) {
         entity_manager->destroy_entity(entity_id);
         component_manager->notify_destroyed_entity(entity_id);
         system_manager->notify_destroyed_entity(entity_id);
     }
+
     // --------------------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------------------
@@ -75,9 +80,15 @@ class ECS {
     }
 
     template<typename T>
+    T& get_component_from_name(EntityId entity_id, const std::string_view& t_name) {
+        component_manager->get_component_from_name<T>(entity_id, t_name);
+    }
+
+    template<typename T>
     void check_for_component(EntityId entity_id) {
         return component_manager->check_for_component<T>(entity_id);
     }
+
     template<typename T>
     [[nodiscard]] ComponentId get_component_id() {
         return component_manager->get_component_id<T>();
@@ -96,6 +107,7 @@ class ECS {
                          const std::shared_ptr<T>& system_ptr) {
         system_manager->register_system<T>(entity_query, system_ptr);
     }
+
     template<typename T>
     void add_unregistered_system(const std::shared_ptr<T>& system_ptr) {
         system_manager->add_unregistered_system<T>(system_ptr);
@@ -107,20 +119,18 @@ class ECS {
     }
 
     [[nodiscard]] std::shared_ptr<System>& get_system(std::string_view type_name) {
-
         return system_manager->get_system(type_name);
     }
 
     // --------------------------------------------------------------------------------------
     void debug_print() {
-
         component_manager->debug_print();
         entity_manager->debug_print();
         system_manager->debug_print();
     }
-    [[nodiscard]] std::string_view get_name_of_component_id(ComponentId component_id) {
+
+    [[nodiscard]] std::string_view
+    get_name_of_component_id(ComponentId component_id) {
         return component_manager->get_name_of_component_id(component_id);
     }
 };
-
-#endif

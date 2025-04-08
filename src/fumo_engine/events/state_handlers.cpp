@@ -13,6 +13,8 @@ void StateHandler::handle_states() {
     end_of_frame_update();
 }
 
+int fall_counter = 0;
+
 void StateHandler::handle_state(const EntityId& entity_id,
                                 const EntityState& entity_state) {
     auto& player_body = global->ECS->get_component<Body>(entity_id);
@@ -27,14 +29,24 @@ void StateHandler::handle_state(const EntityId& entity_id,
         if (player_animation.frame_progress != player_animation.sprite_frame_count) {
             AnimationPlayer::play(player_animation, "jump");
         }
+        return;
     }
     if (!player_state.colliding) {
         player_state.on_ground = false;
     }
+    player_state.falling = !player_state.on_ground && !player_state.colliding;
 
-    if (!player_state.jumping && !player_state.on_ground) {
+    if (player_state.falling) {
+        //-----------------------------------
+        // temporary falling code
+        // fall_counter++;
+        // if (fall_counter > 20) {
+        //     fall_counter = 1;
+        //     player_state.can_jump = true;
+        // }
+        //-----------------------------------
+
         AnimationPlayer::play(player_animation, "jump");
-
         player_animation.frame_progress = 3;
         player_animation.current_region_rect.x =
             player_animation.current_region_rect.width
@@ -73,7 +85,7 @@ void StateHandler::end_of_frame_update() {
         player_body.velocity =
             player_body.get_y_velocity() * 3 / 4 + player_body.get_x_velocity();
     }
-    // FIXME:
+    // hardcoding ends here
     // -----------------------------------------------------------------
 
     player_body.position += player_body.velocity * global->frametime;

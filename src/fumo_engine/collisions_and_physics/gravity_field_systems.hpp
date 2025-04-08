@@ -1,6 +1,4 @@
-#ifndef PLAYER_PHYSICS_HPP
-#define PLAYER_PHYSICS_HPP
-
+#pragma once
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_engine/components.hpp"
 
@@ -25,4 +23,3 @@ struct GravityFieldHandler : System {
 };
 
 
-#endif

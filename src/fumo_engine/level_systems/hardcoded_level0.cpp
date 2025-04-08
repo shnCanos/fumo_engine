@@ -12,8 +12,37 @@ void make_some_rects();
 void screen_border_lines();
 
 void debug_spawn_level_objects() {
-    make_some_rects();
-    screen_border_lines();
+    // make_some_rects();
+    // screen_border_lines();
+    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+
+    {
+        EntityId id_planet = planet_factory->create_rect(starter_position);
+        global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
+
+        Rectangle& outline_rect = global->ECS->get_component<Rectangle>(id_planet);
+        outline_rect = {.x = 0.0f,
+                        .y = 0.0f,
+                        .width = screenWidth,
+                        .height = screenHeight};
+    }
+    {
+        // make first planet that owns the player
+        EntityId id_planet = planet_factory->create_rect_planet(
+            {starter_position.x - screenWidth * 3, starter_position.y});
+
+        auto& player_state =
+            global->ECS->get_component<EntityState>(global->player_id);
+        player_state.player_owning_field = id_planet;
+
+        Rectangle& rect_planet = global->ECS->get_component<Rectangle>(id_planet);
+        rect_planet.width = rect_planet.width * 100;
+        previous_width = rect_planet.width;
+
+        ParallelGravityField& rect_field =
+            global->ECS->get_component<ParallelGravityField>(id_planet);
+        rect_field.field_rectangle.width = rect_planet.width;
+    }
 }
 
 void screen_border_lines() {

@@ -1,5 +1,4 @@
-#ifndef EVENT_HANDLERS_HPP
-#define EVENT_HANDLERS_HPP
+#pragma once
 #include <queue>
 
 #include "fumo_engine/core/system_base.hpp"
@@ -39,6 +38,8 @@ void held_key_swapping(const Event& event);
 } // namespace EventHandler
 
 struct StateHandler: System {
+    Timer coyotte_timer;
+
     void sys_call() override {
         handle_states();
     }
@@ -57,4 +58,3 @@ struct MovedWrapper: System {
 
     void moved_event();
 };
-#endif

@@ -1,5 +1,4 @@
-#ifndef CONSTANTS_HPP_
-#define CONSTANTS_HPP_
+#pragma once
 #include "array"
 #include "raylib.h"
 // WARNING:
@@ -44,4 +43,3 @@ const std::array<Color, 100> all_colors = {LIGHTGRAY,
                                            ORANGE};
 #define PRINT(x) \
     std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
-#endif

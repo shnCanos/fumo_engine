@@ -1,5 +1,4 @@
-#ifndef CONSTANTS_USING_HPP
-#define CONSTANTS_USING_HPP
+#pragma once
 #include <cstdint>
 using EntityId = uint64_t;
 constexpr EntityId MAX_ENTITY_IDS = 3000;
@@ -12,4 +11,3 @@ constexpr ComponentId MAX_COMPONENTS = 64;
 using ComponentMask = uint64_t;
 constexpr uint64_t MAX_SYSTEMS = 64;
 
-#endif
