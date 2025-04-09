@@ -31,10 +31,9 @@ struct LevelSerializer: public System {
 
 namespace FumoSerializer {
 void serialize_entity(const EntityId& entity_id,
-                      const cereal::JSONOutputArchive& out_archive);
-void deserialize_entity(const EntityId& entity_id,
-                        cereal::JSONInputArchive& in_archive);
-void add_component_by_id(const EntityId& entity_id,
+                      cereal::JSONOutputArchive& out_archive);
+void deserialize_entity(cereal::JSONInputArchive& in_archive);
+void deserialize_component_by_id(const EntityId& entity_id,
                          const ComponentId& component_id,
                          cereal::JSONInputArchive& in_archive);
 

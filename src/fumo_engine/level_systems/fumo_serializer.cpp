@@ -16,45 +16,40 @@ void LevelSerializer::serialize_levels() {
         const auto& screen_id = global->ECS->get_component<ScreenId>(entity_id);
         const auto& level_id = global->ECS->get_component<LevelId>(entity_id);
 
-        fs::create_directory(std::format("level{}", level_id.level_id));
+        fs::path level_screen_path = std::format("level{}", level_id.level_id);
+        fs::create_directory(level_screen_path);
 
-        // FIXME: add the directory to the file path later (with std::filesystem::path)
-        std::ofstream out_stream(std::format("screen{}.json", screen_id.screen_id));
+        level_screen_path /= std::format("screen{}.json", screen_id.screen_id);
+
+        std::ofstream out_stream(level_screen_path);
 
         if (out_stream.fail()) [[unlikely]]
             PANIC("failed to open or create file\n");
 
-        FumoSerializer::serialize_entity(entity_id,
-                                         cereal::JSONOutputArchive(out_stream));
+        // NOTE:
+        // dont forget to let the archive go out of scope so it flushes out the
+        // contents
+        cereal::JSONOutputArchive out_archive(out_stream);
+        FumoSerializer::serialize_entity(entity_id, out_archive);
     }
 };
 
+// structure for the json is:
+// entity id
+// component_mask
+// all components
 void FumoSerializer::serialize_entity(const EntityId& entity_id,
-                                      const cereal::JSONOutputArchive& out_archive) {
+                                      cereal::JSONOutputArchive& out_archive) {
     const auto& component_mask = global->ECS->get_component_mask(entity_id);
+
+    out_archive(CEREAL_NVP(entity_id));
+    out_archive(CEREAL_NVP(component_mask));
 
     for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
         if (component_mask & (1 << id)) {
             global->ECS->serialize_component(entity_id, id, out_archive);
         }
     }
-}
-
-void FumoSerializer::deserialize_entity(const EntityId& entity_id,
-                                        cereal::JSONInputArchive& in_archive) {
-    // how will we deserialize the information?
-    // example of the JSON:
-    // 0 corresponds to the Body struct component id when registered
-    // {
-    //     "entity_id1": 1,
-    //     "0": {
-    //         "position": {
-    //             "x": 69.0,
-    //             "y": 6969.0
-    //         }
-    //     },
-    // }
-    // how do i find out what the type is again? std::variant....?
 }
 
 #define DESERIALIZE_COMPONENT(Type) \
@@ -79,9 +74,10 @@ enum struct AllComponentTypes {
     MovedEventData,
 };
 
-void FumoSerializer::add_component_by_id(const EntityId& entity_id,
-                                         const ComponentId& component_id,
-                                         cereal::JSONInputArchive& in_archive) {
+void FumoSerializer::deserialize_component_by_id(
+    const EntityId& entity_id,
+    const ComponentId& component_id,
+    cereal::JSONInputArchive& in_archive) {
     switch (AllComponentTypes {component_id}) {
         case AllComponentTypes::Body:
             DESERIALIZE_COMPONENT(Body);
@@ -127,3 +123,21 @@ void FumoSerializer::add_component_by_id(const EntityId& entity_id,
             break;
     }
 }
+
+void FumoSerializer::deserialize_entity(cereal::JSONInputArchive& in_archive) {
+    // follows the save order for serialized data
+    EntityId entity_id;
+    ComponentMask component_mask;
+    in_archive(entity_id);
+    in_archive(component_mask);
+
+    for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
+        if (component_mask & (1 << id)) {
+            FumoSerializer::deserialize_component_by_id(entity_id,
+                                                        id,
+                                                        in_archive);
+        }
+    }
+}
+
+void LevelSerializer::deserialize_levels() {}

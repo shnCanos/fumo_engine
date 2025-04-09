@@ -63,7 +63,7 @@ class ComponentManager {
 
     void serialize_component(const EntityId& entity_id,
                              const ComponentId& component_id,
-                             const cereal::JSONOutputArchive& out_archive) {
+                             cereal::JSONOutputArchive& out_archive) {
         const auto& component_name = debug_component_id_to_name[component_id];
         component_arrays[component_name]->serialize_component(entity_id,
                                                               component_id,

@@ -33,7 +33,7 @@ class IComponentArray {
     virtual void
     serialize_component(const EntityId& entity_id,
                         const ComponentId& component_id,
-                        const cereal::JSONOutputArchive& out_archive) = 0;
+                         cereal::JSONOutputArchive& out_archive) = 0;
 };
 
 using Index = uint64_t;
@@ -49,8 +49,8 @@ class ComponentArray: public IComponentArray {
   public:
     void serialize_component(const EntityId& entity_id,
                              const ComponentId& component_id,
-                             const cereal::JSONOutputArchive& out_archive) override {
-        out_archive(cereal ::make_nvp(component_id,
+                             cereal::JSONOutputArchive& out_archive) override {
+        out_archive(cereal ::make_nvp(std::to_string(component_id),
                                       all_components[entity_to_index[entity_id]]));
     }
 
