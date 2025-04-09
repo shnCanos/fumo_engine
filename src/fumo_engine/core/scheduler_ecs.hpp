@@ -7,23 +7,6 @@
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_engine/event_components.hpp"
 
-struct AllComponentTypes {
-    std::variant<Body,
-                 Circle,
-                 AnimationInfo,
-                 Timer,
-                 Render,
-                 Rectangle,
-                 PlayerShape,
-                 ParallelGravityField,
-                 CircularGravityField,
-                 ColliderObjectFlag,
-                 GravFieldFlag,
-                 OutlineRectFlag,
-                 EntityState,
-                 MovedEventData>
-        all_types;
-};
 
 struct SystemCompare {
     inline bool operator()(const std::shared_ptr<System>& sysA,
@@ -49,13 +32,13 @@ class SchedulerECS {
     std::unordered_map<std::string_view, std::shared_ptr<System>>
         all_scheduled_systems_debug {};
     std::array<EntityId, MAX_ENTITY_IDS> all_entity_ids_debug {};
-    std::vector<AllComponentTypes> all_component_types;
+    // std::vector<AllComponentTypes> all_component_types;
 
   public:
     void initialize() {
         ecs = std::make_unique<ECS>();
         ecs->initialize();
-        all_component_types.reserve(MAX_COMPONENTS);
+        // all_component_types.reserve(MAX_COMPONENTS);
     }
 
     //------------------------------------------------------------------
@@ -95,11 +78,17 @@ class SchedulerECS {
         all_entity_ids_debug[entity_id] = NO_ENTITY_FOUND;
     }
 
+    void serialize_component(const EntityId& entity_id,
+                             ComponentId component_id,
+                             const cereal::JSONOutputArchive& out_archive) {
+        ecs->serialize_component(entity_id, component_id, out_archive);
+    }
+
     //------------------------------------------------------------------
     // component stuff
     template<typename T>
     void register_component() {
-        all_component_types.push_back(T {});
+        // all_component_types.push_back(T {});
         ecs->register_component<T>();
     }
 
@@ -130,6 +119,10 @@ class SchedulerECS {
     template<typename T>
     [[nodiscard]] ComponentId get_component_id() {
         return ecs->get_component_id<T>();
+    }
+
+    [[nodiscard]] ComponentMask get_component_mask(const EntityId& entity_id) {
+        return ecs->get_component_mask(entity_id);
     }
 
     // --------------------------------------------------------------------------------------

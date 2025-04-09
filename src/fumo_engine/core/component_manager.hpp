@@ -1,15 +1,16 @@
 #pragma once
 #include <memory>
 
+#include "cereal/archives/json.hpp"
 #include "component_array.hpp"
 #include "constants.hpp"
 #include "engine_constants.hpp"
 #include "system_base.hpp"
 
+// each type needs to map to a respective id
+// NOTE: (components are never unregistered in this implementation)
 class ComponentManager {
   private:
-    // each type needs to map to a respective id
-    // NOTE: (components are never unregistered in this implementation)
     std::unordered_map<std::string_view, ComponentId> component_ids;
     std::unordered_map<std::string_view, std::shared_ptr<IComponentArray>>
         component_arrays;
@@ -17,7 +18,6 @@ class ComponentManager {
 
     // used for printing whole entities,
     // and for getting all the components of an entity
-    // (could be used in serialization ?)
     std::unordered_map<ComponentId, std::string_view> debug_component_id_to_name;
 
   public:
@@ -61,6 +61,14 @@ class ComponentManager {
         return cast_component_array->get_component_data(entity_id);
     }
 
+    void serialize_component(const EntityId& entity_id,
+                             const ComponentId& component_id,
+                             const cereal::JSONOutputArchive& out_archive) {
+        const auto& component_name = debug_component_id_to_name[component_id];
+        component_arrays[component_name]->serialize_component(entity_id,
+                                                              component_id,
+                                                              out_archive);
+    }
 
     template<typename T>
     void check_for_component(EntityId entity_id) {

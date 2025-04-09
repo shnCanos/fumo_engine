@@ -15,23 +15,22 @@ void register_all_to_ECS() {
     register_systems();
 }
 
-struct AllComponentTypes {
-    std::variant<Body,
-                 Circle,
-                 AnimationInfo,
-                 Timer,
-                 Render,
-                 Rectangle,
-                 PlayerShape,
-                 ParallelGravityField,
-                 CircularGravityField,
-                 ColliderObjectFlag,
-                 GravFieldFlag,
-                 OutlineRectFlag,
-                 EntityState,
-                 MovedEventData>
-        all_types;
-};
+
+// Body
+// Circle
+// AnimationInfo
+// Timer
+// Render
+// Rectangle
+// PlayerShape
+// ParallelGravityField
+// CircularGravityField
+// ColliderObjectFlag
+// GravFieldFlag
+// OutlineRectFlag
+// EntityState
+// MovedEventData
+
 
 void register_components() {
     global->ECS->register_component<Body>();

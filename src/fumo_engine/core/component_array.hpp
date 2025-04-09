@@ -1,7 +1,9 @@
 #pragma once
-#include "engine_constants.hpp"
 #include <libassert/assert.hpp>
 #include <unordered_map>
+
+#include "cereal/archives/json.hpp"
+#include "engine_constants.hpp"
 
 // const uint64_t MAX_ELEMENTS = 100;
 //
@@ -25,28 +27,37 @@
 // };
 
 class IComponentArray {
-
   public:
-    // default tells compiler this is a trivial type
     virtual ~IComponentArray() = default;
-    // pure function
     virtual void entity_destroyed(EntityId entity_id) = 0;
+    virtual void
+    serialize_component(const EntityId& entity_id,
+                        const ComponentId& component_id,
+                        const cereal::JSONOutputArchive& out_archive) = 0;
 };
 
 using Index = uint64_t;
 
 template<typename T>
-class ComponentArray : public IComponentArray {
+class ComponentArray: public IComponentArray {
   private:
-    std::array<T, MAX_ENTITY_IDS> all_components{};
+    std::array<T, MAX_ENTITY_IDS> all_components {};
     std::unordered_map<EntityId, Index> entity_to_index;
     std::unordered_map<Index, EntityId> index_to_entity;
-    size_t component_count{};
+    size_t component_count {};
 
   public:
+    void serialize_component(const EntityId& entity_id,
+                             const ComponentId& component_id,
+                             const cereal::JSONOutputArchive& out_archive) override {
+        out_archive(cereal ::make_nvp(component_id,
+                                      all_components[entity_to_index[entity_id]]));
+    }
+
     void add_component_data(EntityId entity_id, T component) {
         // add new entities to the end of the array
-        DEBUG_ASSERT(!entity_to_index.contains(entity_id), "Component added twice.",
+        DEBUG_ASSERT(!entity_to_index.contains(entity_id),
+                     "Component added twice.",
                      entity_to_index);
         size_t new_index = component_count;
 
@@ -58,9 +69,11 @@ class ComponentArray : public IComponentArray {
         // move forward current pointer
         component_count++;
     };
+
     void remove_component_data(EntityId entity_id) {
         DEBUG_ASSERT(entity_to_index.contains(entity_id),
-                     "Removing non-existent component.", entity_to_index);
+                     "Removing non-existent component.",
+                     entity_to_index);
         // removing components means we want to:
         //  -> place the last component in the new empty spot to keep our array packed
         //  -> update our unordered_maps to account for this removal
@@ -80,9 +93,11 @@ class ComponentArray : public IComponentArray {
 
         component_count--;
     }
+
     T& get_component_data(EntityId entity_id) {
         DEBUG_ASSERT(entity_to_index.contains(entity_id),
-                     "this entity does not have this component.", entity_id);
+                     "this entity does not have this component.",
+                     entity_id);
         // notice that there is an overhead from the non-contiguous unordered_map access
         // on this method possibly replace this with something else later
         return all_components[entity_to_index[entity_id]];

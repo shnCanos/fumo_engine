@@ -32,8 +32,21 @@ struct LevelSerializer: public System {
 namespace FumoSerializer {
 void serialize_entity(const EntityId& entity_id,
                       const cereal::JSONOutputArchive& out_archive);
+void deserialize_entity(const EntityId& entity_id,
+                        cereal::JSONInputArchive& in_archive);
+void add_component_by_id(const EntityId& entity_id,
+                         const ComponentId& component_id,
+                         cereal::JSONInputArchive& in_archive);
 
+template<typename T>
+[[nodiscard]] T deserialize_component(const ComponentId& component_id,
+                                      cereal::JSONInputArchive& in_archive) {
+    T component;
+    in_archive(cereal ::make_nvp(std::to_string(component_id), component));
+    return component;
 }
+
+} // namespace FumoSerializer
 
 struct LevelManager {
     // responsible for updating the ScreenId and LevelId on "Ctrl + S"

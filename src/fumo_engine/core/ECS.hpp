@@ -32,6 +32,12 @@ class ECS {
         system_manager->notify_destroyed_entity(entity_id);
     }
 
+    void serialize_component(const EntityId& entity_id,
+                             ComponentId component_id,
+                             const cereal::JSONOutputArchive& out_archive) {
+        component_manager->serialize_component(entity_id, component_id, out_archive);
+    }
+
     // --------------------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------------------
@@ -79,10 +85,10 @@ class ECS {
         return component_manager->get_component<T>(entity_id);
     }
 
-    template<typename T>
-    T& get_component_from_name(EntityId entity_id, const std::string_view& t_name) {
-        component_manager->get_component_from_name<T>(entity_id, t_name);
-    }
+    // template<typename T>
+    // T& get_component_from_name(EntityId entity_id, const std::string_view& t_name) {
+    //     // component_manager->get_component_from_name<T>(entity_id, t_name);
+    // }
 
     template<typename T>
     void check_for_component(EntityId entity_id) {
