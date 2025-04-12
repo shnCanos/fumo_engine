@@ -15,10 +15,10 @@ void GlobalState::setup_game_state() {
     camera = std::make_unique<Camera2D>();
     const auto& player_body = ECS->get_component<Body>(player_id);
     // camera->target = player_body.position;
-    camera->target = screenCenter;
+    camera->target = screenCenter.to_raylib_vec2();
     camera->rotation = 0.0f;
     camera->zoom = 0.8f;
-    camera->offset = screenCenter;
+    camera->offset = screenCenter.to_raylib_vec2();
     auto& player_animation = ECS->get_component<AnimationInfo>(player_id);
     AnimationPlayer::play(player_animation, "idle");
 }

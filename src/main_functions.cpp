@@ -1,7 +1,10 @@
 #include "main_functions.hpp"
+
 #include "fumo_engine/core/global_state.hpp"
+#include "fumo_raylib.hpp"
 
 extern std::unique_ptr<GlobalState> global;
+
 DIRECTION opposite_direction(DIRECTION direction) {
     if (direction == DIRECTION::LEFT) {
         return DIRECTION::RIGHT;
@@ -30,10 +33,6 @@ DIRECTION opposite_direction(DIRECTION direction) {
 //     return still_down;
 //
 // }
-Vector2 Vector2ScaleDivision(Vector2 v, float scale) {
-    Vector2 result = {v.x / scale, v.y / scale};
-    return result;
-}
 
 void debug_print_animation_info(const AnimationInfo& animation_info) {
     PRINT(animation_info.current_region_rect.x);
@@ -50,18 +49,19 @@ void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
     float minEffectLength = 10;
     float fractionSpeed = 0.8f;
 
-    camera->offset = (Vector2) {screenWidth / 2.0f, screenHeight / 2.0f};
-    Vector2 diff = Vector2Subtract(player.position, camera->target);
-    float length = Vector2Length(diff);
+    camera->offset = {screenWidth / 2.0f, screenHeight / 2.0f};
+    FumoVec2 diff = FumoVec2Subtract(player.position, to_fumo_vec2(camera->target));
+    float length = FumoVec2Length(diff);
 
     float scaling = 8.0f;
 
     if (length > minEffectLength) {
         float speed = fmaxf(fractionSpeed * length, minSpeed);
-        camera->target = Vector2Add(
-            camera->target,
-            Vector2Scale(diff, speed * global->frametime / length) * scaling
-        );
+        camera->target =
+            FumoVec2Add(to_fumo_vec2(camera->target),
+                        FumoVec2Scale(diff, speed * global->frametime / length)
+                            * scaling)
+                .to_raylib_vec2();
     }
 }
 
@@ -69,12 +69,16 @@ void debug_player_drawing(const PlayerShape& player_shape, const Body& player_bo
     // extra visualization code
     BeginMode2D(*global->camera);
     const auto& render = global->ECS->get_component<Render>(global->player_id);
-    DrawCircleV(player_shape.bottom_circle_center, player_shape.radius, render.color);
-    DrawCircleV(player_shape.top_circle_center, player_shape.radius, render.color);
+    DrawCircleV(player_shape.bottom_circle_center.to_raylib_vec2(),
+                player_shape.radius,
+                render.color.to_raylib_color());
+    DrawCircleV(player_shape.top_circle_center.to_raylib_vec2(),
+                player_shape.radius,
+                render.color.to_raylib_color());
 
     // double gravity_reach = 300.0f;
-    // Vector2 normalized_velocity = Vector2Normalize(player_body.velocity);
-    // Vector2 line_end = player_body.position + normalized_velocity * gravity_reach;
+    // FumoVec2 normalized_velocity = FumoVec2Normalize(player_body.velocity);
+    // FumoVec2 line_end = player_body.position + normalized_velocity * gravity_reach;
     // if (player_state.jumping) {
     //     line_end =
     //         player_body.position - (player_body.gravity_direction) * gravity_reach;

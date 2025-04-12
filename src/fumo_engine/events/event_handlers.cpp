@@ -10,6 +10,8 @@ void EntityEventHandler::handle_events() {
         handle_event(event);
         event_queue.pop();
     }
+    // ... add code for going through lasting events
+
 }
 
 void EntityEventHandler::handle_event(const Event& event) {

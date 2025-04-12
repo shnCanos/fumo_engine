@@ -18,7 +18,7 @@
 // // - top left of the screen is {0,0} relative to the objects
 // // - when we draw/place them in the world, we add the screen top left
 // struct Screen {
-//     Vector2 screen_position; // screen top left position
+//     FumoVec2 screen_position; // screen top left position
 // };
 //
 // // struct OnScreen{};

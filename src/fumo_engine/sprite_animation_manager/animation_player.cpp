@@ -1,4 +1,4 @@
-#include <string_view>
+#include <string>
 
 #include "constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
@@ -11,7 +11,7 @@ void debug_print_animation_info(const AnimationInfo& animation_info);
 // TODO: add system for drawing static Sprite2D
 void AnimationPlayer::play(
     AnimationInfo& animation_info,
-    std::string_view animation_name
+    std::string animation_name
 ) {
     const auto& sprite_sheet =
         global->sprite_manager->get_sprite_sheet(animation_name);
@@ -84,7 +84,7 @@ void AnimationPlayer::pause(AnimationInfo& animation_info) {
 
 void AnimationPlayer::queue(
     AnimationInfo& animation_info,
-    std::string_view animation_name
+    std::string animation_name
 ) {
     const auto& sprite_sheet =
         global->sprite_manager->get_sprite_sheet(animation_name);
@@ -92,7 +92,7 @@ void AnimationPlayer::queue(
         && animation_info.current_sheet_name == "NO_SHEET") [[unlikely]] {
         replace_animation(animation_info, sprite_sheet);
     }
-    animation_info.sheet_vector.push_back(animation_name);
+    animation_info.sheet_vector.push_back(std::string(animation_name));
 }
 
 //  ---------------------------------------------------------------------------

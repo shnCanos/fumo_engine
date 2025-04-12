@@ -7,35 +7,35 @@
 
 struct Collision {
     float overlap;
-    Vector2 push;
+    FumoVec2 push;
 };
 
-// [[nodiscard]] float PointToLineDistance(const Vector2& Point, const Vector2&
+// [[nodiscard]] float PointToLineDistance(const FumoVec2& Point, const FumoVec2&
 // LineStart,
-//                                         const Vector2& LineEnd);
-[[nodiscard]] std::pair<float, Vector2>
-PointToLineDistanceAndIntersection(const Vector2& Point,
-                                   const Vector2& LineStart,
-                                   const Vector2& LineEnd);
-[[nodiscard]] std::pair<float, Vector2>
-PointToLineDistanceAndIntersection(const Vector2& Point,
-                                   const std::pair<Vector2, Vector2>& line);
-[[nodiscard]] std::pair<float, Vector2>
-closest_rectangle_side(const std::vector<std::pair<float, Vector2>>& distances);
-[[nodiscard]] Vector2 closest_point(const Vector2 target,
-                                    const std::vector<Vector2>& points);
-// [[nodiscard]] Vector2 LineToLineIntersection(const std::pair<Vector2, Vector2>& line1,
-//                                              const std::pair<Vector2, Vector2>&
+//                                         const FumoVec2& LineEnd);
+[[nodiscard]] std::pair<float, FumoVec2>
+PointToLineDistanceAndIntersection(const FumoVec2& Point,
+                                   const FumoVec2& LineStart,
+                                   const FumoVec2& LineEnd);
+[[nodiscard]] std::pair<float, FumoVec2>
+PointToLineDistanceAndIntersection(const FumoVec2& Point,
+                                   const std::pair<FumoVec2, FumoVec2>& line);
+[[nodiscard]] std::pair<float, FumoVec2>
+closest_fumo_rect_side(const std::vector<std::pair<float, FumoVec2>>& distances);
+[[nodiscard]] FumoVec2 closest_point(const FumoVec2 target,
+                                    const std::vector<FumoVec2>& points);
+// [[nodiscard]] FumoVec2 LineToLineIntersection(const std::pair<FumoVec2, FumoVec2>& line1,
+//                                              const std::pair<FumoVec2, FumoVec2>&
 //                                              line2);
-[[nodiscard]] std::pair<float, Vector2>
-CircleToRectDistanceAndIntersection(const Vector2& circle_center,
+[[nodiscard]] std::pair<float, FumoVec2>
+CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
                                     const float& radius,
-                                    const Rectangle& rect,
+                                    const FumoRect& rect,
                                     const Body& rect_body);
 
 [[nodiscard]] Collision PlayerToRectCollision(const PlayerShape& player_shape,
                                               const Body& player_body,
-                                              const Rectangle& rectangle,
+                                              const FumoRect& fumo_rect,
                                               const Body& rectange_body);
 
 [[nodiscard]] Collision PlayerToCircleCollision(const PlayerShape& player_shape,

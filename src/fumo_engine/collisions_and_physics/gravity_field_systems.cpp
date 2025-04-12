@@ -25,8 +25,7 @@ void GravityFieldHandler::find_gravity_field() {
 
     EntityQuery query_parallel {
         .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
-        .component_filter = Filter::All
-    };
+        .component_filter = Filter::All};
 
     for (const auto& planet_id : sys_entities) {
         const auto& body_planet = global->ECS->get_component<Body>(planet_id);
@@ -43,8 +42,9 @@ void GravityFieldHandler::find_gravity_field() {
             const auto& circular_field =
                 global->ECS->get_component<CircularGravityField>(planet_id);
 
-            if (circular_field
-                    .is_inside_field(player_body, player_shape, body_planet)) {
+            if (circular_field.is_inside_field(player_body,
+                                               player_shape,
+                                               body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
         }
@@ -62,34 +62,28 @@ void GravityFieldHandler::find_gravity_field() {
             player_state.player_owning_field = planet_id;
 
             global->event_handler->add_event(
-                {.event = EVENT_::ENTITY_SWAPPED_ORBITS, .entity_id = player_id}
-            );
+                {.event = EVENT_::ENTITY_SWAPPED_ORBITS, .entity_id = player_id});
 
             return;
         }
     }
 }
 
-bool ParallelGravityField::is_inside_field(
-    const Body& player_body,
-    const PlayerShape& player_shape
-) const {
+bool ParallelGravityField::is_inside_field(const Body& player_body,
+                                           const PlayerShape& player_shape) const {
     Collision collision = PlayerToRectCollision(
         player_shape,
         player_body,
-        field_rectangle,
-        Body {.position = {field_rectangle.x, field_rectangle.y}}
-    );
+        field_fumo_rect,
+        Body {.position = {field_fumo_rect.x, field_fumo_rect.y}});
 
     // if overlap == 0, then there was no collision
     return (collision.overlap != 0);
 }
 
-bool CircularGravityField::is_inside_field(
-    const Body& player_body,
-    const PlayerShape& player_shape,
-    const Body& circular_body
-) const {
+bool CircularGravityField::is_inside_field(const Body& player_body,
+                                           const PlayerShape& player_shape,
+                                           const Body& circular_body) const {
     // -------------------------------------------------------------------------------
     // check for collisions with capsule
     // -------------------------------------------------------------------------------
@@ -98,7 +92,7 @@ bool CircularGravityField::is_inside_field(
     // -------------------------------------------------------------------------------
     // top circle collision check
     float top_distance =
-        Vector2Distance(circular_body.position, player_shape.top_circle_center);
+        FumoVec2Distance(circular_body.position, player_shape.top_circle_center);
     if (top_distance < radius_sum) {
         // collided with top circle
         return true;
@@ -106,7 +100,7 @@ bool CircularGravityField::is_inside_field(
     // -------------------------------------------------------------------------------
     // bottom circle collision check
     float bottom_distance =
-        Vector2Distance(circular_body.position, player_shape.bottom_circle_center);
+        FumoVec2Distance(circular_body.position, player_shape.bottom_circle_center);
     if (bottom_distance < radius_sum) {
         // collided with top circle
         return true;

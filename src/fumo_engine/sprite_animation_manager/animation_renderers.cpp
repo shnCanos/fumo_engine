@@ -1,8 +1,9 @@
+#include <cstdlib>
+
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
 #include "raylib.h"
 #include "sprite_and_animation_systems.hpp"
-#include <cstdlib>
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -25,8 +26,8 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
                                        const Body& body) {
     // NOTE:
     // destination.x/y -> where to draw on the screen
-    // origin -> where do we center the rectangle itself according to destination.x/y
-    // origin is relative to the destination rectangle
+    // origin -> where do we center the fumo_rect itself according to destination.x/y
+    // origin is relative to the destination fumo_rect
     // width and height provide the scaling of our texture
 
     // PRINT("GAMING");
@@ -34,12 +35,13 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
 
     BeginMode2D(*global->camera);
 
-    Rectangle destination = {
-        body.position.x, body.position.y,
+    FumoRect destination = {
+        body.position.x,
+        body.position.y,
         animation_info.current_region_rect.width * animation_info.sprite_scaling,
         animation_info.current_region_rect.height * animation_info.sprite_scaling};
 
-    Rectangle source = animation_info.current_region_rect;
+    FumoRect source = animation_info.current_region_rect;
 
     if (body.inverse_direction) {
         source = {animation_info.current_region_rect.x,
@@ -48,9 +50,14 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
                   animation_info.current_region_rect.height};
     }
 
-    Vector2 origin = {abs(destination.width / 2), 3 * destination.height / 4};
+    FumoVec2 origin = {abs(destination.width / 2), 3 * destination.height / 4};
 
-    DrawTexturePro(sheet_texture, source, destination, origin, body.rotation, WHITE);
+    DrawTexturePro(sheet_texture,
+                   source.to_raylib_rect(),
+                   destination.to_raylib_rect(),
+                   origin.to_raylib_vec2(),
+                   body.rotation,
+                   WHITE);
 
     EndMode2D();
 }

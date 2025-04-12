@@ -79,12 +79,12 @@ void StateHandler::end_of_frame_update() {
     }
 
     // hardcoded for a little bit smoother jump, delete later
-    //-----------------------------------------------------------------
-    // float dot_vel = player_body.get_dot_y_velocity();
-    // if (dot_vel >= 800) {
-    //     player_body.velocity =
-    //         player_body.get_y_velocity() * 3 / 4 + player_body.get_x_velocity();
-    // }
+    // -----------------------------------------------------------------
+    float dot_vel = player_body.get_dot_y_velocity();
+    if (dot_vel >= 800) {
+        player_body.velocity =
+            player_body.get_y_velocity() * 3 / 4 + player_body.get_x_velocity();
+    }
     // hardcoding ends here
     // -----------------------------------------------------------------
 
@@ -101,5 +101,5 @@ void StateHandler::end_of_frame_update() {
     // also, we should LERP between the new gravity direction and the old one
     // and slowly rotate the player
     // FIXME: figure out a new way to update velocity
-    // player_body.velocity = {0.0f, 0.0f};
+    player_body.velocity = {0.0f, 0.0f};
 }

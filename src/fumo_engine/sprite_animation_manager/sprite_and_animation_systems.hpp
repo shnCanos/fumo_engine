@@ -1,5 +1,5 @@
 #pragma once
-#include <string_view>
+#include <string>
 #include <unordered_map>
 
 #include "constants.hpp"
@@ -14,7 +14,7 @@ class SpriteManager {
     // SpriteSheet2Ds so they can be used by some other system
     // to implement functionality
   private:
-    std::unordered_map<std::string_view, SpriteSheet2D> all_sprite_sheets {};
+    std::unordered_map<std::string, SpriteSheet2D> all_sprite_sheets {};
 
   public:
     void register_sprite(SpriteSheet2D sprite_sheet) {
@@ -25,14 +25,14 @@ class SpriteManager {
     }
 
     [[nodiscard]] const SpriteSheet2D&
-    get_sprite_sheet(std::string_view sprite_name) {
+    get_sprite_sheet(std::string sprite_name) {
         DEBUG_ASSERT(all_sprite_sheets.contains(sprite_name),
                      "this sprite hasnt been registered.",
                      sprite_name);
         return all_sprite_sheets[sprite_name];
     }
 
-    [[nodiscard]] const Texture2D& get_sprite_texture(std::string_view sprite_name) {
+    [[nodiscard]] const Texture2D& get_sprite_texture(std::string sprite_name) {
         DEBUG_ASSERT(all_sprite_sheets.contains(sprite_name),
                      "this sprite hasnt been registered.",
                      sprite_name);
@@ -49,18 +49,18 @@ class SpriteManager {
 
 namespace AnimationPlayer {
 // NOTE: ALWAYS replaces the current animation with the new one
-void play(AnimationInfo& animation_info, std::string_view animation_name);
-// void play(AnimationInfo& animation_info, std::string_view animation_name,
+void play(AnimationInfo& animation_info, std::string animation_name);
+// void play(AnimationInfo& animation_info, std::string animation_name,
 //           bool looping);
-void queue(AnimationInfo& animation_info, std::string_view animation_name);
+void queue(AnimationInfo& animation_info, std::string animation_name);
 // ---------------------------------------------------------------------------
 
 // pauses the current animation and resets it to the initial state
 void pause(AnimationInfo& animation_info);
 void resume(AnimationInfo& animation_info);
 void stop(AnimationInfo& animation_info);
-// void play_after(std::string_view play_after_animation,
-//                 std::string_view target_animation);
+// void play_after(std::string play_after_animation,
+//                 std::string target_animation);
 
 // Clears all queued, unplayed animations.
 void clear_queue();
@@ -86,7 +86,7 @@ struct AnimationRenderer: System {
 
 struct EntireAnimationPlayer: System {
     AnimationInfo* animation_info_ptr;
-    std::string_view animation_name = "NO_NAME";
+    std::string animation_name = "NO_NAME";
 
     void sys_call() override {
         play_full_animation();
@@ -95,7 +95,7 @@ struct EntireAnimationPlayer: System {
     // NOTE: this system is sleeping on already slept systems
     // if i add the check it crashes the game
     void play_entire_animation(AnimationInfo& _animation_info,
-                               std::string_view _animation_name) {
+                               std::string _animation_name) {
         animation_info_ptr = &_animation_info;
         animation_name = _animation_name;
     };

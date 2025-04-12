@@ -13,7 +13,7 @@ class EntityEventHandler {
     std::queue<Event> event_queue {};
     std::queue<Event> event_queue_copy {};
     // events we want to consume in the future and only then destroy
-    // std::vector<Event> lasting_event_vector {};
+    std::vector<Event> lasting_event_vector {};
 
   public:
     inline void add_event(const Event& event) {

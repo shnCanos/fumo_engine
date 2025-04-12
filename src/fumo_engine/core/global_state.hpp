@@ -4,7 +4,6 @@
 #include "fumo_engine/components.hpp"
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/scheduler_ecs.hpp"
-#include "fumo_engine/event_components.hpp"
 #include "fumo_engine/events/event_state_handlers.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
 

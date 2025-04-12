@@ -28,7 +28,7 @@ void jumped(const Event& event) {
     player_state.can_jump = false;
     // player_state.falling = false;
 // FIXME:: write the new code for jumping
-    // BodyMovement::jump(player_body, event.entity_id);
+    BodyMovement::jump(player_body, event.entity_id);
 }
 
 void idle(const Event& event) {
@@ -88,7 +88,7 @@ void collided(const Event& event) {
 
 enum struct ACCEPT { HORIZONTAL, VERTICAL, HORIZONTAL_INVERT, VERTICAL_INVERT };
 
-[[nodiscard]] Vector2 direction_to_vector(DIRECTION direction) {
+[[nodiscard]] FumoVec2 direction_to_vector(DIRECTION direction) {
     switch (direction) {
         case DIRECTION::LEFT:
             return {-1.0f, 0.0f};
@@ -106,8 +106,8 @@ enum struct ACCEPT { HORIZONTAL, VERTICAL, HORIZONTAL_INVERT, VERTICAL_INVERT };
 }
 
 DIRECTION find_real_direction(DIRECTION direction, const Body& body) {
-    Vector2 vec_direction = direction_to_vector(direction);
-    return (Vector2DotProduct(vec_direction, body.x_direction) > 0) ? DIRECTION::RIGHT
+    FumoVec2 vec_direction = direction_to_vector(direction);
+    return (FumoVec2DotProduct(vec_direction, body.x_direction) > 0) ? DIRECTION::RIGHT
                                                                     : DIRECTION::LEFT;
 }
 

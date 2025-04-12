@@ -21,7 +21,7 @@ void register_all_to_ECS() {
 // AnimationInfo
 // Timer
 // Render
-// Rectangle
+// FumoRect
 // PlayerShape
 // ParallelGravityField
 // CircularGravityField
@@ -38,7 +38,7 @@ void register_components() {
     global->ECS->register_component<AnimationInfo>();
     global->ECS->register_component<Timer>();
     global->ECS->register_component<Render>();
-    global->ECS->register_component<Rectangle>();
+    global->ECS->register_component<FumoRect>();
     global->ECS->register_component<PlayerShape>();
     global->ECS->register_component<ParallelGravityField>();
     global->ECS->register_component<CircularGravityField>();
@@ -62,7 +62,9 @@ void register_systems_scheduled() {
     //--------------------------------------------------------------------------------------
     // actual game logic
     global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
-    // global->ECS->add_unregistered_system<JumpHandler, 1>();
+    global->ECS->add_unregistered_system<JumpHandler, 1>();
+    // gravity updater is a registered system,
+    // but its only running on the player right now
     global->ECS->add_unregistered_system<GravityUpdater, 2>();
 
     global->ECS->register_system<GravityFieldHandler, 3>(EntityQuery {
@@ -110,5 +112,9 @@ void register_unregistered_systems_unscheduled() {
     // global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
     // global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<LevelEntityFactory>();
-    global->ECS->add_unregistered_system_unscheduled<MovedWrapper>();
+    // FIXME: dont register delegate event wrappers
+    // otherwise, there can only be one entity moving per frame
+    // create a new stack object, and it will get destroyed along with
+    // the popped event that contains it
+    // global->ECS->add_unregistered_system_unscheduled<MovedWrapper>();
 }

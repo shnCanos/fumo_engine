@@ -18,7 +18,7 @@ class ComponentManager {
 
     // used for printing whole entities,
     // and for getting all the components of an entity
-    std::unordered_map<ComponentId, std::string_view> debug_component_id_to_name;
+    std::unordered_map<ComponentId, std::string_view> component_id_to_name;
 
   public:
     template<typename T>
@@ -30,7 +30,7 @@ class ComponentManager {
         // assign the name a unique id (used for the component bitmasks)
         component_ids.insert({t_name, current_component_id});
         // associate the id to the name for debugging
-        debug_component_id_to_name.insert({current_component_id, t_name});
+        component_id_to_name.insert({current_component_id, t_name});
 
         // use the t_name also for creating a new array of this component
         component_arrays.insert({t_name, std::make_shared<ComponentArray<T>>()});
@@ -64,9 +64,10 @@ class ComponentManager {
     void serialize_component(const EntityId& entity_id,
                              const ComponentId& component_id,
                              cereal::JSONOutputArchive& out_archive) {
-        const auto& component_name = debug_component_id_to_name[component_id];
+        const auto& component_name = component_id_to_name[component_id];
         component_arrays[component_name]->serialize_component(entity_id,
                                                               component_id,
+                                                              component_name,
                                                               out_archive);
     }
 
@@ -128,6 +129,6 @@ class ComponentManager {
 
     [[nodiscard]] std::string_view
     get_name_of_component_id(ComponentId component_id) {
-        return debug_component_id_to_name[component_id];
+        return component_id_to_name[component_id];
     }
 };

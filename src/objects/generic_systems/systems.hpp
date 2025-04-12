@@ -23,7 +23,7 @@ struct JumpHandler: System {
     // wrapper for hard coded jump
     // (want to call it every frame)
     void sys_call() override {
-        // BodyMovement::hard_coded_jump();
+        BodyMovement::hard_coded_jump();
     }
 };
 
@@ -36,6 +36,6 @@ void global_debug();
 // void move_vertically(Body& body, float amount);
 // void move_horizontally(Body& body, float amount);
 // void move_towards(Body& body, Body& target);
-// void move_towards_position(Body& body, Vector2 position);
+// void move_towards_position(Body& body, FumoVec2 position);
 // void move_vertically_fixed(Body& body, float amount);
 // void move_horizontally_fixed(Body& body, float amount);

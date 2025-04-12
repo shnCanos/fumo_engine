@@ -8,7 +8,7 @@ struct GravityUpdater : System {
 
     void sys_call() override { gravity_update(); }
     void gravity_update();
-    void update_gravity(Body& player_body);
+    void update_gravity(EntityId entity_id, Body& player_body);
     void update_position(Body& player_body);
 };
 

@@ -4,6 +4,7 @@
 
 #include "cereal/archives/json.hpp"
 #include "engine_constants.hpp"
+#include "fumo_engine/components.hpp"
 
 // const uint64_t MAX_ELEMENTS = 100;
 //
@@ -30,10 +31,10 @@ class IComponentArray {
   public:
     virtual ~IComponentArray() = default;
     virtual void entity_destroyed(EntityId entity_id) = 0;
-    virtual void
-    serialize_component(const EntityId& entity_id,
-                        const ComponentId& component_id,
-                         cereal::JSONOutputArchive& out_archive) = 0;
+    virtual void serialize_component(const EntityId& entity_id,
+                                     const ComponentId& component_id,
+                                     std::string_view component_name,
+                                     cereal::JSONOutputArchive& out_archive) = 0;
 };
 
 using Index = uint64_t;
@@ -49,9 +50,10 @@ class ComponentArray: public IComponentArray {
   public:
     void serialize_component(const EntityId& entity_id,
                              const ComponentId& component_id,
+                             std::string_view component_name,
                              cereal::JSONOutputArchive& out_archive) override {
-        // out_archive(cereal ::make_nvp(std::to_string(component_id),
-        //                               all_components[entity_to_index[entity_id]]));
+        out_archive(cereal ::make_nvp(std::string(component_name),
+                                      all_components[entity_to_index[entity_id]]));
     }
 
     void add_component_data(EntityId entity_id, T component) {

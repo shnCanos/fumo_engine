@@ -3,17 +3,14 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-
 void GravityUpdater::gravity_update() {
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    update_gravity(player_body);
+    update_gravity(global->player_id, player_body);
 }
 
-void GravityUpdater::update_gravity(Body& body) {
+void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     // NOTE: points towards the planet's planet_body
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_state =
-        global->ECS->get_component<EntityState>(global->player_id);
+    auto& player_state = global->ECS->get_component<EntityState>(entity_id);
 
     if (player_state.player_owning_field == NO_ENTITY_FOUND
         || player_state.player_owning_field == 0) {
@@ -24,22 +21,18 @@ void GravityUpdater::update_gravity(Body& body) {
 
     EntityId planet_id = player_state.player_owning_field;
     EntityQuery query_parallel {
-        .component_mask =
-            global->ECS->make_component_mask<ParallelGravityField>(),
-        .component_filter = Filter::All
-    };
+        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_filter = Filter::All};
 
     const auto& body_planet = global->ECS->get_component<Body>(planet_id);
-    Vector2 gravity_direction {};
+    FumoVec2 gravity_direction {};
 
     // --------------------------------------------------------------------
     // mario galaxy-like changing of the left-right movement to match
     // the player expectation of what right and left should be
     EntityQuery skip_parallel {
-        .component_mask =
-            global->ECS->make_component_mask<ParallelGravityField>(),
-        .component_filter = Filter::None
-    };
+        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_filter = Filter::None};
 
     // --------------------------------------------------------------------
 
@@ -55,8 +48,7 @@ void GravityUpdater::update_gravity(Body& body) {
         // methods for circular gravity fields
         auto& circular_field =
             global->ECS->get_component<CircularGravityField>(planet_id);
-        const auto& circle_shape =
-            global->ECS->get_component<Circle>(planet_id);
+        const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
         circular_field.update_gravity(player_body, body_planet);
 
         gravity_direction = circular_field.gravity_direction;
@@ -72,8 +64,8 @@ void GravityUpdater::update_gravity(Body& body) {
     // FIXME:: replace gravity updating so that we have smoothing or
     // at least dont add up a fixed value
     //
-    // Vector2 acceleration = gravity_direction * gravity_strength;
-    // player_body.velocity += acceleration;
+    FumoVec2 acceleration = gravity_direction * gravity_strength;
+    player_body.velocity += acceleration;
 }
 
 void ParallelGravityField::update_gravity(Body& player_body) {
@@ -82,10 +74,7 @@ void ParallelGravityField::update_gravity(Body& player_body) {
     //
 }
 
-void CircularGravityField::update_gravity(
-    Body& player_body,
-    const Body& body_planet
-) {
-    gravity_direction =
-        Vector2Normalize(body_planet.position - player_body.position);
+void CircularGravityField::update_gravity(Body& player_body,
+                                          const Body& body_planet) {
+    gravity_direction = FumoVec2Normalize(body_planet.position - player_body.position);
 }

@@ -5,6 +5,7 @@
 #include "fumo_engine/core/system_base.hpp"
 #include "objects/generic_systems/systems.hpp"
 #include "raylib.h"
+#include "constants.hpp"
 
 // slowly rotate player to the new gravity direction
 // change controls like mario galaxy (relative to the screen)
@@ -33,8 +34,11 @@ enum struct EVENT_ {
 
 struct Event {
     EVENT_ event;
+    // NOTE:  only here for now, remove entity_id later
     EntityId entity_id;
     std::shared_ptr<System> delegate_system;
+
+    SERIALIZE(event, entity_id, delegate_system)
 };
 
 struct EntityState {
@@ -48,17 +52,28 @@ struct EntityState {
     bool falling = false;
 
     EntityId player_owning_field = NO_ENTITY_FOUND;
+
+    SERIALIZE(on_ground,
+              jumping,
+              can_swap_orbits,
+              can_jump,
+              idle,
+              landed,
+              colliding,
+              falling)
 };
 
 struct MovedEventData {
     DIRECTION direction;
     DIRECTION previous_direction = DIRECTION::NO_DIRECTION;
     DIRECTION continue_in_direction;
+
+    SERIALIZE(direction, previous_direction, continue_in_direction)
 };
 
 //-----------------------------------------------------------------
 // flag structs
-struct Level1Tag {
+// struct Level1Tag {
     // identify objects in level 1
     // NOTE: general idea for how levels work:
     //
@@ -67,15 +82,19 @@ struct Level1Tag {
     // it also adds the OnScreen component to entities so other systems
     // can know what entities they should be updating
     // and it manages the screen transitions
-};
+// };
 
 struct OnScreen {
+    SERIALIZE(satisfy_cereal)
     // given to entities that are currently on screen
     // (used by systems that only care about what should be on the screen)
+    private:
+    char satisfy_cereal;
 };
 
 struct Render {
-    Color color;
+    SERIALIZE(color)
+    FumoColor color;
 };
 
 // struct PlayerFlag {
@@ -84,12 +103,21 @@ struct Render {
 // };
 
 struct ColliderObjectFlag {
-    // identifies planets and rectangles and such shapes
+    SERIALIZE(satisfy_cereal)
+    // identifies planets and fumo_rects and such shapes
+    private:
+    char satisfy_cereal;
 };
 
 struct GravFieldFlag {
+    SERIALIZE(satisfy_cereal)
     // if it has a field of any type
+    private:
+    char satisfy_cereal;
 };
 
-struct OutlineRectFlag {};
-
+struct OutlineRectFlag {
+    SERIALIZE(satisfy_cereal)
+    private:
+    char satisfy_cereal;
+};

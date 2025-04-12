@@ -11,10 +11,10 @@ void DebugLevelEditor::reset_position() {
     body.position = screenCenter;
 }
 
-void DebugLevelEditor::delete_planet(Vector2 mouse_position) {
+void DebugLevelEditor::delete_planet(FumoVec2 mouse_position) {
     for (const auto& entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
-        float distance = Vector2Distance(body.position, mouse_position);
+        float distance = FumoVec2Distance(body.position, mouse_position);
 
         if (distance < mouse_radius) {
             const auto& planet_factory =
@@ -25,27 +25,27 @@ void DebugLevelEditor::delete_planet(Vector2 mouse_position) {
     }
 }
 
-void DebugLevelEditor::spawn_circular_planet(Vector2 mouse_position) {
+void DebugLevelEditor::spawn_circular_planet(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_circular_planet(mouse_position);
 }
 
-void DebugLevelEditor::spawn_rect_planet(Vector2 mouse_position) {
+void DebugLevelEditor::spawn_rect_planet(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_rect_planet(mouse_position);
 }
 
-void DebugLevelEditor::spawn_rect(Vector2 mouse_position) {
+void DebugLevelEditor::spawn_rect(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_rect(mouse_position);
 }
 
-void DebugLevelEditor::spawn_rect_field(Vector2 mouse_position) {
+void DebugLevelEditor::spawn_rect_field(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_rect_field(mouse_position);
 }
 
-void DebugLevelEditor::move_entity(Vector2 mouse_position) {
+void DebugLevelEditor::move_entity(FumoVec2 mouse_position) {
     for (const auto& entity_id : sys_entities) {
         auto& body = global->ECS->get_component<Body>(entity_id);
         float distance;
@@ -65,7 +65,7 @@ void DebugLevelEditor::move_entity(Vector2 mouse_position) {
             .component_filter = Filter::None
         };
 
-        distance = Vector2Distance(body.position, mouse_position);
+        distance = FumoVec2Distance(body.position, mouse_position);
 
         if (distance < mouse_radius) {
             body.position = mouse_position;
@@ -79,16 +79,16 @@ void DebugLevelEditor::move_entity(Vector2 mouse_position) {
                 // for the isolated grav fields
                 auto& parallel_field =
                     global->ECS->get_component<ParallelGravityField>(entity_id);
-                parallel_field.field_rectangle.x = mouse_position.x;
-                parallel_field.field_rectangle.y = mouse_position.y;
+                parallel_field.field_fumo_rect.x = mouse_position.x;
+                parallel_field.field_fumo_rect.y = mouse_position.y;
                 return;
 
             } else if (global->ECS->filter(entity_id, parallel_grav_query)) {
                 auto& parallel_field =
                     global->ECS->get_component<ParallelGravityField>(entity_id);
-                parallel_field.field_rectangle.x = mouse_position.x;
-                parallel_field.field_rectangle.y =
-                    mouse_position.y - parallel_field.field_rectangle.height;
+                parallel_field.field_fumo_rect.x = mouse_position.x;
+                parallel_field.field_fumo_rect.y =
+                    mouse_position.y - parallel_field.field_fumo_rect.height;
             }
             return;
         }
@@ -97,8 +97,8 @@ void DebugLevelEditor::move_entity(Vector2 mouse_position) {
 
 void DebugLevelEditor::handle_input() {
     global->camera->zoom += ((float)GetMouseWheelMove() * 0.05f);
-    Vector2 mouse_position =
-        GetScreenToWorld2D(GetMousePosition(), *global->camera);
+    FumoVec2 mouse_position =
+        to_fumo_vec2(GetScreenToWorld2D(GetMousePosition(), *global->camera));
     // DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {

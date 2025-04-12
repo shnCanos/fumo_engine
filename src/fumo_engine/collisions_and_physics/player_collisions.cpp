@@ -14,20 +14,20 @@ void PlayerCollisionRunner::check_collisions() {
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
     auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
 
-    EntityQuery query_rectangle {
-        .component_mask = global->ECS->make_component_mask<Rectangle>(),
+    EntityQuery query_fumo_rect {
+        .component_mask = global->ECS->make_component_mask<FumoRect>(),
         .component_filter = Filter::All
     };
 
     for (const auto& obstacle_id : sys_entities) {
         const auto& obstacle_body = global->ECS->get_component<Body>(obstacle_id);
 
-        if (global->ECS->filter(obstacle_id, query_rectangle)) {
-            const auto& rectangle = global->ECS->get_component<Rectangle>(obstacle_id);
+        if (global->ECS->filter(obstacle_id, query_fumo_rect)) {
+            const auto& fumo_rect = global->ECS->get_component<FumoRect>(obstacle_id);
             if (player_to_rect_collision_solving(
                     player_shape,
                     player_body,
-                    rectangle,
+                    fumo_rect,
                     obstacle_body
                 )) {
                 collision_happened = true;
@@ -56,16 +56,16 @@ void PlayerCollisionRunner::check_collisions() {
 bool PlayerCollisionRunner::player_to_rect_collision_solving(
     PlayerShape& player_shape,
     Body& player_body,
-    const Rectangle& rectangle,
-    const Body& rectangle_body
+    const FumoRect& fumo_rect,
+    const Body& fumo_rect_body
 ) {
-    // NOTE: assume rectangles are NOT rotated
+    // NOTE: assume fumo_rects are NOT rotated
     // (add rotation support later if i want to add slopes and stuff)
 
     // -------------------------------------------------------------------------------
     // solve the collision
     Collision collision =
-        PlayerToRectCollision(player_shape, player_body, rectangle, rectangle_body);
+        PlayerToRectCollision(player_shape, player_body, fumo_rect, fumo_rect_body);
 
     if (collision.overlap == 0.0f) {
         // no collision happened
@@ -73,9 +73,9 @@ bool PlayerCollisionRunner::player_to_rect_collision_solving(
     }
     // -------------------------------------------------------------------------------
     // points towards the player_body
-    Vector2 push = Vector2Normalize(collision.push);
+    FumoVec2 push = FumoVec2Normalize(collision.push);
     float correction = 1.0f; // this value is here to stabilize the simulation
-    push = Vector2Scale(push, collision.overlap * correction);
+    push = FumoVec2Scale(push, collision.overlap * correction);
     player_body.position += push;
     player_shape.update_capsule_positions(player_body);
     return true;
@@ -98,9 +98,9 @@ bool PlayerCollisionRunner::player_to_circle_collision_solving(
     }
     // -------------------------------------------------------------------------------
     // points towards the player_body
-    Vector2 push = Vector2Normalize(collision.push);
+    FumoVec2 push = FumoVec2Normalize(collision.push);
     float correction = 1.0f; // this value is here to stabilize the simulation
-    push = Vector2Scale(push, collision.overlap * correction);
+    push = FumoVec2Scale(push, collision.overlap * correction);
     player_body.position += push;
     player_shape.update_capsule_positions(player_body);
     return true;

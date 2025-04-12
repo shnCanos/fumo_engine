@@ -12,10 +12,11 @@ int main(void) {
 
     global = std::make_unique<GlobalState>();
     global->initialize();
-
+    //--------------------------------------------------------------------------------------
     // must be done before global->setup_game_state();
     initialize_all_textures();
     register_all_to_ECS();
+    //--------------------------------------------------------------------------------------
 
     global->setup_game_state();
 

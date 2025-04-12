@@ -63,12 +63,12 @@ int key_down_event_moved(const int& Key,
                          const EntityId& entity_id,
                          const DIRECTION& direction) {
     if (IsKeyDown(Key)) {
-        const auto& moved_wrapper = global->ECS->get_system<MovedWrapper>();
         auto& moved_event = global->ECS->get_component<MovedEventData>(entity_id);
         moved_event.direction = direction;
-        global->event_handler->add_event({.event = event,
-                                          .entity_id = entity_id,
-                                          .delegate_system = moved_wrapper});
+        global->event_handler->add_event(
+            {.event = event,
+             .entity_id = entity_id,
+             .delegate_system = std::make_shared<MovedWrapper>()});
         return 1;
     }
     return 0;
