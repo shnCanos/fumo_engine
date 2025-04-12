@@ -28,6 +28,8 @@ int main(void) {
         BeginDrawing();
 
         global->frametime = GetFrameTime();
+        int x =132123;
+        int x1 =132123;
 
         global->ECS->run_systems();
         // events are handled after all systems are ran

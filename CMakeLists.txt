@@ -15,38 +15,66 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 option(USE_NO_ASSETS "Use no assets" OFF)
 option(USE_RAYLIB "Use raylib" ON)
 option(USE_LIBASSERT "Use libassert" ON)
-
-# libraries array to be linked
-set(LIBRARIES ${PROJECT_NAME})
-
-include(FetchContent)
-function(add_git_dependency libName gitURL gitTag)
-
-    FetchContent_Declare(${libName}
-            GIT_REPOSITORY ${gitURL}
-            GIT_TAG        ${gitTag}
-            GIT_SHALLOW    TRUE
-            GIT_PROGRESS   TRUE
-        )
-    if(NOT ("${libName}" STREQUAL "libname"))
-        FetchContent_MakeAvailable(${libName})
-    endif()
-endfunction()
-
 #[===[
     NOTE: if you want to get the latest commit to a repository
     git rev-parse HEAD
     copy the commit hash if you want a specific commit
 ]===]
 
+# libraries array to be linked
+set(LIBRARIES ${PROJECT_NAME})
+
+include(FetchContent)
+include(FindPkgConfig)
+function(add_git_dependency libName gitURL gitTag package_version)
+
+    FetchContent_Declare(${libName}
+            GIT_REPOSITORY ${gitURL}
+            GIT_TAG        ${gitTag}
+            GIT_SHALLOW    TRUE
+            GIT_PROGRESS   TRUE
+            FIND_PACKAGE_ARGS ${libName} ${package_version} CONFIG
+        )
+
+    if(NOT ("${libName}" STREQUAL "libname"))
+        FetchContent_MakeAvailable(${libName})
+    endif()
+
+endfunction()
+
+function(add_git_dependency libName gitURL gitTag)
+
+        FetchContent_Declare(${libName}
+            GIT_REPOSITORY ${gitURL}
+            GIT_TAG        ${gitTag}
+            GIT_SHALLOW    TRUE
+            GIT_PROGRESS   TRUE
+            FIND_PACKAGE_ARGS CONFIG
+        )
+    if(NOT ("${libName}" STREQUAL "libname"))
+        FetchContent_MakeAvailable(${libName})
+    endif()
+endfunction()
+
+
 if(USE_LIBASSERT)
     set(dep libassert)
-    add_git_dependency(
-        ${dep}
-        https://github.com/jeremy-rifkin/libassert.git
-        v2.1.5
-    )
-    include_directories(RECURSE build/_deps/libassert-src/src)
+
+    find_package(libassert 2.1.5)
+
+    if (libassert_VERSION VERSION_LESS "2.1.5")
+
+        FetchContent_Declare(libassert
+            GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert.git
+            GIT_TAG        v2.1.5
+            GIT_SHALLOW    TRUE
+            GIT_PROGRESS   TRUE
+            OVERRIDE_FIND_PACKAGE
+        )
+        FetchContent_MakeAvailable(libassert)
+        include_directories(RECURSE build/_deps/libassert-src/src)
+    endif()
+
     list(APPEND LIBRARIES libassert::assert)
 endif()
 

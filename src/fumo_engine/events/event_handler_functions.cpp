@@ -5,7 +5,7 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-namespace EventHandler {
+namespace FumoEvent {
 
 void jumped(const Event& event) {
     auto& player_body = global->ECS->get_component<Body>(event.entity_id);
@@ -76,7 +76,7 @@ void collided(const Event& event) {
     player_state.colliding = true;
 }
 
-} // namespace EventHandler
+} // namespace FumoEvent
 
 // want this behavior:
 // > when the player presses a direction, we check what that direction

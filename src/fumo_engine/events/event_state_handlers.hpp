@@ -6,7 +6,7 @@
 
 // NOTE: while this is ONLY for the player,
 // this class might be generalized to any entity in the future
-class EntityEventHandler {
+class EntitycoolEvents {
     friend class GlobalState;
 
   private:
@@ -17,7 +17,7 @@ class EntityEventHandler {
 
   public:
     inline void add_event(const Event& event) {
-        event_queue.emplace(event);
+        event_queue.push(event);
     }
 
     bool event_happened(const EVENT_& EVENT, EntityId entity_id);
@@ -27,7 +27,7 @@ class EntityEventHandler {
     void handle_event(const Event& event);
 };
 
-namespace EventHandler {
+namespace FumoEvent {
 
 void jumped(const Event& event);
 void idle(const Event& event);
@@ -35,7 +35,20 @@ void swapped_orbits(const Event& event);
 void collided(const Event& event);
 void held_key_swapping(const Event& event);
 
-} // namespace EventHandler
+template<typename T>
+std::shared_ptr<T> create_delegate(EntityId entity_id) {
+    auto var = std::is_base_of_v<System, T>;
+
+    DEBUG_ASSERT(var,
+                 "Can only add Systems as delegates.",
+                 libassert::type_name<T>());
+
+    std::shared_ptr<T> delegate = std::make_shared<T>();
+    delegate->entity_id = entity_id;
+    return delegate;
+}
+
+} // namespace FumoEvent
 
 struct StateHandler: System {
     Timer coyotte_timer;

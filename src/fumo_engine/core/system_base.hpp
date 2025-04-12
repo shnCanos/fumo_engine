@@ -1,6 +1,7 @@
 #pragma once
-#include "engine_constants.hpp"
 #include <set>
+
+#include "engine_constants.hpp"
 // NOTE: all systems should inherit from this system
 
 // NOTE: DONT FORGET TO INHERIT PUBLICLY FROM THIS CLASS
@@ -11,13 +12,14 @@ const Priority MAX_PRIORITY = MAX_SYSTEMS;
 
 class System {
   public:
-    std::set<EntityId> sys_entities{};
+    std::set<EntityId> sys_entities {};
     // sys_call is a generic method, required to sort systems by priority at the end.
     // it is necessary to work around this method if needed for subsequent function calls
     virtual void sys_call() = 0;
     // NOTE: new variable, used to disable and enable systems
     bool awake = true;
     Priority priority = NO_PRIORITY;
+    // virtual ~System();
 };
 
 // struct SystemListener : System {
@@ -39,4 +41,3 @@ class System {
 //     void sys_call() override {}
 //     EntityQuery query;
 // };
-

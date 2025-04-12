@@ -1,3 +1,4 @@
 .cache/clangd/index
 build
 release_build
+build.ninja

@@ -3,7 +3,7 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-void EntityEventHandler::handle_events() {
+void EntitycoolEvents::handle_events() {
     std::queue<Event> event_queue_copy(event_queue);
     while (!event_queue.empty()) {
         const Event& event = event_queue.front();
@@ -14,10 +14,10 @@ void EntityEventHandler::handle_events() {
 
 }
 
-void EntityEventHandler::handle_event(const Event& event) {
+void EntitycoolEvents::handle_event(const Event& event) {
     switch (event.event) {
         case EVENT_::ENTITY_JUMPED:
-            EventHandler::jumped(event);
+            FumoEvent::jumped(event);
             break;
 
         case EVENT_::ENTITY_MOVED:
@@ -26,15 +26,15 @@ void EntityEventHandler::handle_event(const Event& event) {
             break;
 
         case EVENT_::ENTITY_IDLE:
-            EventHandler::idle(event);
+            FumoEvent::idle(event);
             break;
 
         case EVENT_::ENTITY_SWAPPED_ORBITS:
-            EventHandler::swapped_orbits(event);
+            FumoEvent::swapped_orbits(event);
             break;
 
         case EVENT_::ENTITY_COLLIDED:
-            EventHandler::collided(event);
+            FumoEvent::collided(event);
             break;
         case EVENT_::ENTITY_DASHED:
             break;
@@ -44,7 +44,7 @@ void EntityEventHandler::handle_event(const Event& event) {
 // NOTE: this function is very unoptimal, and if we REALLY 
 // want to check events like this often, then we should stop using a queue
 // and switch to a deque or even simply a vector
-bool EntityEventHandler::event_happened(const EVENT_& EVENT, EntityId entity_id) {
+bool EntitycoolEvents::event_happened(const EVENT_& EVENT, EntityId entity_id) {
     auto copycopy(event_queue_copy);
     while (!event_queue_copy.empty()) {
         const Event& event = event_queue_copy.front();

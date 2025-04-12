@@ -21,7 +21,7 @@ class GlobalState {
 
     std::unique_ptr<Camera2D> camera;
 
-    std::unique_ptr<EntityEventHandler> event_handler;
+    std::unique_ptr<EntitycoolEvents> event_handler;
 
 
     EntityId
@@ -33,7 +33,7 @@ class GlobalState {
         ECS = std::make_shared<SchedulerECS>();
         ECS->initialize();
         sprite_manager = std::make_unique<SpriteManager>();
-        event_handler = std::make_unique<EntityEventHandler>();
+        event_handler = std::make_unique<EntitycoolEvents>();
     }
 
     void handle_events() {
