@@ -61,7 +61,7 @@ void register_systems_scheduled() {
     global->ECS->add_unregistered_system<JumpHandler, 1>();
     // gravity updater is a registered system,
     // but its only running on the player right now
-    // global->ECS->add_unregistered_system<GravityUpdater, 2>();
+    global->ECS->add_unregistered_system<GravityUpdater, 2>();
 
     global->ECS->register_system<GravityFieldHandler, 3>(EntityQuery {
         .component_mask = global->ECS->make_component_mask<GravFieldFlag>(),
