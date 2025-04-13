@@ -33,3 +33,12 @@ struct LevelSerializer: public System {
     // based on where stuff was stored (directory and file name)
     void deserialize_levels();
 };
+
+class SomeClass {
+
+  private:
+    int foo, bar;
+
+  public:
+    SomeClass(int foo, int bar) : foo(foo), bar(bar) {}
+};

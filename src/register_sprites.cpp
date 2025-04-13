@@ -15,50 +15,50 @@ void load_player_textures() {
     // FIXME: change the way we open the files to use std::filesystem::path
     // and write it so that it will work when sending the .exe
     // (find current path, then load assets... etc)
-    global->sprite_manager->register_sprite(SpriteSheet2D {
-        .texture_sheet = LoadTexture("assets/test_player/dash.png"),
-        .sprite_sheet_name = "dash",
-        .sprite_frame_count = 9,
-        .base_frame_speed = 6,
-        .looping = true});
-    global->sprite_manager->register_sprite(SpriteSheet2D {
-        .texture_sheet = LoadTexture("assets/test_player/jump.png"),
-        .sprite_sheet_name = "jump",
-        .sprite_frame_count = 4,
-        .base_frame_speed = 8});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/dash.png"),
+                       .sprite_sheet_name = "dash",
+                       .sprite_frame_count = 9,
+                       .base_frame_speed = 6,
+                       .looping = true});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/jump.png"),
+                       .sprite_sheet_name = "jump",
+                       .sprite_frame_count = 4,
+                       .base_frame_speed = 8});
 
-    global->sprite_manager->register_sprite(SpriteSheet2D {
-        .texture_sheet = LoadTexture("assets/test_player/landing.png"),
-        .sprite_sheet_name = "landing",
-        .sprite_frame_count = 2,
-        .base_frame_speed = 8});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/landing.png"),
+                       .sprite_sheet_name = "landing",
+                       .sprite_frame_count = 2,
+                       .base_frame_speed = 8});
 
-    global->sprite_manager->register_sprite(SpriteSheet2D {
-        .texture_sheet = LoadTexture("assets/test_player/idle.png"),
-        .sprite_sheet_name = "idle",
-        .sprite_frame_count = 7,
-        .base_frame_speed = 8,
-        .looping = true});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/idle.png"),
+                       .sprite_sheet_name = "idle",
+                       .sprite_frame_count = 7,
+                       .base_frame_speed = 8,
+                       .looping = true});
 
-    global->sprite_manager->register_sprite(SpriteSheet2D {
-        .texture_sheet = LoadTexture("assets/test_player/run.png"),
-        .sprite_sheet_name = "run",
-        .sprite_frame_count = 8,
-        .base_frame_speed = 6,
-        .looping = true});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/run.png"),
+                       .sprite_sheet_name = "run",
+                       .sprite_frame_count = 8,
+                       .base_frame_speed = 6,
+                       .looping = true});
 
     auto back_sheet = LoadTexture("assets/test_player/run.png");
 
-    global->sprite_manager->register_sprite(SpriteSheet2D {
-        .texture_sheet = back_sheet,
-        .sprite_sheet_name = "run_backwards",
-        .sprite_frame_count = 8,
-        .base_frame_speed = 6,
-        .base_region_rect = {.x = 0.0f,
-                             .y = 0.0f,
-                             .width = (float)back_sheet.width / -8.0f,
-                             .height = (float)back_sheet.height},
-        .looping = true});
+    global->sprite_manager->register_sprite(
+        SpriteSheet2D {.texture_sheet = back_sheet,
+                       .sprite_sheet_name = "run_backwards",
+                       .sprite_frame_count = 8,
+                       .base_frame_speed = 6,
+                       .base_region_rect = {.x = 0.0f,
+                                            .y = 0.0f,
+                                            .width = (float)back_sheet.width / -8.0f,
+                                            .height = (float)back_sheet.height},
+                       .looping = true});
 }
 
 // void func() {

@@ -1,13 +1,10 @@
 #pragma once
+#include <cereal/archives/json.hpp>
+#include <iostream> // IWYU pragma: export
+#include <libassert/assert.hpp>
+
 #include "array"
 #include "fumo_raylib.hpp"
-// WARNING:
-// ----------------------------------------------------------------
-#include <iostream>
-// WARNING: ignore clangd's warning, you need to include <iostream>
-// ----------------------------------------------------------------
-#include <cereal/archives/json.hpp>
-#include <libassert/assert.hpp>
 // const int screenWidth = 500;
 constexpr int screenWidth = 1920;
 constexpr int screenHeight = 1080;

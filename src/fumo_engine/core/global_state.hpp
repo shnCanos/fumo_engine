@@ -10,10 +10,6 @@
 
 class GlobalState {
   public:
-    // NOTE: I merged the scheduler with the ECS so we can separate game specific global
-    // state i dont want to rewrite access functions so SchedulerECS is accessed
-    // directly
-
     float frametime;
     std::shared_ptr<SchedulerECS> ECS;
 
@@ -21,7 +17,7 @@ class GlobalState {
 
     std::unique_ptr<Camera2D> camera;
 
-    std::unique_ptr<EntitycoolEvents> event_handler;
+    std::unique_ptr<EntityEventHandler> event_handler;
 
 
     EntityId
@@ -33,7 +29,7 @@ class GlobalState {
         ECS = std::make_shared<SchedulerECS>();
         ECS->initialize();
         sprite_manager = std::make_unique<SpriteManager>();
-        event_handler = std::make_unique<EntitycoolEvents>();
+        event_handler = std::make_unique<EntityEventHandler>();
     }
 
     void handle_events() {

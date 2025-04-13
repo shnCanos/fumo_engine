@@ -6,7 +6,7 @@
 
 // NOTE: while this is ONLY for the player,
 // this class might be generalized to any entity in the future
-class EntitycoolEvents {
+class EntityEventHandler {
     friend class GlobalState;
 
   private:

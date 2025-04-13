@@ -63,6 +63,16 @@ int key_down_event_moved(const int& Key,
                          const EntityId& entity_id,
                          const DIRECTION& direction) {
     if (IsKeyDown(Key)) {
+        auto& moved_event = global->ECS->get_component<MovedEventData>(entity_id);
+        moved_event.direction = direction;
+
+        global->event_handler->add_event(
+            {.event = event,
+             .entity_id = entity_id,
+             .delegate_system = FumoEvent::create_delegate<MovedWrapper>(entity_id)});
+
+        return 1;
+    }
         // auto add_id = [&]<typename T>(std::type_identity<T>, const auto& entity_id) {
         //     auto delegate = std::make_shared<T>();
         //     delegate->entity_id = entity_id;
@@ -78,16 +88,6 @@ int key_down_event_moved(const int& Key,
         // return 1;
         // const std::shared_ptr<MovedWrapper> moved_wrapper {};
         // moved_wrapper->entity_id = entity_id;
-        auto& moved_event = global->ECS->get_component<MovedEventData>(entity_id);
-        moved_event.direction = direction;
-
-        global->event_handler->add_event(
-            {.event = event,
-             .entity_id = entity_id,
-             .delegate_system = FumoEvent::create_delegate<MovedWrapper>(entity_id)});
-
-        return 1;
-    }
 
     return 0;
 }
