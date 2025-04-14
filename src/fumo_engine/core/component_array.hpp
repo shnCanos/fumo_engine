@@ -52,8 +52,10 @@ class ComponentArray: public IComponentArray {
                              const ComponentId& component_id,
                              std::string_view component_name,
                              cereal::JSONOutputArchive& out_archive) override {
-        out_archive(cereal ::make_nvp(std::string(component_name),
-                                      all_components[entity_to_index[entity_id]]));
+    // FIXME: make it so whenever we delete a component or an entity,
+    // we also update the serialized data by removing it
+        out_archive(cereal::make_nvp(std::string(component_name),
+                                     all_components[entity_to_index[entity_id]]));
     }
 
     void add_component_data(EntityId entity_id, T component) {

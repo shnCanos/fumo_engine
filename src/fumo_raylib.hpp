@@ -56,7 +56,7 @@ inline FumoVec2 FumoVec2ScaleDivision(FumoVec2 v, float scale) {
 }
 
 inline float FumoVec2DotProduct(FumoVec2 v1, FumoVec2 v2) {
-    return Vector2DotProduct(v1.to_raylib_vec2(), v1.to_raylib_vec2());
+    return Vector2DotProduct(v1.to_raylib_vec2(), v2.to_raylib_vec2());
 }
 
 inline float FumoVec2Distance(FumoVec2 v1, FumoVec2 v2) {

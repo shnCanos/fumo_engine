@@ -1,7 +1,7 @@
 #pragma once
+#include <cereal/types/string.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/types/vector.hpp>
-#include <cereal/types/string.hpp>
 #include <string_view>
 
 #include "constants.hpp"
@@ -23,9 +23,9 @@ enum struct AllComponentTypes {
     OutlineRectFlag,
     EntityState,
     MovedEventData,
+    ScreenId,
+    LevelId
 };
-
-
 
 struct Body {
 

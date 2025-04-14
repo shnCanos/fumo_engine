@@ -6,17 +6,21 @@ namespace FumoSerializer {
 void serialize_entity(const EntityId& entity_id,
                       cereal::JSONOutputArchive& out_archive);
 void deserialize_entity(cereal::JSONInputArchive& in_archive);
-void deserialize_component_by_id(const EntityId& entity_id,
-                                 const ComponentId& component_id,
-                                 cereal::JSONInputArchive& in_archive);
 
-template<typename T>
-[[nodiscard]] T deserialize_component(const ComponentId& component_id,
-                                      cereal::JSONInputArchive& in_archive) {
-    T component;
-    in_archive(cereal ::make_nvp(std::to_string(component_id), component));
-    return component;
-}
+namespace {
+    void deserialize_component_by_id(const EntityId& entity_id,
+                                     const ComponentId& component_id,
+                                     cereal::JSONInputArchive& in_archive);
+
+    template<typename T>
+    [[nodiscard]] T deserialize_component(const std::string& component_name,
+                                          const ComponentId& component_id,
+                                          cereal::JSONInputArchive& in_archive) {
+        T component;
+        in_archive(cereal ::make_nvp(component_name, component));
+        return component;
+    }
+} // namespace
 
 } // namespace FumoSerializer
 

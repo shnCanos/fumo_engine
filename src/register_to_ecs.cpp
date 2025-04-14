@@ -1,5 +1,7 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/core/system_base.hpp"
+#include "fumo_engine/level_systems/fumo_serializer.hpp"
+#include "fumo_engine/level_systems/level_editor.hpp"
 #include "include_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -44,6 +46,8 @@ void register_components() {
     global->ECS->register_component<OutlineRectFlag>();
     global->ECS->register_component<EntityState>();
     global->ECS->register_component<MovedEventData>();
+    global->ECS->register_component<ScreenId>();
+    global->ECS->register_component<LevelId>();
 
     // global->ECS->register_component<Level1Tag>();
     // global->ECS->register_component<OnScreen>();
@@ -62,6 +66,9 @@ void register_systems_scheduled() {
     // gravity updater is a registered system,
     // but its only running on the player right now
     global->ECS->add_unregistered_system<GravityUpdater, 2>();
+    global->ECS->register_system_unscheduled<LevelSerializer>(EntityQuery {
+        .component_mask = global->ECS->make_component_mask<LevelId, ScreenId>(),
+        .component_filter = Filter::All});
 
     global->ECS->register_system<GravityFieldHandler, 3>(EntityQuery {
         .component_mask = global->ECS->make_component_mask<GravFieldFlag>(),

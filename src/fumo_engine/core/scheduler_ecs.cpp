@@ -3,15 +3,20 @@
 void SchedulerECS::debug_print_entity(EntityId entity_id) {
     auto component_mask = ecs->get_component_mask(entity_id);
 
-    // std::cerr << entity_id << " -----> ";
-    //
-    // for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
-    //     // go through all components
-    //     if (component_mask & (1 << id)) {
-    //         std::string_view component_name = ecs->get_name_of_component_id(id);
-    //         std::cerr << libassert::highlight_stringify(component_name) << " ";
-    //     }
-    // }
+    std::cerr << "component_mask: " << std::format("{:064b}", component_mask) << " | ";
+
+    std::cerr << "entity_id: " << entity_id << " -----> ";
+
+    for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
+        // go through all components
+        uint64_t iterate = 1;
+        iterate <<= id;
+        if (component_mask & (iterate)) {
+            std::string_view component_name = ecs->get_name_of_component_id(id);
+            std::cerr << libassert::highlight_stringify(component_name) << " ";
+        }
+    }
+    std::cerr << std::endl;
 }
 
 void SchedulerECS::debug_print() {

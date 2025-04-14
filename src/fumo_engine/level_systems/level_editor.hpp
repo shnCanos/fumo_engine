@@ -4,6 +4,8 @@
 
 // #include "raylib.h"
 
+constexpr uint64_t MAX_SCREENS = 256;
+
 struct ScreenId {
     // tells us what screen an entity belongs to
     // (wrapping an int with type information)

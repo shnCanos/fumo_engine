@@ -1,6 +1,8 @@
 #include "fumo_engine/core/global_state.hpp"
-#include "objects/generic_systems/factory_systems.hpp"
+#include "fumo_engine/level_systems/fumo_serializer.hpp"
 #include "fumo_engine/level_systems/input_handling_systems.hpp"
+#include "fumo_engine/level_systems/level_editor.hpp"
+#include "objects/generic_systems/factory_systems.hpp"
 
 const int default_rect_width = 500.0f;
 const int default_rect_height = 300.0f;
@@ -27,7 +29,11 @@ void DebugLevelEditor::delete_planet(FumoVec2 mouse_position) {
 
 void DebugLevelEditor::spawn_circular_planet(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
-    planet_factory->create_circular_planet(mouse_position);
+    // EntityId entity_id = planet_factory->create_circular_planet(mouse_position);
+    //
+    const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
+    level_serializer->serialize_levels();
+    // level_serializer->deserialize_levels();
 }
 
 void DebugLevelEditor::spawn_rect_planet(FumoVec2 mouse_position) {
@@ -52,18 +58,14 @@ void DebugLevelEditor::move_entity(FumoVec2 mouse_position) {
         EntityQuery circle_grav_query {
             .component_mask =
                 global->ECS->make_component_mask<CircularGravityField>(),
-            .component_filter = Filter::All
-        };
+            .component_filter = Filter::All};
         EntityQuery parallel_grav_query {
             .component_mask =
                 global->ECS->make_component_mask<ParallelGravityField>(),
-            .component_filter = Filter::All
-        };
+            .component_filter = Filter::All};
         EntityQuery only_grav_query {
-            .component_mask =
-                global->ECS->make_component_mask<ColliderObjectFlag>(),
-            .component_filter = Filter::None
-        };
+            .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
+            .component_filter = Filter::None};
 
         distance = FumoVec2Distance(body.position, mouse_position);
 
@@ -114,10 +116,8 @@ void DebugLevelEditor::handle_input() {
         delete_planet(mouse_position);
     }
 
-    mouse_position = {
-        .x = mouse_position.x - default_rect_width / 2.0f,
-        .y = mouse_position.y - default_rect_height / 2.0f
-    };
+    mouse_position = {.x = mouse_position.x - default_rect_width / 2.0f,
+                      .y = mouse_position.y - default_rect_height / 2.0f};
     // so we spawn the center of the rect on the mouse
     if (IsKeyPressed(KEY_F2)) {
         spawn_rect_planet(mouse_position);
