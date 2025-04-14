@@ -304,76 +304,13 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 26,
-    "component_mask": 50865,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 320.0,
-            "value1": 540.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false,
-        "value6": 0
-    },
-    "Render": {
-        "value0": {
-            "value0": 230,
-            "value1": 41,
-            "value2": 55,
-            "value3": 255
-        }
-    },
-    "FumoRect": {
-        "value0": 320.0,
-        "value1": 540.0,
-        "value2": 200.0,
-        "value3": 200.0
-    },
-    "ParallelGravityField": {
-        "value0": {
-            "value0": 320.0,
-            "value1": 340.0,
-            "value2": 200.0,
-            "value3": 200.0
-        },
-        "value1": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value2": 900.0,
-        "value3": 0.0
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "ScreenId": {
-        "value0": 0
-    },
-    "LevelId": {
-        "value0": 0
-    },
     "entity_id": 27,
     "component_mask": 50865,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": -320.0,
-            "value1": 540.0
+            "value0": 9.1275634765625,
+            "value1": 551.8447875976563
         },
         "value2": {
             "value0": 0.0,
@@ -406,8 +343,8 @@
     },
     "ParallelGravityField": {
         "value0": {
-            "value0": -320.0,
-            "value1": 340.0,
+            "value0": 9.1275634765625,
+            "value1": 351.84478759765627,
             "value2": 200.0,
             "value3": 200.0
         },
@@ -856,5 +793,5 @@
     },
     "LevelId": {
         "value0": 0
-    },
+    }
 }

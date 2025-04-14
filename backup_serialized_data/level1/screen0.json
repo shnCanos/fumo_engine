@@ -1,69 +1,11 @@
 {
-    "entity_id": 7,
-    "component_mask": 50963,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 960.0,
-            "value1": 310.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false,
-        "value6": 0
-    },
-    "Circle": {
-        "value0": 200.0
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
-        }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 960.0,
-            "value1": 310.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": -1.0
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "ScreenId": {
-        "value0": 0
-    },
-    "LevelId": {
-        "value0": 1
-    },
     "entity_id": 8,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 1860.0,
-            "value1": 310.0
+            "value0": 491.96856689453127,
+            "value1": 314.52130126953127
         },
         "value2": {
             "value0": 0.0,
@@ -95,12 +37,12 @@
         "value0": 450.0,
         "value1": 900.0,
         "value2": {
-            "value0": 1860.0,
-            "value1": 310.0
+            "value0": 491.96856689453127,
+            "value1": 314.52130126953127
         },
         "value3": {
-            "value0": 0.0,
-            "value1": 0.0
+            "value0": -0.8879501819610596,
+            "value1": -0.4599396288394928
         }
     },
     "ColliderObjectFlag": {
@@ -1100,5 +1042,5 @@
     },
     "LevelId": {
         "value0": 1
-    },
+    }
 }

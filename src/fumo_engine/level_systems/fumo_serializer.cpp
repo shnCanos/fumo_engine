@@ -4,7 +4,6 @@
 
 #include "filesystem"
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/level_systems/fumo_serializer.hpp"
 #include "fumo_engine/level_systems/level_editor.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -46,10 +45,15 @@ void fix_JSON_serialization() {
             std::string contents = cereal_buffer.str();
 
             contents.insert(0, "{\n");
+            contents.erase(contents.end() - 2); // remove extra "," at the end
             contents.append("}");
 
             std::ofstream out_stream(file_name, std::ios::trunc);
             out_stream << contents;
+            PRINT_NO_NAME(std::format(
+                "serialized {}.",
+                (file_name.parent_path().filename() / file_name.filename())
+                    .string()));
         }
     }
 }
@@ -133,7 +137,7 @@ void deserialize_component_by_id(const EntityId& entity_id,
             DESERIALIZE_COMPONENT(PlayerShape);
             break;
         case AllComponentTypes::ParallelGravityField:
-            DESERIALIZE_COMPONENT(PlayerShape);
+            DESERIALIZE_COMPONENT(ParallelGravityField);
             break;
         case AllComponentTypes::CircularGravityField:
             DESERIALIZE_COMPONENT(CircularGravityField);
@@ -184,10 +188,11 @@ void serialize_entity(const EntityId& entity_id,
 }
 
 void deserialize_entity(cereal::JSONInputArchive& in_archive) {
-    // follows the save order for serialized data
-    EntityId entity_id;
+    // NOTE: follows the save order for serialized data
+    // *MUST* save entities in entity_id order else this will break
+
+    EntityId entity_id = global->ECS->create_entity();
     ComponentMask component_mask;
-    // std::cerr << "component_mask: " << std::format("{:064b}", component_mask) << " | " << std::endl;
     in_archive(entity_id, component_mask);
 
     for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
@@ -220,7 +225,18 @@ void LevelSerializer::deserialize_levels() {
 
             cereal::JSONInputArchive in_archive(in_stream);
 
-            FumoSerializer::deserialize_entity(in_archive);
+            try {
+                while (1) {
+                    FumoSerializer::deserialize_entity(in_archive);
+                }
+            } catch (cereal::Exception) {
+                // finished going through file
+                PRINT_NO_NAME(std::format(
+                    "parsed {}.",
+                    (file_name.parent_path().filename() / file_name.filename())
+                        .string()));
+                break;
+            }
         }
     }
 }

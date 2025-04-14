@@ -29,11 +29,8 @@ void DebugLevelEditor::delete_planet(FumoVec2 mouse_position) {
 
 void DebugLevelEditor::spawn_circular_planet(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
-    // EntityId entity_id = planet_factory->create_circular_planet(mouse_position);
+    EntityId entity_id = planet_factory->create_circular_planet(mouse_position);
     //
-    const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
-    level_serializer->serialize_levels();
-    // level_serializer->deserialize_levels();
 }
 
 void DebugLevelEditor::spawn_rect_planet(FumoVec2 mouse_position) {
@@ -114,6 +111,12 @@ void DebugLevelEditor::handle_input() {
         return;
     } else if (IsKeyPressed(KEY_D)) {
         delete_planet(mouse_position);
+    } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
+        if (IsKeyPressed(KEY_S)) {
+            const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
+            // level_serializer->deserialize_levels();
+            level_serializer->serialize_levels();
+        }
     }
 
     mouse_position = {.x = mouse_position.x - default_rect_width / 2.0f,

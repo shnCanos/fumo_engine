@@ -42,5 +42,7 @@ const std::array<FumoColor, 100> all_colors = {FUMO_LIGHTGRAY,
 #define PRINT(x) \
     std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
 
+#define PRINT_NO_NAME(x) std::cerr << libassert::highlight_stringify(x) << '\n';
+
 //---------------------------------------------------------------------------
 // fumo engine primitive types

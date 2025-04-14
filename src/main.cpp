@@ -1,4 +1,5 @@
 #include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/level_systems/fumo_serializer.hpp"
 #include "raylib.h"
 
 std::unique_ptr<GlobalState> global;
@@ -36,7 +37,9 @@ int main(void) {
         // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {
             count++;
-            debug_spawn_level_objects();
+            // debug_spawn_level_objects();
+            const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
+            level_serializer->deserialize_levels();
         }
 
         DrawFPS(10, 10);
