@@ -209,6 +209,16 @@ void deserialize_entity(cereal::JSONInputArchive& in_archive) {
 void LevelSerializer::deserialize_levels() {
     // assumes we are in the serialized_data/ directory
 
+
+    // FIXME: when we deserialize screens, we arent deserializing in entity_id order
+    // this means that we are for example, creating entity_id = 7, but deserializing
+    // entity_id 24. to fix this, we need to somehow iterate all files in entity id order when
+    // deserializing
+    // -> suggestion: we simply keep 2 versions of the data
+
+
+
+
     for (const auto& directory : fs::directory_iterator(fs::current_path())) {
 
         if (!directory.is_directory()) [[unlikely]] {
