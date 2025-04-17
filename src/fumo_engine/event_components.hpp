@@ -51,10 +51,13 @@ struct EntityState {
     bool landed = false;
     bool colliding = false;
     bool falling = false;
+    bool dashing = false;
 
     float dash_time = 0.0f;
     int dashes_left = 1;
     FumoVec2 input_direction;
+    FumoVec2 dash_start;
+    FumoVec2 dash_end;
 
     EntityId player_owning_field = NO_ENTITY_FOUND;
 

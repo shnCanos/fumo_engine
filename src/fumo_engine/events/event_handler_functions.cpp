@@ -1,5 +1,9 @@
+#include <raylib.h>
+#include <raymath.h>
+#include <cmath>
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/events/event_state_handlers.hpp"
+#include "fumo_raylib.hpp"
 #include "main_functions.hpp"
 #include "objects/generic_systems/systems.hpp"
 
@@ -84,16 +88,28 @@ void dashed(const Event& event) {
     auto& player_animation =
         global->ECS->get_component<AnimationInfo>(event.entity_id);
 
+    // FIXME: can double dash if dashing from the floor
+    // maybe fix by being smart!
     if (player_state.dashes_left == 0) return;
 
-    if (!(player_state.dash_time > 0)) {
-        player_state.dash_time = 0.3f;
+    if (!player_state.dashing) {
+        constexpr float dash_length = 600.;
+        
+        auto direction = player_state.input_direction;
 
-        // AnimationPlayer::play(player_animation, "dash");
-        PRINT(player_state.input_direction.x);
-        PRINT(player_state.input_direction.y);
-        player_body.x_direction = player_state.input_direction;
+        if (direction.x == 0 && direction.y == 0) {
+            direction = FumoVec2Snap(player_body.x_direction, 8);
+            direction = direction * (player_body.inverse_direction ? -1 : 1);
+        }
+
+        player_body.x_direction = direction ;
         player_body.velocity = {.x = 0, .y = 0};
+        player_state.dashing = true;
+        // set the start and end positions of the dash
+        // for easing
+        player_state.dash_start = player_body.position;
+        player_state.dash_end = player_body.position + direction * dash_length;
+        player_state.dash_time = 0;
         player_state.dashes_left--;
     }
 

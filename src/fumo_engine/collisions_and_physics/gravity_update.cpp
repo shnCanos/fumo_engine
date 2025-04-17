@@ -67,7 +67,7 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
 
     float factor = 6;
 
-    if (player_state.dash_time > 0) {
+    if (player_state.dashing) {
         factor = 0;
 
     player_body.gravity_direction = {player_body.x_direction.y, -player_body.x_direction.x};

@@ -75,6 +75,14 @@ inline FumoVec2 FumoVec2Add(FumoVec2 lhs, FumoVec2 rhs) {
     return to_fumo_vec2(Vector2Add(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
 }
 
+inline float FumoVec2Angle(FumoVec2 lhs, FumoVec2 rhs) {
+    return Vector2Angle(lhs.to_raylib_vec2(), rhs.to_raylib_vec2());
+}
+
+inline FumoVec2 FumoVec2Rotate(FumoVec2 v, float angle) {
+    return to_fumo_vec2(Vector2Rotate(v.to_raylib_vec2(), angle));
+}
+
 inline FumoVec2 FumoVec2Negate(FumoVec2 rhs) {
     return to_fumo_vec2(Vector2Negate(rhs.to_raylib_vec2()));
 }
@@ -125,6 +133,10 @@ inline FumoVec2 operator*(const FumoVec2& lhs, const float& rhs) {
     return FumoVec2Scale(lhs, rhs);
 }
 
+inline FumoVec2 operator*(const float& lhs, const FumoVec2& rhs) {
+    return FumoVec2Scale(rhs, lhs);
+}
+
 inline const FumoVec2& operator*=(FumoVec2& lhs, const float& rhs) {
     lhs = FumoVec2Scale(lhs, rhs);
     return lhs;
@@ -163,6 +175,13 @@ inline bool operator==(const FumoVec2& lhs, const FumoVec2& rhs) {
 
 inline bool operator!=(const FumoVec2& lhs, const FumoVec2& rhs) {
     return !FloatEquals(lhs.x, rhs.x) || !FloatEquals(lhs.y, rhs.y);
+}
+
+inline FumoVec2 FumoVec2Snap(FumoVec2 v1, int directions) {
+    float angle = std::atan2(v1.y, v1.x);
+    angle = std::round(angle / (2*PI) * directions) / directions * (2*PI);
+
+    return FumoVec2Rotate({1, 0}, angle) * FumoVec2Length(v1);
 }
 
 // Some Basic Colors

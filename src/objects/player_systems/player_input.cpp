@@ -62,7 +62,7 @@ void PlayerInputHandler::handle_input() {
 
     key_was_pressed += key_pressed_event(KEY_X, EVENT_::ENTITY_DASHED, player_id);    
 
-    if (player_state.dash_time) {
+    if (player_state.dashing) {
         return;
     }
 
