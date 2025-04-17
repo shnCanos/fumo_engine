@@ -72,8 +72,32 @@ void collided(const Event& event) {
 
     player_state.on_ground = true;
     player_state.can_swap_orbits = true;
+    player_state.jumping = false;
     player_state.can_jump = true;
     player_state.colliding = true;
+    player_state.dashes_left = 1;
+}
+
+void dashed(const Event& event) {
+    auto& player_body = global->ECS->get_component<Body>(event.entity_id);
+    auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
+
+    if (player_state.dashes_left == 0) 
+        return;
+
+    if (!(player_state.dash_time > 0)) {
+        player_state.dash_time = 0.1f;
+        
+        PRINT(player_state.input_direction.x);
+        PRINT(player_state.input_direction.y);
+        player_body.x_direction = player_state.input_direction;
+        player_body.velocity = {.x = 0, .y = 0};
+        player_state.dashes_left--;
+    }
+    
+
+    // float flip = player_body.inverse_direction ? -1 : 1;
+    // player_body.velocity += player_body.x_direction * dash_speed * flip;
 }
 
 } // namespace FumoEvent
@@ -87,23 +111,6 @@ void collided(const Event& event) {
 // -> we either accept, or reject the input
 
 enum struct ACCEPT { HORIZONTAL, VERTICAL, HORIZONTAL_INVERT, VERTICAL_INVERT };
-
-[[nodiscard]] FumoVec2 direction_to_vector(DIRECTION direction) {
-    switch (direction) {
-        case DIRECTION::LEFT:
-            return {-1.0f, 0.0f};
-        case DIRECTION::RIGHT:
-            return {1.0f, 0.0f};
-        case DIRECTION::UP:
-            return {0.0f, -1.0f};
-        case DIRECTION::DOWN:
-            return {0.0f, 1.0f};
-        default:
-            PRINT("sent to unreachable code NO_DIRECTION");
-            std::unreachable();
-            break;
-    }
-}
 
 DIRECTION find_real_direction(DIRECTION direction, const Body& body) {
     FumoVec2 vec_direction = direction_to_vector(direction);

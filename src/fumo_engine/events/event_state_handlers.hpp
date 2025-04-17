@@ -33,6 +33,7 @@ void jumped(const Event& event);
 void idle(const Event& event);
 void swapped_orbits(const Event& event);
 void collided(const Event& event);
+void dashed(const Event& event);
 void held_key_swapping(const Event& event);
 
 template<typename T>

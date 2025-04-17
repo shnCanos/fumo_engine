@@ -22,6 +22,23 @@ DIRECTION opposite_direction(DIRECTION direction) {
     std::unreachable();
 }
 
+[[nodiscard]] FumoVec2 direction_to_vector(DIRECTION direction) {
+    switch (direction) {
+        case DIRECTION::LEFT:
+            return {-1.0f, 0.0f};
+        case DIRECTION::RIGHT:
+            return {1.0f, 0.0f};
+        case DIRECTION::UP:
+            return {0.0f, -1.0f};
+        case DIRECTION::DOWN:
+            return {0.0f, 1.0f};
+        default:
+            PRINT("sent to unreachable code NO_DIRECTION");
+            std::unreachable();
+            break;
+    }
+}
+
 // bool IsKeyStillDown(int key) {
 //     bool still_down = false;
 //

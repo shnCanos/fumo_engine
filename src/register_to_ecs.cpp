@@ -62,7 +62,6 @@ void register_systems_scheduled() {
     //--------------------------------------------------------------------------------------
     // actual game logic
     global->ECS->add_unregistered_system<PlayerInputHandler, 0>();
-    global->ECS->add_unregistered_system<JumpHandler, 1>();
     // gravity updater is a registered system,
     // but its only running on the player right now
     global->ECS->add_unregistered_system<GravityUpdater, 2>();

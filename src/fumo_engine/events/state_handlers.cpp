@@ -36,55 +36,72 @@ void StateHandler::handle_state(const EntityId& entity_id,
     }
     player_state.falling = !player_state.on_ground && !player_state.colliding;
 
-    if (player_state.falling) {
-        //-----------------------------------
-        // temporary falling code
-        // fall_counter++;
-        // if (fall_counter > 20) {
-        //     fall_counter = 1;
-        //     player_state.can_jump = true;
-        // }
-        //-----------------------------------
+    // if (player_state.falling) {
+    //     //-----------------------------------
+    //     // temporary falling code
+    //     // fall_counter++;
+    //     // if (fall_counter > 20) {
+    //     //     fall_counter = 1;
+    //     //     player_state.can_jump = true;
+    //     // }
+    //     //-----------------------------------
 
-        AnimationPlayer::play(player_animation, "jump");
-        player_animation.frame_progress = 3;
-        player_animation.current_region_rect.x =
-            player_animation.current_region_rect.width
-            * player_animation.frame_progress;
-        player_animation.is_running = true;
-    }
+    //     AnimationPlayer::play(player_animation, "jump");
+    //     player_animation.frame_progress = 3;
+    //     player_animation.current_region_rect.x =
+    //         player_animation.current_region_rect.width
+    //         * player_animation.frame_progress;
+    //     player_animation.is_running = true;
+    // }
 }
 
 void StateHandler::end_of_frame_update() {
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
     auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
+    auto& player_animation =
+        global->ECS->get_component<AnimationInfo>(global->player_id);
+
     // camera follows player
     UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
     //-----------------------------------------------------------------
     // apply movement changes to the player
-    if (player_state.can_swap_orbits) {
+    // if (true || player_state.can_swap_orbits) {
+    if (player_state.dash_time > 0) {
+        const float dash_speed = 700.0f;
+        // float flip = player_body.inverse_direction ? -1 : 1;
+        player_body.velocity += player_body.x_direction * dash_speed;
+        player_state.dash_time -= global->frametime;
+
+        if (player_state.dash_time < 0)
+            player_state.dash_time = 0;
+        
+        AnimationPlayer::play(player_animation, "dash");
+    }
+    else {
         player_body.x_direction = {player_body.gravity_direction.y,
                                    -player_body.gravity_direction.x};
         player_body.rotation =
             std::atan2(player_body.x_direction.y, player_body.x_direction.x)
             * RAD2DEG;
     }
+            // }
+
 
     if (player_state.on_ground) {
         // dont move in the GRAVITY direction while player is on the ground
         // nudge player SLIGHTLY towards planet to correct horizontal movement
         player_body.velocity =
-            player_body.get_x_velocity() + player_body.get_y_velocity() * 0.1f;
+            player_body.get_x_velocity() + player_body.get_y_velocity() * 0.05f;
     }
 
     // hardcoded for a little bit smoother jump, delete later
     // -----------------------------------------------------------------
-    float dot_vel = player_body.get_dot_y_velocity();
-    if (dot_vel >= 800) {
-        player_body.velocity =
-            player_body.get_y_velocity() * 3 / 4 + player_body.get_x_velocity();
-    }
+    // float dot_vel = player_body.get_dot_y_velocity();
+    // if (dot_vel >= 800) {
+    //     player_body.velocity =
+    //         player_body.get_y_velocity() * 3 / 4 + player_body.get_x_velocity();
+    // }
     // hardcoding ends here
     // -----------------------------------------------------------------
 
@@ -101,5 +118,9 @@ void StateHandler::end_of_frame_update() {
     // also, we should LERP between the new gravity direction and the old one
     // and slowly rotate the player
     // FIXME: figure out a new way to update velocity
-    player_body.velocity = {0.0f, 0.0f};
+    // player_body.velocity = {0.0f, 0.0f};
+    
+
+    player_body.velocity = player_body.get_x_velocity() * 0.75f +
+                            player_body.get_y_velocity();
 }

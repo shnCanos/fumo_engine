@@ -1,5 +1,8 @@
+#include <raylib.h>
+
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
+#include "fumo_raylib.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -56,16 +59,42 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     }
     // --------------------------------------------------------------------
 
-    player_body.gravity_direction = gravity_direction;
-
     // --------------------------------------------------------------------
 
     // --------------------------------------------------------------------
     // FIXME:: replace gravity updating so that we have smoothing or
     // at least dont add up a fixed value
-    //
-    FumoVec2 acceleration = gravity_direction * gravity_strength;
-    player_body.velocity += acceleration;
+
+    float factor = 6;
+
+    if (player_state.dash_time > 0) {
+        factor = 0;
+
+    player_body.gravity_direction = {player_body.x_direction.y, -player_body.x_direction.x};
+    } else {
+        player_body.gravity_direction = gravity_direction;
+
+        if (player_state.jumping) {
+            float jump_progress =
+                FumoVec2DotProduct(player_body.get_y_velocity(), gravity_direction);
+
+            if (jump_progress > 0) {
+                factor += 4;
+            }
+
+            if (IsKeyReleased(KEY_SPACE)) {
+                player_body.velocity = player_body.get_x_velocity()
+                    + player_body.get_y_velocity() * 0.5f;
+            }
+
+            if (!IsKeyDown(KEY_SPACE)) {
+                factor += 2;
+            }
+        }
+    }
+
+    FumoVec2 acceleration = gravity_direction * gravity_strength * factor;
+    player_body.velocity += acceleration * global->frametime;
 }
 
 void ParallelGravityField::update_gravity(Body& player_body) {
@@ -76,5 +105,6 @@ void ParallelGravityField::update_gravity(Body& player_body) {
 
 void CircularGravityField::update_gravity(Body& player_body,
                                           const Body& body_planet) {
-    gravity_direction = FumoVec2Normalize(body_planet.position - player_body.position);
+    gravity_direction =
+        FumoVec2Normalize(body_planet.position - player_body.position);
 }

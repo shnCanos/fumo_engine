@@ -15,17 +15,8 @@ enum struct DIRECTION { LEFT, RIGHT, UP, DOWN , NO_DIRECTION};
 
 namespace BodyMovement {
 void jump(Body& body, const EntityId& entity_id);
-void hard_coded_jump();
 void move(const EntityId& entity_id, const DIRECTION& direction);
 } // namespace BodyMovement
-
-struct JumpHandler: System {
-    // wrapper for hard coded jump
-    // (want to call it every frame)
-    void sys_call() override {
-        BodyMovement::hard_coded_jump();
-    }
-};
 
 namespace Debugger {
 void global_debug();

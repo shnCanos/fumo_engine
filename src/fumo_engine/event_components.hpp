@@ -3,6 +3,7 @@
 
 #include "fumo_engine/core/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
+#include "fumo_raylib.hpp"
 #include "objects/generic_systems/systems.hpp"
 #include "raylib.h"
 #include "constants.hpp"
@@ -50,6 +51,10 @@ struct EntityState {
     bool landed = false;
     bool colliding = false;
     bool falling = false;
+
+    float dash_time = 0.0f;
+    int dashes_left = 1;
+    FumoVec2 input_direction;
 
     EntityId player_owning_field = NO_ENTITY_FOUND;
 

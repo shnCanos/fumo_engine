@@ -793,5 +793,68 @@
     },
     "LevelId": {
         "value0": 0
+    },
+    "entity_id": 37,
+    "component_mask": 50865,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": -465.4964599609375,
+            "value1": 541.6781005859375
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false,
+        "value6": 0
+    },
+    "Render": {
+        "value0": {
+            "value0": 230,
+            "value1": 41,
+            "value2": 55,
+            "value3": 255
+        }
+    },
+    "FumoRect": {
+        "value0": -553.4962158203125,
+        "value1": 210.34466552734376,
+        "value2": 200.0,
+        "value3": 200.0
+    },
+    "ParallelGravityField": {
+        "value0": {
+            "value0": -465.4964599609375,
+            "value1": 341.6781005859375,
+            "value2": 200.0,
+            "value3": 200.0
+        },
+        "value1": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value2": 900.0,
+        "value3": 0.0
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "GravFieldFlag": {
+        "value0": 0
+    },
+    "ScreenId": {
+        "value0": 0
+    },
+    "LevelId": {
+        "value0": 0
     }
 }

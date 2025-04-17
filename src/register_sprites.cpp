@@ -19,7 +19,7 @@ void load_player_textures() {
         SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/dash.png"),
                        .sprite_sheet_name = "dash",
                        .sprite_frame_count = 9,
-                       .base_frame_speed = 6,
+                       .base_frame_speed = 12,
                        .looping = true});
     global->sprite_manager->register_sprite(
         SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/jump.png"),
