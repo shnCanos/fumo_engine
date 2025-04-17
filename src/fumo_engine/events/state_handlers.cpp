@@ -25,7 +25,7 @@ void StateHandler::handle_state(const EntityId& entity_id,
     player_body.inverse_direction =
         (moved_event_data.continue_in_direction == DIRECTION::LEFT);
 
-    if (player_state.jumping) {
+    if (player_state.jumping && !player_state.dash_time) {
         if (player_animation.frame_progress != player_animation.sprite_frame_count) {
             AnimationPlayer::play(player_animation, "jump");
         }
@@ -68,7 +68,7 @@ void StateHandler::end_of_frame_update() {
     // apply movement changes to the player
     // if (true || player_state.can_swap_orbits) {
     if (player_state.dash_time > 0) {
-        const float dash_speed = 700.0f;
+        const float dash_speed = 250.0f;
         // float flip = player_body.inverse_direction ? -1 : 1;
         player_body.velocity += player_body.x_direction * dash_speed;
         player_state.dash_time -= global->frametime;

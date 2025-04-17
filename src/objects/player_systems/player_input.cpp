@@ -20,7 +20,7 @@ int key_down_event_moved(const int& Key,
 
 FumoVec2 vec;
 
-void peidros_cool_dash(const EntityId& player_id,
+int peidros_cool_dash(const EntityId& player_id,
     EntityState& player_state) {
     
     player_state.input_direction = {.x = 0, .y = 0};
@@ -46,6 +46,8 @@ void peidros_cool_dash(const EntityId& player_id,
     }
 
     player_state.input_direction = FumoVec2Normalize(player_state.input_direction);
+
+    return 0;
 }
 
 void PlayerInputHandler::handle_input() {
@@ -64,7 +66,7 @@ void PlayerInputHandler::handle_input() {
         return;
     }
 
-    peidros_cool_dash(player_id, player_state);
+    key_was_pressed += peidros_cool_dash(player_id, player_state);
 
     if (key_down_event_moved(KEY_LEFT,
                              EVENT_::ENTITY_MOVED,
@@ -92,9 +94,9 @@ void PlayerInputHandler::handle_input() {
         return;
     }
 
-    if (!key_was_pressed) {
-        global->event_handler->add_event({EVENT_::ENTITY_IDLE, player_id});
-    }
+    // if (!key_was_pressed) {
+    global->event_handler->add_event({EVENT_::ENTITY_IDLE, player_id});
+    // }
 }
 
 int key_down_event(const int& Key, const EVENT_& event, const EntityId& id) {

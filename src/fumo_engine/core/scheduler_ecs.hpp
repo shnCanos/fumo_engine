@@ -157,8 +157,8 @@ class SchedulerECS {
         ecs->add_unregistered_system(system_ptr);
         system_ptr->priority = priority;
 
-        // can be changed to be in the constructor or test this with initializer
-        // list
+        // can be changed to be in the constructor or test this with 
+        // initializer list
         unregistered_system_scheduler.insert(system_ptr);
 
         // NOTE: remove later if not using debugger

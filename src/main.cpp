@@ -37,9 +37,9 @@ int main(void) {
         // here because we start with no planets right now (remove whem we make levels)
         if (!count) [[unlikely]] {
             count++;
-            // debug_spawn_level_objects();
-            const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
-            level_serializer->deserialize_levels();
+            debug_spawn_level_objects();
+            // const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
+            // level_serializer->deserialize_levels();
         }
 
         DrawFPS(10, 10);

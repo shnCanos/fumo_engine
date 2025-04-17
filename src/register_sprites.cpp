@@ -11,6 +11,7 @@ void initialize_all_textures() {
     load_player_textures();
 }
 
+
 void load_player_textures() {
     // FIXME: change the way we open the files to use std::filesystem::path
     // and write it so that it will work when sending the .exe
@@ -19,7 +20,7 @@ void load_player_textures() {
         SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/dash.png"),
                        .sprite_sheet_name = "dash",
                        .sprite_frame_count = 9,
-                       .base_frame_speed = 12,
+                       .base_frame_speed = 4,
                        .looping = true});
     global->sprite_manager->register_sprite(
         SpriteSheet2D {.texture_sheet = LoadTexture("assets/test_player/jump.png"),
