@@ -20,7 +20,7 @@ class EntityEventHandler {
         event_queue.push(event);
     }
 
-    bool event_happened(const EVENT_& EVENT, EntityId entity_id);
+    bool did_event_happen(const EVENT_& EVENT, EntityId entity_id);
 
   private:
     void handle_events();
@@ -35,6 +35,7 @@ void swapped_orbits(const Event& event);
 void collided(const Event& event);
 void dashed(const Event& event);
 void held_key_swapping(const Event& event);
+void screen_transition(const Event& event);
 
 template<typename T>
 std::shared_ptr<T> create_delegate(EntityId entity_id) {

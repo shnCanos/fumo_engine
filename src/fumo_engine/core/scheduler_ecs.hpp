@@ -86,7 +86,6 @@ class SchedulerECS {
     // component stuff
     template<typename T>
     void register_component() {
-        // all_component_types.push_back(T {});
         ecs->register_component<T>();
     }
 
@@ -97,6 +96,18 @@ class SchedulerECS {
     void entity_add_component(const EntityId& entity_id, T component) {
         // scheduler.scheduled_entity_component_masks[entity_id] =
         ecs->entity_add_component(entity_id, component);
+    }
+
+    template<typename T>
+    void replace_or_add_component(const EntityId& entity_id, T component) {
+
+        if (filter(entity_id,
+                   EntityQuery {.component_mask = make_component_mask<T>(),
+                                .component_filter = Filter::All})) {
+            ecs->replace_component(entity_id, component);
+            return;
+        }
+        entity_add_component(entity_id, component);
     }
 
     template<typename T> // remove from entity
@@ -157,7 +168,7 @@ class SchedulerECS {
         ecs->add_unregistered_system(system_ptr);
         system_ptr->priority = priority;
 
-        // can be changed to be in the constructor or test this with 
+        // can be changed to be in the constructor or test this with
         // initializer list
         unregistered_system_scheduler.insert(system_ptr);
 

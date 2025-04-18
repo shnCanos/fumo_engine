@@ -1,5 +1,5 @@
 #pragma once
-#include "constants.hpp"
+#include "cereal/archives/json.hpp"
 #include "fumo_engine/core/system_base.hpp"
 
 namespace FumoSerializer {
@@ -36,13 +36,4 @@ struct LevelSerializer: public System {
     // goes through the serialized data and assigns ScreenId and LevelId
     // based on where stuff was stored (directory and file name)
     void deserialize_levels();
-};
-
-class SomeClass {
-
-  private:
-    int foo, bar;
-
-  public:
-    SomeClass(int foo, int bar) : foo(foo), bar(bar) {}
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include "constants.hpp"
+#include "constants/constants.hpp"
 #include "fumo_engine/core/entity_query.hpp"
 #include "system_base.hpp"
 #include <string_view>

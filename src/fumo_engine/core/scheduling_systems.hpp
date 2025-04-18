@@ -1,5 +1,5 @@
 #pragma once
-#include "constants.hpp"
+#include "constants/constants.hpp"
 #include "fumo_engine/core/scheduler_ecs.hpp"
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_engine/components.hpp"

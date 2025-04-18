@@ -1,15 +1,13 @@
+#include "constants/planet_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/level_systems/level_editor.hpp"
+#include "fumo_engine/screen_components.hpp"
 #include "objects/generic_systems/factory_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 [[nodiscard]] FumoRect make_default_field_rect(FumoVec2 position);
 [[nodiscard]] FumoRect make_default_ground_rect(FumoVec2 position);
 // TODO: move these to constants when you figure out their values
-const float default_grav_strength = 900.0f;
-const float default_gravity_reach = 150.0f;
-const int default_rect_width = 200.0f;
-const int default_rect_height = 200.0f;
 
 void LevelEntityFactory::delete_planet(EntityId entity_id) {
     // here to keep track of what this instance of planet factory
@@ -53,7 +51,7 @@ EntityId LevelEntityFactory::create_circular_planet(FumoVec2 position) {
                               .gravity_strength = default_grav_strength,
                               .position = position});
 
-    global->ECS->entity_add_component(entity_id, ScreenId {0});
+    global->ECS->entity_add_component(entity_id, Screen {0});
     global->ECS->entity_add_component(entity_id, LevelId {1});
 
     sys_entities.insert(entity_id);
@@ -85,7 +83,7 @@ EntityId LevelEntityFactory::create_rect_planet(FumoVec2 position) {
     global->ECS->entity_add_component(entity_id, ColliderObjectFlag {});
     global->ECS->entity_add_component(entity_id, GravFieldFlag {});
 
-    global->ECS->entity_add_component(entity_id, ScreenId {0});
+    global->ECS->entity_add_component(entity_id, Screen {0});
     global->ECS->entity_add_component(entity_id, LevelId {0});
 
     sys_entities.insert(entity_id);
@@ -110,7 +108,7 @@ EntityId LevelEntityFactory::create_rect_field(FumoVec2 position) {
         Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},
               .velocity = {0.0f, 0.0f}});
 
-    global->ECS->entity_add_component(entity_id, ScreenId {0});
+    global->ECS->entity_add_component(entity_id, Screen {0});
     global->ECS->entity_add_component(entity_id, LevelId {0});
 
     sys_entities.insert(entity_id);
@@ -132,7 +130,7 @@ EntityId LevelEntityFactory::create_rect(FumoVec2 position) {
         Body {.position = {ground_fumo_rect.x, ground_fumo_rect.y},
               .velocity = {0.0f, 0.0f}});
 
-    global->ECS->entity_add_component(entity_id, ScreenId {0});
+    global->ECS->entity_add_component(entity_id, Screen {0});
     global->ECS->entity_add_component(entity_id, LevelId {0});
 
     sys_entities.insert(entity_id);
@@ -173,10 +171,43 @@ EntityId LevelEntityFactory::create_rect_field(FumoVec2 position,
         Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},
               .velocity = {0.0f, 0.0f}});
 
-    global->ECS->entity_add_component(entity_id, ScreenId {0});
+    global->ECS->entity_add_component(entity_id, Screen {0});
     global->ECS->entity_add_component(entity_id, LevelId {0});
 
     sys_entities.insert(entity_id);
 
     return entity_id;
 }
+
+EntityId LevelEntityFactory::create_screen_transition(FumoVec2 position,
+                                               FumoVec2 grav_direction) {
+    EntityId entity_id = global->ECS->create_entity();
+
+    FumoRect grav_field_fumo_rect = make_default_field_rect(position);
+    global->ECS->entity_add_component(entity_id,
+                                      ParallelGravityField {
+                                          .field_fumo_rect = grav_field_fumo_rect,
+                                          .gravity_direction = grav_direction,
+                                          .gravity_strength = default_grav_strength,
+                                      });
+
+    global->ECS->entity_add_component(entity_id, GravFieldFlag {});
+
+
+
+    global->ECS->entity_add_component(entity_id, Render {.color = FUMO_BLUE});
+    global->ECS->entity_add_component(
+        entity_id,
+        Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},
+              .velocity = {0.0f, 0.0f}});
+
+    global->ECS->entity_add_component(entity_id, Screen {0});
+    global->ECS->entity_add_component(entity_id, LevelId {0});
+
+    sys_entities.insert(entity_id);
+
+    return entity_id;
+}
+
+
+

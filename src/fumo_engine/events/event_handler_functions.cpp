@@ -23,7 +23,7 @@ void jumped(const Event& event) {
         // cancel previous jump if we were in the middle of it
         player_body.iterations = 0;
     }
-    // FIXME: add a falling event so the falling animation frame doesnt
+    // TODO: add a falling event so the falling animation frame doesnt
     // play if we jump while falling (and add a timer to limit how long
     // you can jump after falling from a ledge (unsure how to do this properly))
 
@@ -31,7 +31,6 @@ void jumped(const Event& event) {
     player_state.on_ground = false;
     player_state.can_jump = false;
     // player_state.falling = false;
-    // FIXME:: write the new code for jumping
     BodyMovement::jump(player_body, event.entity_id);
 }
 

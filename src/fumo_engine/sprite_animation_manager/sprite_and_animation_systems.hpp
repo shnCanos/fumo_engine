@@ -2,7 +2,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "constants.hpp"
+#include "constants/constants.hpp"
 #include "fumo_engine/components.hpp"
 #include "fumo_engine/core/system_base.hpp"
 

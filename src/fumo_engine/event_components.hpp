@@ -1,12 +1,12 @@
 #pragma once
 #include <memory>
 
-#include "fumo_engine/core/engine_constants.hpp"
+#include "constants/constants.hpp"
+#include "constants/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_raylib.hpp"
 #include "objects/generic_systems/systems.hpp"
 #include "raylib.h"
-#include "constants.hpp"
 
 // slowly rotate player to the new gravity direction
 // change controls like mario galaxy (relative to the screen)
@@ -29,6 +29,7 @@ enum struct EVENT_ {
     ENTITY_COLLIDED,
     ENTITY_SWAPPED_ORBITS,
     //-----------------------------------------------------------------
+    PLAYER_TRANSITIONED_SCREEN,
     // PLAYER_HELD_KEY_WHILE_LANDING,
     // ENTITY_FELL_FROM_GROUND,
 };
@@ -52,6 +53,7 @@ struct EntityState {
     bool colliding = false;
     bool falling = false;
     bool dashing = false;
+    bool is_changing_screens = false;
 
     float dash_time = 0.0f;
     int dashes_left = 1;
@@ -71,6 +73,9 @@ struct EntityState {
               falling)
 };
 
+//-----------------------------------------------------------------
+
+
 struct MovedEventData {
     DIRECTION direction;
     DIRECTION previous_direction = DIRECTION::NO_DIRECTION;
@@ -82,21 +87,21 @@ struct MovedEventData {
 //-----------------------------------------------------------------
 // flag structs
 // struct Level1Tag {
-    // identify objects in level 1
-    // NOTE: general idea for how levels work:
-    //
-    // we create all the entities a level will need, then we store them in some
-    // level manager thing that deals with them, and knows what belongs where
-    // it also adds the OnScreen component to entities so other systems
-    // can know what entities they should be updating
-    // and it manages the screen transitions
+// identify objects in level 1
+// NOTE: general idea for how levels work:
+//
+// we create all the entities a level will need, then we store them in some
+// level manager thing that deals with them, and knows what belongs where
+// it also adds the OnScreen component to entities so other systems
+// can know what entities they should be updating
+// and it manages the screen transitions
 // };
 
 struct OnScreen {
     SERIALIZE(satisfy_cereal)
     // given to entities that are currently on screen
     // (used by systems that only care about what should be on the screen)
-    private:
+  private:
     char satisfy_cereal;
 };
 
@@ -113,19 +118,19 @@ struct Render {
 struct ColliderObjectFlag {
     SERIALIZE(satisfy_cereal)
     // identifies planets and fumo_rects and such shapes
-    private:
+  private:
     char satisfy_cereal;
 };
 
 struct GravFieldFlag {
     SERIALIZE(satisfy_cereal)
     // if it has a field of any type
-    private:
+  private:
     char satisfy_cereal;
 };
 
 struct OutlineRectFlag {
     SERIALIZE(satisfy_cereal)
-    private:
+  private:
     char satisfy_cereal;
 };

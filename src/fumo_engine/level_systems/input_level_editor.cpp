@@ -1,7 +1,6 @@
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/level_systems/fumo_serializer.hpp"
-#include "fumo_engine/level_systems/input_handling_systems.hpp"
-#include "fumo_engine/level_systems/level_editor.hpp"
+#include "fumo_engine/serialization/fumo_serializer.hpp"
+#include "fumo_engine/level_systems/input_level_editor.hpp"
 #include "objects/generic_systems/factory_systems.hpp"
 
 const int default_rect_width = 500.0f;

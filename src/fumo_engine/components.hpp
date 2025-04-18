@@ -4,7 +4,7 @@
 #include <cereal/types/vector.hpp>
 #include <string_view>
 
-#include "constants.hpp"
+#include "constants/constants.hpp"
 #include "fumo_raylib.hpp"
 #include "raylib.h"
 
@@ -23,8 +23,10 @@ enum struct AllComponentTypes {
     OutlineRectFlag,
     EntityState,
     MovedEventData,
-    ScreenId,
-    LevelId
+    Screen,
+    LevelId,
+    // FIXME: dont forget to serialize
+    ScreenTransitionRect
 };
 
 struct Body {
@@ -52,11 +54,9 @@ struct Body {
         return x_direction * FumoVec2DotProduct(velocity, x_direction);
     }
 
-    void scale_velocity(float scale) {
-        velocity += gravity_direction * scale;
-    }
+    void scale_velocity(float scale) { velocity += gravity_direction * scale; }
 
-    // -------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------
     // trash to delete
     int iterations {};
 
@@ -110,6 +110,9 @@ struct ParallelGravityField {
     // the field has one direction INSIDE this fumo_rect
 
     // NOTE: assume the field points towards the bottom side of the fumo_rect
+
+    // NOTE: there is no body for gravity fields because we want to have the body
+    // be used for the floor and not for the field on planets
     FumoRect field_fumo_rect {};
 
     FumoVec2 gravity_direction = {0.0f, 1.0f}; // default is vertical

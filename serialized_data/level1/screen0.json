@@ -1,11 +1,11 @@
 {
-    "entity_id": 8,
+    "entity_id": 7,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 961.1953125,
-            "value1": 262.70977783203127
+            "value0": 960.0,
+            "value1": 310.0
         },
         "value2": {
             "value0": 0.0,
@@ -37,12 +37,12 @@
         "value0": 450.0,
         "value1": 900.0,
         "value2": {
-            "value0": 961.1953125,
-            "value1": 262.70977783203127
+            "value0": 960.0,
+            "value1": 310.0
         },
         "value3": {
-            "value0": -0.1785697340965271,
-            "value1": -0.9839272499084473
+            "value0": 0.0,
+            "value1": -1.0
         }
     },
     "ColliderObjectFlag": {
@@ -51,8 +51,74 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 1
+    },
+    "entity_id": 8,
+    "component_mask": 50963,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": 1860.0,
+            "value1": 310.0
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false,
+        "value6": 0
+    },
+    "Circle": {
+        "value0": 200.0
+    },
+    "Render": {
+        "value0": {
+            "value0": 0,
+            "value1": 121,
+            "value2": 241,
+            "value3": 255
+        }
+    },
+    "CircularGravityField": {
+        "value0": 450.0,
+        "value1": 900.0,
+        "value2": {
+            "value0": 1860.0,
+            "value1": 310.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "ColliderObjectFlag": {
         "value0": 0
+    },
+    "GravFieldFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -109,8 +175,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -157,8 +227,8 @@
             "value1": 310.0
         },
         "value3": {
-            "value0": 0.980115532875061,
-            "value1": 0.1984277218580246
+            "value0": 0.0,
+            "value1": 0.0
         }
     },
     "ColliderObjectFlag": {
@@ -167,8 +237,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -225,8 +299,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -283,8 +361,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -341,8 +423,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -399,8 +485,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -457,8 +547,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -515,8 +609,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -573,8 +671,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -631,8 +733,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -689,8 +795,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -747,8 +857,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -805,8 +919,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -863,8 +981,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -921,8 +1043,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -979,8 +1105,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
     },
     "LevelId": {
         "value0": 1
@@ -1037,66 +1167,12 @@
     "GravFieldFlag": {
         "value0": 0
     },
-    "ScreenId": {
-        "value0": 0
-    },
-    "LevelId": {
-        "value0": 1
-    },
-    "entity_id": 35,
-    "component_mask": 50963,
-    "Body": {
-        "value0": 0.0,
+    "Screen": {
+        "value0": 0,
         "value1": {
-            "value0": 1860.688720703125,
-            "value1": 311.0426025390625
-        },
-        "value2": {
             "value0": 0.0,
             "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false,
-        "value6": 0
-    },
-    "Circle": {
-        "value0": 200.0
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
         }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 1860.688720703125,
-            "value1": 311.0426025390625
-        },
-        "value3": {
-            "value0": -0.8046682476997376,
-            "value1": -0.5937246680259705
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "ScreenId": {
-        "value0": 0
     },
     "LevelId": {
         "value0": 1

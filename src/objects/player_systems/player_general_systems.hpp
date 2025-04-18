@@ -1,5 +1,5 @@
 #pragma once
-#include "fumo_engine/core/engine_constants.hpp"
+#include "constants/engine_constants.hpp"
 #include "fumo_engine/core/system_base.hpp"
 
 namespace PlayerInitializer {

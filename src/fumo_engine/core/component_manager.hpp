@@ -3,8 +3,8 @@
 
 #include "cereal/archives/json.hpp"
 #include "component_array.hpp"
-#include "constants.hpp"
-#include "engine_constants.hpp"
+#include "constants/constants.hpp"
+#include "constants/engine_constants.hpp"
 #include "system_base.hpp"
 
 // each type needs to map to a respective id
@@ -61,6 +61,18 @@ class ComponentManager {
         return cast_component_array->get_component_data(entity_id);
     }
 
+    template<typename T>
+    void replace_component(const EntityId& entity_id, T& new_component) {
+        std::string_view t_name = libassert::type_name<T>();
+        DEBUG_ASSERT(component_ids.contains(t_name),
+                     "forgot to register component",
+                     component_ids,
+                     t_name);
+        std::shared_ptr<ComponentArray<T>> cast_component_array =
+            std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
+        cast_component_array->replace_component_data(entity_id, new_component);
+    }
+
     void serialize_component(const EntityId& entity_id,
                              const ComponentId& component_id,
                              cereal::JSONOutputArchive& out_archive) {
@@ -72,7 +84,7 @@ class ComponentManager {
     }
 
     template<typename T>
-    void check_for_component(EntityId entity_id) {
+    void get_component_error_internal(EntityId entity_id) {
         std::string_view t_name = libassert::type_name<T>();
         DEBUG_ASSERT(component_ids.contains(t_name),
                      "forgot to register component",
@@ -123,9 +135,7 @@ class ComponentManager {
         }
     }
 
-    void debug_print() {
-        PRINT(component_arrays);
-    }
+    void debug_print() { PRINT(component_arrays); }
 
     [[nodiscard]] std::string_view
     get_name_of_component_id(ComponentId component_id) {

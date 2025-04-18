@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 #include "cereal/archives/json.hpp"
-#include "engine_constants.hpp"
+#include "constants/engine_constants.hpp"
 #include "fumo_engine/components.hpp"
 
 // const uint64_t MAX_ELEMENTS = 100;
@@ -52,8 +52,8 @@ class ComponentArray: public IComponentArray {
                              const ComponentId& component_id,
                              std::string_view component_name,
                              cereal::JSONOutputArchive& out_archive) override {
-    // FIXME: make it so whenever we delete a component or an entity,
-    // we also update the serialized data by removing it
+        // FIXME: make it so whenever we delete a component or an entity,
+        // we also update the serialized data by removing it
         out_archive(cereal::make_nvp(std::string(component_name),
                                      all_components[entity_to_index[entity_id]]));
     }
@@ -105,6 +105,15 @@ class ComponentArray: public IComponentArray {
         // notice that there is an overhead from the non-contiguous unordered_map access
         // on this method possibly replace this with something else later
         return all_components[entity_to_index[entity_id]];
+    }
+
+    void replace_component_data(const EntityId& entity_id, T& new_component) {
+        DEBUG_ASSERT(entity_to_index.contains(entity_id),
+                     "this entity does not have this component.",
+                     entity_id);
+        // notice that there is an overhead from the non-contiguous unordered_map access
+        // on this method possibly replace this with something else later
+        all_components[entity_to_index[entity_id]] = new_component;
     }
 
     void entity_destroyed(EntityId entity_id) override {

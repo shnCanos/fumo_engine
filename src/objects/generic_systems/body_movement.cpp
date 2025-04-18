@@ -3,14 +3,12 @@
 #include <cerrno>
 
 #include "fumo_engine/core/global_state.hpp"
-#include "raylib.h"
-#include "raymath.h"
 #include "systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
 // const static float movement_scaling = 20000.0f;
-const static float movement_scaling = 240.0f;
+const static float movement_scaling = 185.0f;
 const static float jump_scaling = 1500.0f;
 
 void BodyMovement::move(const EntityId& entity_id, const DIRECTION& direction) {
@@ -39,13 +37,13 @@ void BodyMovement::move(const EntityId& entity_id, const DIRECTION& direction) {
     }
 }
 
-float scaling = -980.0f * 3;
-
-float default_scaling = -980.0f * 3;
-
-float going_down_scaling = -900.0f;
-
-float default_going_down_scaling = -900.0f;
+// float scaling = -980.0f * 3;
+//
+// float default_scaling = -980.0f * 3;
+//
+// float going_down_scaling = -900.0f;
+//
+// float default_going_down_scaling = -900.0f;
 
 void BodyMovement::jump(Body& body, const EntityId& entity_id) {
     auto& player_state = global->ECS->get_component<EntityState>(entity_id);
@@ -58,9 +56,9 @@ void BodyMovement::jump(Body& body, const EntityId& entity_id) {
 
     // global->event_handler->add_event({EVENT_::ENTITY_JUMPED, entity_id});
 
-    scaling = default_scaling;
-
-    going_down_scaling = default_going_down_scaling;
+    // scaling = default_scaling;
+    //
+    // going_down_scaling = default_going_down_scaling;
 
     body.velocity =
             body.get_x_velocity() + FumoVec2Negate(body.gravity_direction) * jump_scaling;

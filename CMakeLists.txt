@@ -50,7 +50,23 @@ function(add_git_dependency libName gitURL gitTag)
     GIT_TAG ${gitTag}
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
-    FIND_PACKAGE_ARGS CONFIG)
+    # FIND_PACKAGE_ARGS CONFIG
+    )
+    if(NOT ("${libName}" STREQUAL "libname"))
+        FetchContent_MakeAvailable(${libName})
+    endif()
+
+endfunction()
+function(add_git_dependency_find_package libName gitURL gitTag)
+
+    FetchContent_Declare(
+    ${libName}
+    GIT_REPOSITORY ${gitURL}
+    GIT_TAG ${gitTag}
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    FIND_PACKAGE_ARGS CONFIG
+    )
     if(NOT ("${libName}" STREQUAL "libname"))
         FetchContent_MakeAvailable(${libName})
     endif()
@@ -72,6 +88,13 @@ if(USE_LIBASSERT)
       OVERRIDE_FIND_PACKAGE)
         FetchContent_MakeAvailable(libassert)
         include_directories(RECURSE build/_deps/libassert-src/src)
+    else()
+        add_git_dependency_find_package(
+            libassert
+            https://github.com/jeremy-rifkin/libassert.git
+            v2.1.5
+        )
+
     endif()
 
     list(APPEND LIBRARIES libassert::assert)
@@ -96,7 +119,8 @@ if(USE_RAYLIB)
       CACHE BOOL "" FORCE)
 
     set(dep raylib)
-    add_git_dependency(${dep} https://github.com/raysan5/raylib.git "master")
+    add_git_dependency(${dep} https://github.com/raysan5/raylib.git "c1ab645")
+
 
     FetchContent_GetProperties(${dep})
     if(NOT ${dep}_POPULATED)

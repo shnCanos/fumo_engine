@@ -2,8 +2,8 @@
 #include <array>
 #include <cstdint>
 
-#include "constants.hpp"
-#include "engine_constants.hpp"
+#include "constants/constants.hpp"
+#include "constants/engine_constants.hpp"
 // #include <libassert/assert.hpp>
 #include <queue>
 
@@ -18,8 +18,8 @@ class EntityManager {
 
   public:
     EntityManager() {
-        for (EntityId entity_id = 0; entity_id < MAX_ENTITY_IDS; entity_id++) {
-            available_entity_ids.push(entity_id);
+        for (EntityId id = 0; id < MAX_ENTITY_IDS; id++) {
+            available_entity_ids.push(id);
         }
     }
 
@@ -87,7 +87,8 @@ class EntityManager {
         entity_component_masks[entity_id] |= 1 << component_id;
     }
 
-    void remove_from_component_mask(EntityId entity_id, ComponentId component_id) {
+    void remove_from_component_mask(EntityId entity_id,
+                                    ComponentId component_id) {
         DEBUG_ASSERT(living_entity_count < MAX_ENTITY_IDS,
                      "too many living entities");
         DEBUG_ASSERT(entity_id < MAX_ENTITY_IDS, "exceeded MAX_ENTITY_IDS");
@@ -95,7 +96,7 @@ class EntityManager {
         DEBUG_ASSERT(entity_component_masks[entity_id] && component_id == 0,
                      "component wasn't in the mask",
                      entity_component_masks[entity_id]);
-        // FIXME: make sure that this works as intended 
+        // FIXME: make sure that this works as intended
         // (test removing components later)
         entity_component_masks[entity_id] ^= 1 << component_id;
     }

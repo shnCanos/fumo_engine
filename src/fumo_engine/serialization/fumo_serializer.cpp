@@ -1,10 +1,11 @@
-#include "fumo_engine/level_systems/fumo_serializer.hpp"
+#include "fumo_engine/serialization/fumo_serializer.hpp"
 
 #include <fstream>
 
 #include "filesystem"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/level_systems/level_editor.hpp"
+#include "fumo_engine/screen_components.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -66,13 +67,17 @@ void LevelSerializer::serialize_levels() {
     clear_files_for_serialization();
 
     for (const auto& entity_id : sys_entities) {
-        const auto& screen_id = global->ECS->get_component<ScreenId>(entity_id);
+        // FIXME: add Screen to each entity instead of the screenId
+
+        // ---------------------------------------------------------------------
+        const auto& screen = global->ECS->get_component<Screen>(entity_id);
         const auto& level_id = global->ECS->get_component<LevelId>(entity_id);
+        // ---------------------------------------------------------------------
 
         fs::path level_screen_path = std::format("level{}", level_id.level_id);
         fs::create_directory(level_screen_path);
 
-        level_screen_path /= std::format("screen{}.json", screen_id.screen_id);
+        level_screen_path /= std::format("screen{}.json", screen.screen_id);
 
         std::ofstream out_stream(level_screen_path, std::ios::app);
 
@@ -157,11 +162,14 @@ void deserialize_component_by_id(const EntityId& entity_id,
         case AllComponentTypes::MovedEventData:
             DESERIALIZE_COMPONENT(MovedEventData);
             break;
-        case AllComponentTypes::ScreenId:
-            DESERIALIZE_COMPONENT(ScreenId);
+        case AllComponentTypes::Screen:
+            DESERIALIZE_COMPONENT(Screen);
             break;
         case AllComponentTypes::LevelId:
             DESERIALIZE_COMPONENT(LevelId);
+            break;
+        case AllComponentTypes::ScreenTransitionRect:
+            DESERIALIZE_COMPONENT(ScreenTransitionRect);
             break;
     }
 }
@@ -191,9 +199,10 @@ void deserialize_entity(cereal::JSONInputArchive& in_archive) {
     // NOTE: follows the save order for serialized data
     // *MUST* save entities in entity_id order else this will break
 
-    EntityId entity_id = global->ECS->create_entity();
+    EntityId entity_id;
     ComponentMask component_mask;
     in_archive(entity_id, component_mask);
+    entity_id = global->ECS->create_entity();
 
     for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
         uint64_t iterate = 1;
@@ -209,15 +218,8 @@ void deserialize_entity(cereal::JSONInputArchive& in_archive) {
 void LevelSerializer::deserialize_levels() {
     // assumes we are in the serialized_data/ directory
 
-
-    // FIXME: when we deserialize screens, we arent deserializing in entity_id order
-    // this means that we are for example, creating entity_id = 7, but deserializing
-    // entity_id 24. to fix this, we need to somehow iterate all files in entity id order when
-    // deserializing
-    // -> suggestion: we simply keep 2 versions of the data
-
-
-
+    // entities are deserialized with new entity_ids that are
+    // in order of screen_id and level_id
 
     for (const auto& directory : fs::directory_iterator(fs::current_path())) {
 
