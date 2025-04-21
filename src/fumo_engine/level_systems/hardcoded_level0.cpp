@@ -1,3 +1,4 @@
+#include "constants/planet_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/generic_systems/factory_systems.hpp"
 #include "raylib.h"
@@ -20,29 +21,30 @@ void debug_spawn_level_objects() {
         EntityId id_planet = planet_factory->create_rect(starter_position);
         global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
 
-        FumoRect& outline_rect = global->ECS->get_component<FumoRect>(id_planet);
+        FumoRect& outline_rect =
+            global->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = 0.0f,
                         .y = 0.0f,
                         .width = screenWidth,
                         .height = screenHeight};
     }
-    {
-        // make first planet that owns the player
-        EntityId id_planet = planet_factory->create_rect_planet(
-            {starter_position.x - screenWidth * 3, starter_position.y});
-
-        auto& player_state =
-            global->ECS->get_component<EntityState>(global->player_id);
-        player_state.player_owning_field = id_planet;
-
-        FumoRect& rect_planet = global->ECS->get_component<FumoRect>(id_planet);
-        rect_planet.width = rect_planet.width * 100;
-        previous_width = rect_planet.width;
-
-        ParallelGravityField& rect_field =
-            global->ECS->get_component<ParallelGravityField>(id_planet);
-        rect_field.field_fumo_rect.width = rect_planet.width;
-    }
+    // {
+    //     // make first planet that owns the player
+    //     EntityId id_planet = planet_factory->create_rect_planet(
+    //         {starter_position.x - screenWidth * 3, starter_position.y});
+    //
+    //     auto& player_state =
+    //         global->ECS->get_component<EntityState>(global->player_id);
+    //     player_state.player_owning_field = id_planet + 1;
+    //
+    //     FumoRect& rect_planet = global->ECS->get_component<FumoRect>(id_planet);
+    //     rect_planet.width = rect_planet.width * 100;
+    //     previous_width = rect_planet.width;
+    //
+    //     ParallelGravityField& rect_field =
+    //         global->ECS->get_component<ParallelGravityField>(id_planet + 1);
+    //     rect_field.field_fumo_rect.width = rect_planet.width;
+    // }
 }
 
 void screen_border_lines() {
@@ -52,7 +54,8 @@ void screen_border_lines() {
         EntityId id_planet = planet_factory->create_rect(starter_position);
         global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
 
-        FumoRect& outline_rect = global->ECS->get_component<FumoRect>(id_planet);
+        FumoRect& outline_rect =
+            global->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = 0.0f,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -62,7 +65,8 @@ void screen_border_lines() {
         EntityId id_planet = planet_factory->create_rect(starter_position);
         global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
 
-        FumoRect& outline_rect = global->ECS->get_component<FumoRect>(id_planet);
+        FumoRect& outline_rect =
+            global->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = screenWidth,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -72,7 +76,8 @@ void screen_border_lines() {
         EntityId id_planet = planet_factory->create_rect(starter_position);
         global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
 
-        FumoRect& outline_rect = global->ECS->get_component<FumoRect>(id_planet);
+        FumoRect& outline_rect =
+            global->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = screenWidth * 2,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -82,7 +87,8 @@ void screen_border_lines() {
         EntityId id_planet = planet_factory->create_rect(starter_position);
         global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
 
-        FumoRect& outline_rect = global->ECS->get_component<FumoRect>(id_planet);
+        FumoRect& outline_rect =
+            global->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = screenWidth * 3,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -90,60 +96,72 @@ void screen_border_lines() {
     }
     FumoVec2 positon = screenCenter;
     positon.y -= 230;
-    { EntityId circle_planet = planet_factory->create_circular_planet(positon); }
-    positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     positon.x += 900;
     {
-        EntityId circle_planet = planet_factory->create_circular_planet(positon);
-        EntityId circle_planet2 =
-            planet_factory->create_circular_planet({positon.x, positon.y - 900});
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
+    }
+    positon.x += 900;
+    {
+        EntityId circle_planet =
+            planet_factory->create_circular_planet(positon);
+        EntityId circle_planet2 = planet_factory->create_circular_planet(
+            {positon.x, positon.y - 900});
     }
     FumoVec2 screncentr = screenCenter;
     screncentr.x -= screenWidth / 3.0f;
@@ -167,19 +185,21 @@ void make_some_rects() {
 
     {
         // make first planet that owns the player
-        EntityId id_planet = planet_factory->create_rect_planet(
+        EntityId id_planet = planet_factory->create_rect(
             {starter_position.x - screenWidth * 3, starter_position.y});
 
+        EntityId field_id = planet_factory->create_rect_field(
+            {starter_position.x - screenWidth * 3, starter_position.y - default_rect_height});
         auto& player_state =
             global->ECS->get_component<EntityState>(global->player_id);
-        player_state.player_owning_field = id_planet;
+        player_state.player_owning_field = field_id;
 
         FumoRect& rect_planet = global->ECS->get_component<FumoRect>(id_planet);
         rect_planet.width = rect_planet.width * 100;
         previous_width = rect_planet.width;
 
         ParallelGravityField& rect_field =
-            global->ECS->get_component<ParallelGravityField>(id_planet);
+            global->ECS->get_component<ParallelGravityField>(field_id);
         rect_field.field_fumo_rect.width = rect_planet.width;
     }
 
@@ -187,7 +207,8 @@ void make_some_rects() {
         starter_position.x += previous_width;
 
         EntityId id_planet = planet_factory->create_rect(starter_position);
-        FumoRect& no_grav_rect = global->ECS->get_component<FumoRect>(id_planet);
+        FumoRect& no_grav_rect =
+            global->ECS->get_component<FumoRect>(id_planet);
 
         previous_width = no_grav_rect.width;
     }

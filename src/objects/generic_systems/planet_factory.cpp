@@ -1,6 +1,5 @@
 #include "constants/planet_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/level_systems/level_editor.hpp"
 #include "fumo_engine/screen_components.hpp"
 #include "objects/generic_systems/factory_systems.hpp"
 
@@ -63,62 +62,39 @@ EntityId LevelEntityFactory::create_circular_planet(FumoVec2 position) {
 
 EntityId LevelEntityFactory::create_rect_planet(FumoVec2 position) {
 
-    EntityId entity_id = global->ECS->create_entity();
-
-    FumoRect ground_fumo_rect = make_default_ground_rect(position);
-    global->ECS->entity_add_component(entity_id, ground_fumo_rect);
-
-    // placed above the ground fumo_rect, points downwards
-    FumoRect grav_field_fumo_rect = make_default_field_rect(position);
-    grav_field_fumo_rect.y -= default_rect_height;
-    global->ECS->entity_add_component(
-        entity_id,
-        ParallelGravityField {
-            .field_fumo_rect = grav_field_fumo_rect,
-            .gravity_strength = default_grav_strength,
-        });
-
-    global->ECS->entity_add_component(
-        entity_id,
-        Body {.position = {ground_fumo_rect.x, ground_fumo_rect.y},
-              .velocity = {0.0f, 0.0f}});
-    global->ECS->entity_add_component(entity_id, Render {.color = FUMO_RED});
-    global->ECS->entity_add_component(entity_id, ColliderObjectFlag {});
-    global->ECS->entity_add_component(entity_id, GravFieldFlag {});
-
-    global->ECS->entity_add_component(entity_id, Screen {0});
-    global->ECS->entity_add_component(entity_id, LevelId {0});
-
-    sys_entities.insert(entity_id);
-
-    return entity_id;
-}
-
-EntityId LevelEntityFactory::create_rect_field(FumoVec2 position) {
-    EntityId entity_id = global->ECS->create_entity();
-
-    FumoRect grav_field_fumo_rect = make_default_field_rect(position);
-    global->ECS->entity_add_component(
-        entity_id,
-        ParallelGravityField {
-            .field_fumo_rect = grav_field_fumo_rect,
-            .gravity_strength = default_grav_strength,
-        });
-
-    global->ECS->entity_add_component(entity_id, GravFieldFlag {});
-    global->ECS->entity_add_component(entity_id, Render {.color = FUMO_BLUE});
-    global->ECS->entity_add_component(
-        entity_id,
-        Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},
-              .velocity = {0.0f, 0.0f}});
-
-    global->ECS->entity_add_component(entity_id, Screen {0});
-    global->ECS->entity_add_component(entity_id, LevelId {0});
-
-    sys_entities.insert(entity_id);
+    EntityId entity_id = create_rect(position);
+    create_rect_field({.x = position.x, .y = position.y - default_rect_height});
+    // EntityId entity_id = global->ECS->create_entity();
+    //
+    // FumoRect ground_fumo_rect = make_default_ground_rect(position);
+    // global->ECS->entity_add_component(entity_id, ground_fumo_rect);
+    //
+    // // placed above the ground fumo_rect, points downwards
+    // FumoRect grav_field_fumo_rect = make_default_field_rect(position);
+    // grav_field_fumo_rect.y -= default_rect_height;
+    // global->ECS->entity_add_component(
+    //     entity_id,
+    //     ParallelGravityField {
+    //         .field_fumo_rect = grav_field_fumo_rect,
+    //         .gravity_strength = default_grav_strength,
+    //     });
+    //
+    // global->ECS->entity_add_component(
+    //     entity_id,
+    //     Body {.position = {ground_fumo_rect.x, ground_fumo_rect.y},
+    //           .velocity = {0.0f, 0.0f}});
+    // global->ECS->entity_add_component(entity_id, Render {.color = FUMO_RED});
+    // global->ECS->entity_add_component(entity_id, ColliderObjectFlag {});
+    // global->ECS->entity_add_component(entity_id, GravFieldFlag {});
+    //
+    // global->ECS->entity_add_component(entity_id, Screen {0});
+    // global->ECS->entity_add_component(entity_id, LevelId {0});
+    //
+    // sys_entities.insert(entity_id);
 
     return entity_id;
 }
+
 
 EntityId LevelEntityFactory::create_rect(FumoVec2 position) {
     EntityId entity_id = global->ECS->create_entity();
@@ -156,6 +132,31 @@ EntityId LevelEntityFactory::create_rect(FumoVec2 position) {
             .height = default_rect_height};
 }
 
+EntityId LevelEntityFactory::create_rect_field(FumoVec2 position) {
+    EntityId entity_id = global->ECS->create_entity();
+
+    FumoRect grav_field_fumo_rect = make_default_field_rect(position);
+    global->ECS->entity_add_component(
+        entity_id,
+        ParallelGravityField {
+            .field_fumo_rect = grav_field_fumo_rect,
+            .gravity_strength = default_grav_strength,
+        });
+
+    global->ECS->entity_add_component(entity_id, GravFieldFlag {});
+    global->ECS->entity_add_component(entity_id, Render {.color = FUMO_ORANGE});
+    global->ECS->entity_add_component(
+        entity_id,
+        Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},
+              .velocity = {0.0f, 0.0f}});
+
+    global->ECS->entity_add_component(entity_id, Screen {0});
+    global->ECS->entity_add_component(entity_id, LevelId {0});
+
+    sys_entities.insert(entity_id);
+
+    return entity_id;
+}
 EntityId LevelEntityFactory::create_rect_field(FumoVec2 position,
                                                FumoVec2 grav_direction) {
     EntityId entity_id = global->ECS->create_entity();
@@ -170,7 +171,7 @@ EntityId LevelEntityFactory::create_rect_field(FumoVec2 position,
         });
 
     global->ECS->entity_add_component(entity_id, GravFieldFlag {});
-    global->ECS->entity_add_component(entity_id, Render {.color = FUMO_BLUE});
+    global->ECS->entity_add_component(entity_id, Render {.color = FUMO_ORANGE});
     global->ECS->entity_add_component(
         entity_id,
         Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},

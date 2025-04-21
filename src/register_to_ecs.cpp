@@ -73,9 +73,10 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<GravFieldFlag>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system<PlayerCollisionRunner, 4>(EntityQuery {
-        .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
-        .component_filter = Filter::Any});
+    global->ECS->register_system<PlayerCollisionRunner, 4>(
+        EntityQuery {.component_mask =
+                         global->ECS->make_component_mask<ColliderObjectFlag>(),
+                     .component_filter = Filter::Any});
     global->ECS->register_system<ScreenTransitionHandler, 5>(EntityQuery {
         .component_mask =
             global->ECS->make_component_mask<Body, ScreenTransitionRect>(),
@@ -88,7 +89,8 @@ void register_systems_scheduled() {
     // misc systems
     global->ECS->register_system<DebugLevelEditor, 5>(EntityQuery {
         .component_mask =
-            global->ECS->make_component_mask<GravFieldFlag, ColliderObjectFlag>(),
+            global->ECS
+                ->make_component_mask<GravFieldFlag, ColliderObjectFlag>(),
         .component_filter = Filter::Any});
     // global->ECS->register_system<TimerHandler, 7>(
     //     EntityQuery{.component_mask = global->ECS->make_component_mask<Timer>(),
@@ -96,12 +98,14 @@ void register_systems_scheduled() {
 
     //--------------------------------------------------------------------------------------
     // render everything at the end
-    global->ECS->register_system<ObjectRenderer, MAX_PRIORITY>(EntityQuery {
-        .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
-        .component_filter = Filter::All});
+    global->ECS->register_system<ObjectRenderer, MAX_PRIORITY>(
+        EntityQuery {.component_mask =
+                         global->ECS->make_component_mask<ColliderObjectFlag>(),
+                     .component_filter = Filter::All});
 
     global->ECS->register_system<AnimationRenderer, MAX_PRIORITY>(EntityQuery {
-        .component_mask = global->ECS->make_component_mask<Body, AnimationInfo>(),
+        .component_mask =
+            global->ECS->make_component_mask<Body, AnimationInfo>(),
         .component_filter = Filter::All});
 
     global->ECS->register_system<GravFieldRenderer, MAX_PRIORITY>(EntityQuery {
@@ -109,12 +113,13 @@ void register_systems_scheduled() {
                                                            Render,
                                                            Body,
                                                            GravFieldFlag>(),
-        .component_filter = Filter::Only});
+        .component_filter = Filter::All});
     //--------------------------------------------------------------------------------------
 }
 
 void register_unregistered_systems_unscheduled() {
-    global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(global->ECS);
+    global->ECS->add_unregistered_system_unscheduled<SchedulerSystemECS>(
+        global->ECS);
     // global->ECS->add_unregistered_system_unscheduled<GravityBufferHandler>();
     // global->ECS->add_unregistered_system_unscheduled<EntireAnimationPlayer>();
     global->ECS->add_unregistered_system_unscheduled<LevelEntityFactory>();

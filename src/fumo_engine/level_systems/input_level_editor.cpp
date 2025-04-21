@@ -126,7 +126,7 @@ void DebugLevelEditor::handle_input() {
                       .y = mouse_position.y - default_rect_height / 2.0f};
     // so we spawn the center of the rect on the mouse
     if (IsKeyPressed(KEY_F2)) {
-        spawn_rect_planet(mouse_position);
+        // spawn_rect_planet(mouse_position);
      
     } else if (IsKeyPressed(KEY_T)) {
         spawn_rect(mouse_position);

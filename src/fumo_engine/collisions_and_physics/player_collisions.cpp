@@ -60,6 +60,8 @@ bool player_to_rect_collision_solving(PlayerShape& player_shape,
                                       const Body& fumo_rect_body) {
     // NOTE: assume fumo_rects are NOT rotated
     // (add rotation support later if i want to add slopes and stuff)
+    // FumoRect doesnt store the position, that is stored in the Body
+    // (this is useful for writing generic move functions)
 
     // -------------------------------------------------------------------------------
     // solve the collision

@@ -30,6 +30,10 @@ inline FumoColor to_fumo_color(Color c) {
 }
 
 struct FumoRect {
+    // NOTE: does not store positions most of the time
+    // (x and y are not used very often)
+    // commonly the position is on a separate Body{} component
+    //
     // here because raylib is c and i cant add a damn template to the source code
     SERIALIZE(x, y, width, height)
     float x; // FumoRect top-left corner position x

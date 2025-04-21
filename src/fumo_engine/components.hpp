@@ -43,7 +43,8 @@ struct Body {
 
     // NOTE: follows the gravity direction, not the vertical player direction
     [[nodiscard]] FumoVec2 get_y_velocity() {
-        return gravity_direction * FumoVec2DotProduct(velocity, gravity_direction);
+        return gravity_direction
+            * FumoVec2DotProduct(velocity, gravity_direction);
     }
 
     [[nodiscard]] float get_dot_y_velocity() {
@@ -77,12 +78,12 @@ struct Circle {
 };
 
 struct PlayerShape {
-    // TODO: move this to the PlayerFlag
 
     float radius;
     FumoVec2 top_circle_center;
     FumoVec2 bottom_circle_center;
 
+    // PERF: should remove the capsule lines later on if need optimization
     std::pair<FumoVec2, FumoVec2> left_line; // .first is the bottom point
     std::pair<FumoVec2, FumoVec2> right_line; // .first is the bottom point
 
@@ -93,13 +94,20 @@ struct PlayerShape {
             player_body.position + player_body.gravity_direction * radius;
 
         left_line.second = top_circle_center - player_body.x_direction * radius;
-        left_line.first = bottom_circle_center - player_body.x_direction * radius;
+        left_line.first =
+            bottom_circle_center - player_body.x_direction * radius;
 
-        right_line.second = top_circle_center + player_body.x_direction * radius;
-        right_line.first = bottom_circle_center + player_body.x_direction * radius;
+        right_line.second =
+            top_circle_center + player_body.x_direction * radius;
+        right_line.first =
+            bottom_circle_center + player_body.x_direction * radius;
     }
 
-    SERIALIZE(radius, top_circle_center, bottom_circle_center, left_line, right_line);
+    SERIALIZE(radius,
+              top_circle_center,
+              bottom_circle_center,
+              left_line,
+              right_line);
 };
 
 // NOTE: we only want a single side for now, add a fumo_rect version
@@ -121,7 +129,8 @@ struct ParallelGravityField {
     // FumoVec2 position = screenCenter;
 
     bool is_inside_field(const Body& player_body,
-                         const PlayerShape& player_shape) const;
+                         const PlayerShape& player_shape,
+                         const Body& parallel_body) const;
     void update_gravity(Body& player_body);
 
     SERIALIZE(field_fumo_rect, gravity_direction, gravity_strength, rotation)
@@ -223,8 +232,8 @@ struct SpriteSheet2D {
     int base_frame_speed {}; // number of frames to show per second
     FumoRect base_region_rect {.x = 0.0f,
                                .y = 0.0f,
-                               .width =
-                                   (float)texture_sheet.width / sprite_frame_count,
+                               .width = (float)texture_sheet.width
+                                   / sprite_frame_count,
                                .height = (float)texture_sheet.height};
     // base rect that defines how we go through each animation frame
     bool looping = false;

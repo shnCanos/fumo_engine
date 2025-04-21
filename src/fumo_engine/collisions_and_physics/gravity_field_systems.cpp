@@ -10,7 +10,8 @@ extern std::unique_ptr<GlobalState> global;
 // - don't change fields if the player is on the ground
 // - only allow picking candidates again if the player touches the ground
 void GravityFieldHandler::find_gravity_field() {
-    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(global->player_id);
 
     if (!player_state.can_swap_orbits || player_state.on_ground) {
         return;
@@ -21,10 +22,12 @@ void GravityFieldHandler::find_gravity_field() {
 
     const auto& player_id = global->player_id;
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
+    auto& player_shape =
+        global->ECS->get_component<PlayerShape>(global->player_id);
 
     EntityQuery query_parallel {
-        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_mask =
+            global->ECS->make_component_mask<ParallelGravityField>(),
         .component_filter = Filter::All};
 
     for (const auto& planet_id : sys_entities) {
@@ -34,7 +37,9 @@ void GravityFieldHandler::find_gravity_field() {
             // methods for parallel gravity fields
             const auto& parallel_field =
                 global->ECS->get_component<ParallelGravityField>(planet_id);
-            if (parallel_field.is_inside_field(player_body, player_shape)) {
+            if (parallel_field.is_inside_field(player_body,
+                                               player_shape,
+                                               body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
         } else {
@@ -62,7 +67,8 @@ void GravityFieldHandler::find_gravity_field() {
             player_state.player_owning_field = planet_id;
 
             global->event_handler->add_event(
-                {.event = EVENT_::ENTITY_SWAPPED_ORBITS, .entity_id = player_id});
+                {.event = EVENT_::ENTITY_SWAPPED_ORBITS,
+                 .entity_id = player_id});
 
             return;
         }
@@ -70,12 +76,13 @@ void GravityFieldHandler::find_gravity_field() {
 }
 
 bool ParallelGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape) const {
-    Collision collision = Collisions::PlayerToRectCollision(
-        player_shape,
-        player_body,
-        field_fumo_rect,
-        Body {.position = {field_fumo_rect.x, field_fumo_rect.y}});
+                                           const PlayerShape& player_shape,
+                                           const Body& parallel_body) const {
+    Collision collision = Collisions::PlayerToRectCollision(player_shape,
+                                                            player_body,
+                                                            field_fumo_rect,
+                                                            parallel_body);
+    // Body {.position = {field_fumo_rect.x, field_fumo_rect.y}});
 
     // if overlap == 0, then there was no collision
     return (collision.overlap != 0);
@@ -91,16 +98,16 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
 
     // -------------------------------------------------------------------------------
     // top circle collision check
-    float top_distance =
-        FumoVec2Distance(circular_body.position, player_shape.top_circle_center);
+    float top_distance = FumoVec2Distance(circular_body.position,
+                                          player_shape.top_circle_center);
     if (top_distance < radius_sum) {
         // collided with top circle
         return true;
     }
     // -------------------------------------------------------------------------------
     // bottom circle collision check
-    float bottom_distance =
-        FumoVec2Distance(circular_body.position, player_shape.bottom_circle_center);
+    float bottom_distance = FumoVec2Distance(circular_body.position,
+                                             player_shape.bottom_circle_center);
     if (bottom_distance < radius_sum) {
         // collided with top circle
         return true;
