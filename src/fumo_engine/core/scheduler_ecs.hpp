@@ -2,10 +2,10 @@
 #include <memory>
 
 #include "entity_query.hpp"
-#include "fumo_engine/components.hpp"
+#include "fumo_engine/components.hpp" // IWYU pragma: export
 #include "fumo_engine/core/ECS.hpp"
 #include "fumo_engine/core/system_base.hpp"
-#include "fumo_engine/event_components.hpp"
+#include "fumo_engine/event_components.hpp" // IWYU pragma: export
 
 struct SystemCompare {
     inline bool operator()(const std::shared_ptr<System>& sysA,
@@ -18,14 +18,16 @@ class SchedulerECS {
   private:
     friend struct SchedulerSystemECS;
     //------------------------------------------------------------------
+
     std::multiset<std::shared_ptr<System>, SystemCompare> system_scheduler {};
     std::multiset<std::shared_ptr<System>, SystemCompare>
         unregistered_system_scheduler {};
     //------------------------------------------------------------------
     std::unique_ptr<ECS> ecs;
 
-    // TODO: check if you really need this extra map later (using it for printing
-    // rn) (i think it might be unnecessary overhead that slows down the ECS)
+    // TODO: check if you really need this extra map later
+    // (using it for printing rn)
+    // (i think it might be unnecessary overhead that slows down the ECS)
     std::unordered_map<std::string_view, std::shared_ptr<System>>
         all_scheduled_unregistered_systems_debug {};
     std::unordered_map<std::string_view, std::shared_ptr<System>>

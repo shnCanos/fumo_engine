@@ -15,7 +15,8 @@ struct ScreenUpdater: System {
     //
     void sys_call() override { update_screen_ids(); }
 
-    // FIXME:(current) continuously sweep the game and update the screen id
+    // FIXME: current | 
+    // continuously sweep the game and update the screen id
     // as i build the levels (so i dont have to manually state it)
     void update_screen_ids();
     // responsible for updating the ScreenId and LevelId on "Ctrl + S"

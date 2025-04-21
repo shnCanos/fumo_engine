@@ -14,6 +14,7 @@ class DebugLevelEditor: public System {
     void spawn_circular_planet(FumoVec2 mouse_position);
     void spawn_rect_field(FumoVec2 mouse_position);
     void spawn_rect(FumoVec2 mouse_position);
+    void spawn_transition_rect(FumoVec2 mouse_position);
     void debug_print();
     void move_entity(FumoVec2 mouse_position);
     void resize_planet(float resize);

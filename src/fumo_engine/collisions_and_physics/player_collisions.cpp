@@ -9,33 +9,37 @@ void PlayerCollisionRunner::check_collisions() {
     bool collision_happened = false;
 
     const auto& player_id = global->player_id;
-    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
+    auto& player_shape =
+        global->ECS->get_component<PlayerShape>(global->player_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(global->player_id);
 
-    EntityQuery query_fumo_rect {.component_mask =
-                                     global->ECS->make_component_mask<FumoRect>(),
-                                 .component_filter = Filter::All};
+    EntityQuery query_fumo_rect {
+        .component_mask = global->ECS->make_component_mask<FumoRect>(),
+        .component_filter = Filter::All};
 
     for (const auto& obstacle_id : sys_entities) {
-        const auto& obstacle_body = global->ECS->get_component<Body>(obstacle_id);
+        const auto& obstacle_body =
+            global->ECS->get_component<Body>(obstacle_id);
 
         if (global->ECS->filter(obstacle_id, query_fumo_rect)) {
             const auto& fumo_rect =
                 global->ECS->get_component<FumoRect>(obstacle_id);
-            if (player_to_rect_collision_solving(player_shape,
-                                                 player_body,
-                                                 fumo_rect,
-                                                 obstacle_body)) {
+            if (Collisions::player_to_rect_collision_solving(player_shape,
+                                                             player_body,
+                                                             fumo_rect,
+                                                             obstacle_body)) {
                 collision_happened = true;
             }
         } else {
             const auto& circle_shape =
                 global->ECS->get_component<Circle>(obstacle_id);
-            if (player_to_circle_collision_solving(player_shape,
-                                                   player_body,
-                                                   circle_shape,
-                                                   obstacle_body)) {
+            if (Collisions::player_to_circle_collision_solving(player_shape,
+                                                               player_body,
+                                                               circle_shape,
+                                                               obstacle_body)) {
+
                 collision_happened = true;
             }
         }
@@ -48,18 +52,23 @@ void PlayerCollisionRunner::check_collisions() {
     }
 }
 
-bool PlayerCollisionRunner::player_to_rect_collision_solving(
-    PlayerShape& player_shape,
-    Body& player_body,
-    const FumoRect& fumo_rect,
-    const Body& fumo_rect_body) {
+namespace Collisions {
+
+bool player_to_rect_collision_solving(PlayerShape& player_shape,
+                                      Body& player_body,
+                                      const FumoRect& fumo_rect,
+                                      const Body& fumo_rect_body) {
     // NOTE: assume fumo_rects are NOT rotated
     // (add rotation support later if i want to add slopes and stuff)
 
     // -------------------------------------------------------------------------------
     // solve the collision
-    Collision collision =
-        PlayerToRectCollision(player_shape, player_body, fumo_rect, fumo_rect_body);
+    // FIXME: current |
+    // add a "sub_step_count"
+    Collision collision = Collisions::PlayerToRectCollision(player_shape,
+                                                            player_body,
+                                                            fumo_rect,
+                                                            fumo_rect_body);
 
     if (collision.overlap == 0.0f) {
         // no collision happened
@@ -75,17 +84,16 @@ bool PlayerCollisionRunner::player_to_rect_collision_solving(
     return true;
 }
 
-bool PlayerCollisionRunner::player_to_circle_collision_solving(
-    PlayerShape& player_shape,
-    Body& player_body,
-    const Circle& circle_shape,
-    const Body& circle_body) {
+bool player_to_circle_collision_solving(PlayerShape& player_shape,
+                                        Body& player_body,
+                                        const Circle& circle_shape,
+                                        const Body& circle_body) {
     // -------------------------------------------------------------------------------
     // solve the collision
-    Collision collision = PlayerToCircleCollision(player_shape,
-                                                  player_body,
-                                                  circle_shape,
-                                                  circle_body);
+    Collision collision = Collisions::PlayerToCircleCollision(player_shape,
+                                                              player_body,
+                                                              circle_shape,
+                                                              circle_body);
 
     if (collision.overlap == 0.0f) {
         // no collision happened
@@ -100,3 +108,5 @@ bool PlayerCollisionRunner::player_to_circle_collision_solving(
     player_shape.update_capsule_positions(player_body);
     return true;
 }
+
+} // namespace Collisions

@@ -4,7 +4,6 @@
 
 #include "filesystem"
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/level_systems/level_editor.hpp"
 #include "fumo_engine/screen_components.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -15,12 +14,14 @@ void clear_files_for_serialization() {
 
     fs::copy(fs::current_path(),
              "../backup_serialized_data",
-             fs::copy_options::recursive | fs::copy_options::overwrite_existing);
+             fs::copy_options::recursive
+                 | fs::copy_options::overwrite_existing);
 
     for (const auto& directory : fs::directory_iterator(fs::current_path())) {
 
         if (!directory.is_directory()) [[unlikely]] {
-            PANIC("added a file into serialized_data (should only have directories)");
+            PANIC(
+                "added a file into serialized_data (should only have directories)");
         }
         fs::remove_all(directory);
     }
@@ -30,7 +31,8 @@ void fix_JSON_serialization() {
     for (const auto& directory : fs::directory_iterator(fs::current_path())) {
 
         if (!directory.is_directory()) [[unlikely]] {
-            PANIC("added a file into serialized_data (should only have directories)");
+            PANIC(
+                "added a file into serialized_data (should only have directories)");
         }
 
         for (const auto& dir_entry : fs::directory_iterator(directory)) {
@@ -208,7 +210,9 @@ void deserialize_entity(cereal::JSONInputArchive& in_archive) {
         uint64_t iterate = 1;
         iterate <<= id;
         if (component_mask & (iterate)) {
-            FumoSerializer::deserialize_component_by_id(entity_id, id, in_archive);
+            FumoSerializer::deserialize_component_by_id(entity_id,
+                                                        id,
+                                                        in_archive);
         }
     }
 }
@@ -224,7 +228,8 @@ void LevelSerializer::deserialize_levels() {
     for (const auto& directory : fs::directory_iterator(fs::current_path())) {
 
         if (!directory.is_directory()) [[unlikely]] {
-            PANIC("added a file into serialized_data (should only have directories)");
+            PANIC(
+                "added a file into serialized_data (should only have directories)");
         }
 
         for (const auto& dir_entry : fs::directory_iterator(directory)) {

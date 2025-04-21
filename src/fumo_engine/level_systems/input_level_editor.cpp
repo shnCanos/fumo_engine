@@ -37,6 +37,10 @@ void DebugLevelEditor::spawn_rect_planet(FumoVec2 mouse_position) {
     planet_factory->create_rect_planet(mouse_position);
 }
 
+void DebugLevelEditor::spawn_transition_rect(FumoVec2 mouse_position) {
+    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+    planet_factory->create_screen_transition(mouse_position);
+}
 void DebugLevelEditor::spawn_rect(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_rect(mouse_position);
@@ -123,6 +127,9 @@ void DebugLevelEditor::handle_input() {
     // so we spawn the center of the rect on the mouse
     if (IsKeyPressed(KEY_F2)) {
         spawn_rect_planet(mouse_position);
+     
+    } else if (IsKeyPressed(KEY_T)) {
+        spawn_rect(mouse_position);
     } else if (IsKeyPressed(KEY_F3)) {
         spawn_rect(mouse_position);
     } else if (IsKeyPressed(KEY_F4)) {

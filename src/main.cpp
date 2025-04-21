@@ -38,7 +38,8 @@ int main(void) {
         if (!count) [[unlikely]] {
             count++;
             // debug_spawn_level_objects();
-            const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
+            const auto& level_serializer =
+                global->ECS->get_system<LevelSerializer>();
             level_serializer->deserialize_levels();
         }
 

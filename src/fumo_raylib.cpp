@@ -1,4 +1,3 @@
-
 #include "fumo_raylib.hpp"
 
 void FumoDrawCircleV(FumoVec2 center, float radius, FumoColor color) {

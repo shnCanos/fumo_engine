@@ -87,8 +87,7 @@ class EntityManager {
         entity_component_masks[entity_id] |= 1 << component_id;
     }
 
-    void remove_from_component_mask(EntityId entity_id,
-                                    ComponentId component_id) {
+    void remove_from_component_mask(EntityId entity_id, ComponentId component_id) {
         DEBUG_ASSERT(living_entity_count < MAX_ENTITY_IDS,
                      "too many living entities");
         DEBUG_ASSERT(entity_id < MAX_ENTITY_IDS, "exceeded MAX_ENTITY_IDS");

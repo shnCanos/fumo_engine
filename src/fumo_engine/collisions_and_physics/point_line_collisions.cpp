@@ -14,7 +14,9 @@ void weird_debug_print(std::pair<float, FumoVec2> closest_pair,
 
     if (closest_pair.first == 0.0f) {
     } else if (closest_pair.first == bottom_pair.first) {
-        DrawCircleV(bottom_pair.second.to_raylib_vec2(), default_radius, MAGENTA);
+        DrawCircleV(bottom_pair.second.to_raylib_vec2(),
+                    default_radius,
+                    MAGENTA);
     } else if (closest_pair.first == left_pair.first) {
         DrawCircleV(left_pair.second.to_raylib_vec2(), default_radius, ORANGE);
     } else if (closest_pair.first == right_pair.first) {
@@ -52,6 +54,7 @@ void weird_debug_print(std::pair<float, FumoVec2> closest_pair,
 //
 //     return Distance;
 // }
+namespace Collisions {
 [[nodiscard]] std::pair<float, FumoVec2>
 PointToLineDistanceAndIntersection(const FumoVec2& Point,
                                    const FumoVec2& LineStart,
@@ -77,8 +80,8 @@ PointToLineDistanceAndIntersection(const FumoVec2& Point,
 
     FumoVec2 line_vector = LineEnd - LineStart;
     FumoVec2 line_start_to_point = Point - LineStart;
-    float dot =
-        FumoVec2DotProduct(line_start_to_point, line_vector) / (LineMag * LineMag);
+    float dot = FumoVec2DotProduct(line_start_to_point, line_vector)
+        / (LineMag * LineMag);
 
     Intersection.x = LineStart.x + (dot * (LineEnd.x - LineStart.x));
     Intersection.y = LineStart.y + (dot * (LineEnd.y - LineStart.y));
@@ -115,7 +118,8 @@ PointToLineDistanceAndIntersection(const FumoVec2& Point,
         / (LineMag * LineMag);
 
     if (U < 0.0f || U > 1.0f)
-        return {0.0f, {0.0f, 0.0f}}; // closest point does not fall along the line
+        return {0.0f,
+                {0.0f, 0.0f}}; // closest point does not fall along the line
 
     Intersection.x = LineStart.x + U * (LineEnd.x - LineStart.x);
     Intersection.y = LineStart.y + U * (LineEnd.y - LineStart.y);
@@ -129,8 +133,8 @@ PointToLineDistanceAndIntersection(const FumoVec2& Point,
     return {Distance, Intersection};
 }
 
-[[nodiscard]] std::pair<float, FumoVec2>
-closest_fumo_rect_side(const std::vector<std::pair<float, FumoVec2>>& distances) {
+[[nodiscard]] std::pair<float, FumoVec2> closest_fumo_rect_side(
+    const std::vector<std::pair<float, FumoVec2>>& distances) {
     // used for picking one of 2 fumo_rect sides for solving a collision
     // with a circle
     // we pick the closest side to the circle center
@@ -170,8 +174,10 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
                                     const FumoRect& rect,
                                     const Body& rect_body) {
     FumoVec2 TopLeft = {rect_body.position.x, rect_body.position.y};
-    FumoVec2 TopRight = {rect_body.position.x + rect.width, rect_body.position.y};
-    FumoVec2 BottomLeft = {rect_body.position.x, rect_body.position.y + rect.height};
+    FumoVec2 TopRight = {rect_body.position.x + rect.width,
+                         rect_body.position.y};
+    FumoVec2 BottomLeft = {rect_body.position.x,
+                           rect_body.position.y + rect.height};
     FumoVec2 BottomRight = {rect_body.position.x + rect.width,
                             rect_body.position.y + rect.height};
     std::vector<FumoVec2> points {TopLeft, TopRight, BottomLeft, BottomRight};
@@ -196,42 +202,51 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
 
     std::pair<float, FumoVec2> left_pair, bottom_pair, right_pair, top_pair;
 
-    bottom_pair =
-        PointToLineDistanceAndIntersection(circle_center, BottomLeft, BottomRight);
+    bottom_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                     BottomLeft,
+                                                     BottomRight);
     left_pair =
         PointToLineDistanceAndIntersection(circle_center, TopLeft, BottomLeft);
-    right_pair =
-        PointToLineDistanceAndIntersection(circle_center, TopRight, BottomRight);
-    top_pair = PointToLineDistanceAndIntersection(circle_center, TopLeft, TopRight);
+    right_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                    TopRight,
+                                                    BottomRight);
+    top_pair =
+        PointToLineDistanceAndIntersection(circle_center, TopLeft, TopRight);
 
     // -------------------------------------------------------------------------------
     // weird_debug_print(closest_pair, left_pair, bottom_pair, right_pair, top_pair);
 
     if (closest_corner == TopLeft) {
-        left_pair =
-            PointToLineDistanceAndIntersection(circle_center, TopLeft, BottomLeft);
-        top_pair =
-            PointToLineDistanceAndIntersection(circle_center, TopLeft, TopRight);
+        left_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                       TopLeft,
+                                                       BottomLeft);
+        top_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                      TopLeft,
+                                                      TopRight);
         closest_pair = closest_fumo_rect_side({left_pair, top_pair});
 
     } else if (closest_corner == TopRight) {
-        right_pair =
-            PointToLineDistanceAndIntersection(circle_center, TopRight, BottomRight);
-        top_pair =
-            PointToLineDistanceAndIntersection(circle_center, TopLeft, TopRight);
+        right_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                        TopRight,
+                                                        BottomRight);
+        top_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                      TopLeft,
+                                                      TopRight);
         closest_pair = closest_fumo_rect_side({right_pair, top_pair});
 
     } else if (closest_corner == BottomLeft) {
         bottom_pair = PointToLineDistanceAndIntersection(circle_center,
                                                          BottomLeft,
                                                          BottomRight);
-        left_pair =
-            PointToLineDistanceAndIntersection(circle_center, TopLeft, BottomLeft);
+        left_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                       TopLeft,
+                                                       BottomLeft);
         closest_pair = closest_fumo_rect_side({bottom_pair, left_pair});
 
     } else if (closest_corner == BottomRight) {
-        right_pair =
-            PointToLineDistanceAndIntersection(circle_center, TopRight, BottomRight);
+        right_pair = PointToLineDistanceAndIntersection(circle_center,
+                                                        TopRight,
+                                                        BottomRight);
         bottom_pair = PointToLineDistanceAndIntersection(circle_center,
                                                          BottomLeft,
                                                          BottomRight);
@@ -278,9 +293,10 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
         if (closest_dist_intersection.first < player_shape.radius) {
             // this means we collided with the bottom circle
 
-            collision.overlap = player_shape.radius - closest_dist_intersection.first;
-            collision.push =
-                player_shape.bottom_circle_center - closest_dist_intersection.second;
+            collision.overlap =
+                player_shape.radius - closest_dist_intersection.first;
+            collision.push = player_shape.bottom_circle_center
+                - closest_dist_intersection.second;
 
             return collision;
         }
@@ -300,9 +316,10 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
         // DrawCircleV(closest_dist_intersection.second, default_radius, BLUE);
         // EndMode2D();
         if (closest_dist_intersection.first < player_shape.radius) {
-            collision.overlap = player_shape.radius - closest_dist_intersection.first;
-            collision.push =
-                player_shape.top_circle_center - closest_dist_intersection.second;
+            collision.overlap =
+                player_shape.radius - closest_dist_intersection.first;
+            collision.push = player_shape.top_circle_center
+                - closest_dist_intersection.second;
         }
     }
     return collision;
@@ -315,14 +332,17 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
     float radius_sum = player_shape.radius + circle_shape.radius;
     float overlap = 0.0f;
     FumoVec2 push_direction {0.0f, 0.0f};
+
+    float correction = 0.5f;
     // -------------------------------------------------------------------------------
     // bottom circle collision check
-    float bottom_distance =
-        FumoVec2Distance(circle_body.position, player_shape.bottom_circle_center);
-    if (bottom_distance < radius_sum) {
+    float bottom_distance = FumoVec2Distance(circle_body.position,
+                                             player_shape.bottom_circle_center);
+    if (bottom_distance < radius_sum + correction) {
         // collided with the bottom circle
         overlap = radius_sum - bottom_distance;
-        push_direction = player_shape.bottom_circle_center - circle_body.position;
+        push_direction =
+            player_shape.bottom_circle_center - circle_body.position;
         return {overlap, push_direction};
     }
     // -------------------------------------------------------------------------------
@@ -369,3 +389,4 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
     // no collision happened
     return {overlap, push_direction};
 }
+} // namespace Collisions

@@ -3,7 +3,8 @@
 void SchedulerECS::debug_print_entity(EntityId entity_id) {
     auto component_mask = ecs->get_component_mask(entity_id);
 
-    std::cerr << "component_mask: " << std::format("{:064b}", component_mask) << " | ";
+    std::cerr << "component_mask: " << std::format("{:064b}", component_mask)
+              << " | ";
 
     std::cerr << "entity_id: " << entity_id << " -----> ";
 

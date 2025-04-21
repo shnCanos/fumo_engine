@@ -71,7 +71,7 @@ void GravityFieldHandler::find_gravity_field() {
 
 bool ParallelGravityField::is_inside_field(const Body& player_body,
                                            const PlayerShape& player_shape) const {
-    Collision collision = PlayerToRectCollision(
+    Collision collision = Collisions::PlayerToRectCollision(
         player_shape,
         player_body,
         field_fumo_rect,
