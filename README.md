@@ -1,7 +1,6 @@
 # fumo_engine
 This is the game engine i made as a wrapper around raylib to add more functionality that is needed to make a scalable game.
-The only goal for this engine is making my game based around gravity platformer physics, it is not intended to be used as a standalone engine, and i don't really recommend using it as a lot of code isn't the best.
-
+The only goal for this engine is making my game based around gravity platformer physics, it is not intended to be used as a standalone engine, and i don't really recommend using it.
 Implemented features:
 - ECS
 > the game engine's core. Is used to manage game data globally and provide queries for the game's systems.
@@ -22,4 +21,4 @@ Implemented features:
 > demo game to showcase my idea for an interesting gravity based platformer. meant to showcase fumo engine's functionality and also for prototyping a possible future game idea.
 
 Final note:
-> fumo engine is just meant to lay groundwork and add enough functionality to allow me to make a proper finished 2d platformer in the future, it is not meant to be used by other people.
+> fumo engine is just meant to lay the ground work and add enough functionality to allow me to make a proper finished 2d platformer in the future, it is not meant to be used by other people.
