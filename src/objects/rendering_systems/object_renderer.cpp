@@ -63,9 +63,9 @@ void ObjectRenderer::draw_planets() {
                 DRAW_OUTLINE_RECT(rect);
 
             } else {
-                // FumoDrawRectV(body.position,
-                //               {rect.width, rect.height},
-                //               render.color);
+                FumoDrawRectV(body.position,
+                              {rect.width, rect.height},
+                              render.color);
                 // const auto e = Collisions::calculate_sub_rectangles(
                 //     rect,
                 //     body,

@@ -1,7 +1,8 @@
 #pragma once
-#include <iostream> // IWYU pragma: export
 #include <cmath>
+#include <iostream> // IWYU pragma: export
 #include <libassert/assert.hpp>
+
 #include "fumo_serialize_macros.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -49,6 +50,92 @@ struct FumoRect {
 void FumoDrawCircleV(FumoVec2 center, float radius, FumoColor color);
 void FumoDrawLineV(FumoVec2 TopLeft, FumoVec2 TopRight, FumoColor color);
 void FumoDrawRectV(FumoVec2 position, FumoVec2 size, FumoColor color);
+
+inline float ease_quad_in(float t) { return t * t; }
+
+inline float ease_quad_out(float t) { return -(t * (t - 2)); }
+
+
+// Modeled after the overshooting cubic y = x^3-x*sin(x*pi)
+inline float BackEaseIn(float p) { return p * p * p - p * sin(p * M_PI); }
+
+// Modeled after overshooting cubic y = 1-((1-x)^3-(1-x)*sin((1-x)*pi))
+inline float BackEaseOut(float p) {
+    float f = (1 - p);
+    return 1 - (f * f * f - f * sin(f * M_PI));
+}
+
+inline float ExponentialEaseIn(float p) {
+    return (p == 0.0) ? p : pow(2, 10 * (p - 1));
+}
+// Modeled after the exponential function y = -2^(-10x) + 1
+inline float ExponentialEaseOut(float p) {
+    return (p == 1.0) ? p : 1 - pow(2, -10 * p);
+}
+inline float ExponentialEaseInOut(float p)
+{
+	if(p == 0.0 || p == 1.0) return p;
+	
+	if(p < 0.5)
+	{
+		return 0.5 * pow(2, (20 * p) - 10);
+	}
+	else
+	{
+		return -0.5 * pow(2, (-20 * p) + 10) + 1;
+	}
+}
+
+inline float ElasticEaseOut(float p) {
+    return sin(-13 * M_PI_2 * (p + 1)) * pow(2, -10 * p) + 1;
+}
+inline float ElasticEaseInOut(float p)
+{
+	if(p < 0.5)
+	{
+		return 0.5 * sin(13 * M_PI_2 * (2 * p)) * pow(2, 10 * ((2 * p) - 1));
+	}
+	else
+	{
+		return 0.5 * (sin(-13 * M_PI_2 * ((2 * p - 1) + 1)) * pow(2, -10 * (2 * p - 1)) + 2);
+	}
+}
+
+inline float BackEaseInOut(float p) {
+    if (p < 0.5) {
+        float f = 2 * p;
+        return 0.5 * (f * f * f - f * sin(f * M_PI));
+    } else {
+        float f = (1 - (2 * p - 1));
+        return 0.5 * (1 - (f * f * f - f * sin(f * M_PI))) + 0.5;
+    }
+}
+
+inline float BounceEaseOut(float p) {
+    if (p < 4 / 11.0) {
+        return (121 * p * p) / 16.0;
+    } else if (p < 8 / 11.0) {
+        return (363 / 40.0 * p * p) - (99 / 10.0 * p) + 17 / 5.0;
+    } else if (p < 9 / 10.0) {
+        return (4356 / 361.0 * p * p) - (35442 / 1805.0 * p) + 16061 / 1805.0;
+    } else {
+        return (54 / 5.0 * p * p) - (513 / 25.0 * p) + 268 / 25.0;
+    }
+}
+
+inline float BounceEaseIn(float p) { return 1 - BounceEaseOut(1 - p); }
+
+inline float BounceEaseInOut(float p)
+{
+	if(p < 0.5)
+	{
+		return 0.5 * BounceEaseIn(p*2);
+	}
+	else
+	{
+		return 0.5 * BounceEaseOut(p * 2 - 1) + 0.5;
+	}
+}
 
 inline FumoColor FumoColorAlpha(FumoColor color, float alpha) {
     return to_fumo_color(ColorAlpha(color.to_raylib_color(), alpha));

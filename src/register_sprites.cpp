@@ -14,10 +14,10 @@ void load_player_textures() {
     // and write it so that it will work when sending the .exe
     // (find current path, then load assets... etc)
     global->sprite_manager->register_sprite(SpriteSheet2D {
-        .texture_sheet = LoadTexture("assets/test_player/dash.png"),
+        .texture_sheet = LoadTexture("assets/test_player/dash_short.png"),
         .sprite_sheet_name = "dash",
-        .sprite_frame_count = 9,
-        .base_frame_speed = 4});
+        .sprite_frame_count = 5,
+        .base_frame_speed = 5});
 
     global->sprite_manager->register_sprite(SpriteSheet2D {
         .texture_sheet = LoadTexture("assets/test_player/jump.png"),

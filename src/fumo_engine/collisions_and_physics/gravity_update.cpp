@@ -72,9 +72,6 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     player_body.real_x_direction = {player_body.gravity_direction.y,
                                     -player_body.gravity_direction.x};
 
-    player_body.rotation = std::atan2(player_body.real_x_direction.y,
-                                      player_body.real_x_direction.x)
-        * RAD2DEG;
 
     if (player_state.dashing) {
         factor = 0;

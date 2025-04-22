@@ -11,7 +11,7 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
                          const int& substep_count,
                          const int& max_sub_distance) {
 
-    constexpr float leeway = 1.0f; // makes detection more consistent
+    constexpr float leeway = 0.6f; // makes detection more consistent
     const float actual_subdistance = max_sub_distance - leeway;
 
     std::vector<RectBodyPair> sub_rectangles {};
@@ -26,13 +26,13 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
     // -8.5 <- should return
     //
     // FIXME: remove this update later when not debugging
-    UpdateCameraCenterSmoothFollow(
-        global->camera.get(),
-        global->ECS->get_component<Body>(global->player_id));
-    BeginMode2D(*global->camera);
-    FumoDrawRectV(fumo_rect_body.position,
-                  {fumo_rect.width, fumo_rect.height},
-                  FUMO_RED);
+    // UpdateCameraCenterSmoothFollow(
+    //     global->camera.get(),
+    //     global->ECS->get_component<Body>(global->player_id));
+    // BeginMode2D(*global->camera);
+    // FumoDrawRectV(fumo_rect_body.position,
+    //               {fumo_rect.width, fumo_rect.height},
+    //               FUMO_RED);
 
     for (int i = 0; i < substep_count; i++) {
         current_pair.body.position.x += actual_subdistance;
@@ -41,17 +41,17 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
         current_pair.fumo_rect.height -= actual_subdistance * 2.0f;
         if (current_pair.fumo_rect.width <= 0
             || current_pair.fumo_rect.height <= 0) {
-            EndMode2D();
+            // EndMode2D();
             return sub_rectangles;
         }
-        FumoDrawRectV(
-            current_pair.body.position,
-            {current_pair.fumo_rect.width, current_pair.fumo_rect.height},
-            all_colors[i]);
+        // FumoDrawRectV(
+        //     current_pair.body.position,
+        //     {current_pair.fumo_rect.width, current_pair.fumo_rect.height},
+        //     all_colors[i]);
 
         sub_rectangles.push_back(current_pair);
     }
-    EndMode2D();
+    // EndMode2D();
     return sub_rectangles;
 }
 

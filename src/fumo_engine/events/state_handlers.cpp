@@ -48,28 +48,30 @@ void StateHandler::handle_state(const EntityId& entity_id,
 
     player_state.falling = !player_state.on_ground && !player_state.colliding;
 
-    // if (player_state.falling) {
-    //     //-----------------------------------
-    //     // temporary falling code
-    //     // fall_counter++;
-    //     // if (fall_counter > 20) {
-    //     //     fall_counter = 1;
-    //     //     player_state.can_jump = true;
-    //     // }
-    //     //-----------------------------------
+    if (!player_state.idle && !player_state.dashing && !player_state.jumping) {
+        //     //-----------------------------------
+        //     // temporary falling code
+        //     // fall_counter++;
+        //     // if (fall_counter > 20) {
+        //     //     fall_counter = 1;
+        //     //     player_state.can_jump = true;
+        //     // }
+        //     //-----------------------------------
+        //
+        if (player_animation.current_sheet_name != "dash") {
 
-    //     AnimationPlayer::play(player_animation, "jump");
-    //     player_animation.frame_progress = 3;
-    //     player_animation.current_region_rect.x =
-    //         player_animation.current_region_rect.width
-    //         * player_animation.frame_progress;
-    //     player_animation.is_running = true;
-    // }
+            AnimationPlayer::play(player_animation, "jump");
+            player_animation.frame_progress = 3;
+            player_animation.current_region_rect.x =
+                player_animation.current_region_rect.width
+                * player_animation.frame_progress;
+            player_animation.is_running = true;
+        }
+    }
 }
 
-float ease_quad_in(float t) { return t * t; }
 
-float ease_quad_out(float t) { return 1 - (1 - t) * (1 - t); }
+// float ease_quad_out(float t) { return 1 - (1 - t) * (1 - t); }
 
 void StateHandler::end_of_frame_update() {
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
@@ -86,13 +88,15 @@ void StateHandler::end_of_frame_update() {
     // apply movement changes to the player
     // if (true || player_state.can_swap_orbits) {
     if (player_state.dashing) {
-        constexpr float dash_duration = 2.0f;
+        constexpr float dash_duration = 0.2f;
 
+        if (player_state.dash_time == 0) {}
         player_state.dash_time += global->frametime;
         float pos_progress = player_state.dash_time / dash_duration;
+
         if (pos_progress > 1) pos_progress = 1;
 
-        pos_progress = ease_quad_out(pos_progress);
+        pos_progress = ExponentialEaseInOut(pos_progress);
 
         auto new_pos = player_state.dash_start
             + (player_state.dash_end - player_state.dash_start) * pos_progress;
@@ -103,14 +107,17 @@ void StateHandler::end_of_frame_update() {
         if (player_state.dash_time > dash_duration)
             player_state.dashing = false;
 
-        // player_body.rotation = std::atan2(player_body.real_x_direction.y,
-        //                                   player_body.real_x_direction.x)
-        //     * RAD2DEG;
-        AnimationPlayer::play(player_animation, "dash");
+        if (player_animation.frame_progress
+            != player_animation.sprite_frame_count) {
+            AnimationPlayer::play(player_animation, "dash");
+        }
 
     } else {
         player_body.x_direction = {player_body.gravity_direction.y,
                                    -player_body.gravity_direction.x};
+        player_body.rotation =
+            std::atan2(player_body.x_direction.y, player_body.x_direction.x)
+            * RAD2DEG;
     }
     // }
 

@@ -87,6 +87,7 @@ void collided(const Event& event) {
     player_state.colliding = true;
     player_state.dashes_left = 1;
 }
+constexpr float dash_length = 669.0f;
 
 void dashed(const Event& event) {
     auto& player_body = global->ECS->get_component<Body>(event.entity_id);
@@ -100,7 +101,6 @@ void dashed(const Event& event) {
     if (player_state.dashes_left == 0) return;
 
     if (!player_state.dashing) {
-        constexpr float dash_length = 600.0f;
 
         auto direction = player_state.input_direction;
 
@@ -150,6 +150,7 @@ void MovedWrapper::moved_event() {
         global->ECS->get_component<MovedEventData>(entity_id);
 
     const auto& grav_direction = player_body.gravity_direction;
+    const auto& rotation = player_body.rotation;
 
     DIRECTION& previous_direction = move_event_data.previous_direction;
     DIRECTION& direction = move_event_data.direction;
