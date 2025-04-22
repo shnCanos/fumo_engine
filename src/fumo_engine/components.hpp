@@ -38,6 +38,9 @@ struct Body {
     FumoVec2 x_direction = {-gravity_direction.y, gravity_direction.x};
 
     bool inverse_direction = false;
+    // this code is horrible bad fuck you
+    FumoVec2 real_x_direction = {-gravity_direction.y, gravity_direction.x};
+    FumoVec2 real_gravity_direction = {0.0f, 1.0f};
 
     // player events and state
 
@@ -88,19 +91,21 @@ struct PlayerShape {
     std::pair<FumoVec2, FumoVec2> right_line; // .first is the bottom point
 
     void update_capsule_positions(const Body& player_body) {
+        // this is all peidro's fault his code is beyond horrible
         top_circle_center =
-            player_body.position - player_body.gravity_direction * radius;
+            player_body.position - player_body.real_gravity_direction * radius;
         bottom_circle_center =
-            player_body.position + player_body.gravity_direction * radius;
+            player_body.position + player_body.real_gravity_direction * radius;
 
-        left_line.second = top_circle_center - player_body.x_direction * radius;
+        left_line.second =
+            top_circle_center - player_body.real_x_direction * radius;
         left_line.first =
-            bottom_circle_center - player_body.x_direction * radius;
+            bottom_circle_center - player_body.real_x_direction * radius;
 
         right_line.second =
-            top_circle_center + player_body.x_direction * radius;
+            top_circle_center + player_body.real_x_direction * radius;
         right_line.first =
-            bottom_circle_center + player_body.x_direction * radius;
+            bottom_circle_center + player_body.real_x_direction * radius;
     }
 
     SERIALIZE(radius,

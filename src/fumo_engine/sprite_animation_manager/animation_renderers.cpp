@@ -35,15 +35,20 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
 
     BeginMode2D(*global->camera);
 
-    FumoRect destination = {
-        body.position.x,
-        body.position.y,
-        animation_info.current_region_rect.width * animation_info.sprite_scaling,
-        animation_info.current_region_rect.height * animation_info.sprite_scaling};
+    auto& player_state =
+        global->ECS->get_component<EntityState>(global->player_id);
+
+    FumoRect destination = {body.position.x,
+                            body.position.y,
+                            animation_info.current_region_rect.width
+                                * animation_info.sprite_scaling,
+                            animation_info.current_region_rect.height
+                                * animation_info.sprite_scaling};
 
     FumoRect source = animation_info.current_region_rect;
 
     if (body.inverse_direction) {
+
         source = {animation_info.current_region_rect.x,
                   animation_info.current_region_rect.y,
                   -animation_info.current_region_rect.width,

@@ -14,10 +14,28 @@ namespace Collisions {
 // [[nodiscard]] float PointToLineDistance(const FumoVec2& Point, const FumoVec2&
 // LineStart,
 //                                         const FumoVec2& LineEnd);
+[[nodiscard]] bool continuous_rect_collision(PlayerShape& player_shape,
+                                             Body& player_body,
+                                             const FumoRect& fumo_rect,
+                                             const Body& fumo_rect_body,
+                                             const int& substep_count);
+
+struct RectBodyPair {
+    FumoRect fumo_rect;
+    Body body;
+};
+
+[[nodiscard]] std::vector<RectBodyPair>
+calculate_sub_rectangles(const FumoRect& fumo_rect,
+                         const Body& fumo_rect_body,
+                         const int& substep_count,
+                         const int& max_sub_distance);
+
 bool player_to_rect_collision_solving(PlayerShape& player_shape,
                                       Body& player_body,
                                       const FumoRect& fumo_rect,
                                       const Body& fumo_rect_body);
+
 bool player_to_circle_collision_solving(PlayerShape& player_shape,
                                         Body& player_body,
                                         const Circle& circle_shape,

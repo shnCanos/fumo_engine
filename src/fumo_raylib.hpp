@@ -1,15 +1,21 @@
 #pragma once
+#include <iostream> // IWYU pragma: export
+#include <cmath>
+#include <libassert/assert.hpp>
 #include "fumo_serialize_macros.hpp"
 #include "raylib.h"
 #include "raymath.h"
+
+#define PRINT_NO_NAME(x) std::cerr << libassert::highlight_stringify(x) << '\n';
+
+#define PRINT(x) \
+    std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
 
 struct FumoVec2 {
     float x; // Vector x component
     float y; // Vector y component
 
-    inline Vector2 to_raylib_vec2() const {
-        return {x, y};
-    }
+    inline Vector2 to_raylib_vec2() const { return {x, y}; }
     SERIALIZE(x, y)
 };
 
@@ -19,15 +25,11 @@ struct FumoColor {
     unsigned char b; // FumoColor blue value
     unsigned char a; // FumoColor alpha value
 
-    inline Color to_raylib_color() const {
-        return {r, g, b, a};
-    }
+    inline Color to_raylib_color() const { return {r, g, b, a}; }
     SERIALIZE(r, g, b, a)
 };
 
-inline FumoColor to_fumo_color(Color c) {
-    return {c.r, c.g, c.b, c.a};
-}
+inline FumoColor to_fumo_color(Color c) { return {c.r, c.g, c.b, c.a}; }
 
 struct FumoRect {
     // NOTE: does not store positions most of the time
@@ -41,9 +43,7 @@ struct FumoRect {
     float width; // FumoRect width
     float height; // FumoRect height
 
-    Rectangle to_raylib_rect() {
-        return {x, y, width, height};
-    }
+    Rectangle to_raylib_rect() { return {x, y, width, height}; }
 };
 
 void FumoDrawCircleV(FumoVec2 center, float radius, FumoColor color);
@@ -71,9 +71,7 @@ inline float FumoVec2DistanceSqr(FumoVec2 v1, FumoVec2 v2) {
     return Vector2DistanceSqr(v1.to_raylib_vec2(), v2.to_raylib_vec2());
 }
 
-inline FumoVec2 to_fumo_vec2(Vector2 v) {
-    return {v.x, v.y};
-}
+inline FumoVec2 to_fumo_vec2(Vector2 v) { return {v.x, v.y}; }
 
 inline FumoVec2 FumoVec2Add(FumoVec2 lhs, FumoVec2 rhs) {
     return to_fumo_vec2(Vector2Add(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
@@ -96,7 +94,8 @@ inline FumoVec2 FumoVec2Normalize(FumoVec2 lhs) {
 }
 
 inline FumoVec2 FumoVec2Subtract(FumoVec2 lhs, FumoVec2 rhs) {
-    return to_fumo_vec2(Vector2Subtract(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
+    return to_fumo_vec2(
+        Vector2Subtract(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
 }
 
 inline float FumoVec2Length(FumoVec2 v) {
@@ -108,11 +107,13 @@ inline FumoVec2 FumoVec2Scale(FumoVec2 lhs, float rhs) {
 }
 
 inline FumoVec2 FumoVec2Divide(FumoVec2 lhs, FumoVec2 rhs) {
-    return to_fumo_vec2(Vector2Divide(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
+    return to_fumo_vec2(
+        Vector2Divide(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
 }
 
 inline FumoVec2 FumoVec2Multiply(FumoVec2 lhs, FumoVec2 rhs) {
-    return to_fumo_vec2(Vector2Multiply(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
+    return to_fumo_vec2(
+        Vector2Multiply(lhs.to_raylib_vec2(), rhs.to_raylib_vec2()));
 }
 
 inline FumoVec2 operator+(const FumoVec2& lhs, const FumoVec2& rhs) {
@@ -183,7 +184,7 @@ inline bool operator!=(const FumoVec2& lhs, const FumoVec2& rhs) {
 
 inline FumoVec2 FumoVec2Snap(FumoVec2 v1, int directions) {
     float angle = std::atan2(v1.y, v1.x);
-    angle = std::round(angle / (2*PI) * directions) / directions * (2*PI);
+    angle = std::round(angle / (2 * PI) * directions) / directions * (2 * PI);
 
     return FumoVec2Rotate({1, 0}, angle) * FumoVec2Length(v1);
 }

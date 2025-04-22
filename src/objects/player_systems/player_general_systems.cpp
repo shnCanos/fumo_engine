@@ -8,12 +8,13 @@ EntityId PlayerInitializer::initialize_player() {
     EntityId player_id = global->ECS->create_entity();
 
     // global->ECS->entity_add_component(player_id, PlayerFlag{});
-    global->ECS->entity_add_component(player_id, EntityState {.can_swap_orbits = true});
-    global->ECS->entity_add_component(player_id, Render {.color = {50, 50, 50, 150}});
+    global->ECS->entity_add_component(player_id,
+                                      EntityState {.can_swap_orbits = true});
+    global->ECS->entity_add_component(player_id,
+                                      Render {.color = {50, 50, 50, 150}});
 
-    global->ECS->entity_add_component(
-        player_id,
-        AnimationInfo {.sprite_scaling = 2.5f});
+    global->ECS->entity_add_component(player_id,
+                                      AnimationInfo {.sprite_scaling = 2.5f});
 
     Body player_body {
         .position = {.x = screenWidth / 2.0f, .y = screenCenter.y},

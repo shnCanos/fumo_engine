@@ -19,14 +19,14 @@ void BodyMovement::move(const EntityId& entity_id, const DIRECTION& direction) {
         case DIRECTION::LEFT:
             body.velocity -= body.x_direction * movement_scaling;
             if (player_state.on_ground) {
-                body.inverse_direction = true;
+                // body.inverse_direction = true;
                 AnimationPlayer::play(player_animation, "run");
             }
             break;
         case DIRECTION::RIGHT:
             body.velocity += body.x_direction * movement_scaling;
             if (player_state.on_ground) {
-                body.inverse_direction = false;
+                // body.inverse_direction = false;
                 AnimationPlayer::play(player_animation, "run");
             }
             break;

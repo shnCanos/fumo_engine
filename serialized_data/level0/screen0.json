@@ -1177,5 +1177,55 @@
     },
     "LevelId": {
         "value0": 0
+    },
+    "entity_id": 42,
+    "component_mask": 49713,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": -40.0,
+            "value1": 743.040283203125
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false,
+        "value6": 0
+    },
+    "Render": {
+        "value0": {
+            "value0": 230,
+            "value1": 41,
+            "value2": 55,
+            "value3": 255
+        }
+    },
+    "FumoRect": {
+        "value0": -161.25001525878907,
+        "value1": 681.790283203125,
+        "value2": 200.0,
+        "value3": 200.0
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 0
     }
 }

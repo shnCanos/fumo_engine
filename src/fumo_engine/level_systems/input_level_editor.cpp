@@ -1,10 +1,12 @@
+#include "fumo_engine/level_systems/input_level_editor.hpp"
+
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/serialization/fumo_serializer.hpp"
-#include "fumo_engine/level_systems/input_level_editor.hpp"
 #include "objects/generic_systems/factory_systems.hpp"
 
 const int default_rect_width = 500.0f;
 const int default_rect_height = 300.0f;
+#define MINIMUM_SIZE 10.0f
 extern std::unique_ptr<GlobalState> global;
 
 void DebugLevelEditor::reset_position() {
@@ -41,6 +43,7 @@ void DebugLevelEditor::spawn_transition_rect(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_screen_transition(mouse_position);
 }
+
 void DebugLevelEditor::spawn_rect(FumoVec2 mouse_position) {
     const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
     planet_factory->create_rect(mouse_position);
@@ -64,7 +67,8 @@ void DebugLevelEditor::move_entity(FumoVec2 mouse_position) {
                 global->ECS->make_component_mask<ParallelGravityField>(),
             .component_filter = Filter::All};
         EntityQuery only_grav_query {
-            .component_mask = global->ECS->make_component_mask<ColliderObjectFlag>(),
+            .component_mask =
+                global->ECS->make_component_mask<ColliderObjectFlag>(),
             .component_filter = Filter::None};
 
         distance = FumoVec2Distance(body.position, mouse_position);
@@ -97,6 +101,72 @@ void DebugLevelEditor::move_entity(FumoVec2 mouse_position) {
     }
 }
 
+// EntityQuery circle_grav_query {
+//     .component_mask =
+//         global->ECS->make_component_mask<CircularGravityField>(),
+//     .component_filter = Filter::All};
+// EntityQuery only_grav_query {
+//     .component_mask =
+//         global->ECS->make_component_mask<Rectangle>(),
+//     .component_filter = Filter::None};
+
+void resize_rectangle(FumoRect& rectangle,
+                      FumoVec2 mouse_position,
+                      Body& rect_body) {
+    rectangle.width = (mouse_position.x - rect_body.position.x);
+    rectangle.height = (mouse_position.y - rect_body.position.y);
+
+    if (rectangle.width < MINIMUM_SIZE) {
+        rectangle.width = MINIMUM_SIZE;
+    }
+    if (rectangle.height < MINIMUM_SIZE) {
+        rectangle.height = MINIMUM_SIZE;
+    }
+}
+
+void DebugLevelEditor::drag_resizing(FumoVec2 mouse_position) {
+
+    for (const auto& entity_id : sys_entities) {
+
+        auto& body = global->ECS->get_component<Body>(entity_id);
+
+        EntityQuery parallel_grav_query {
+            .component_mask =
+                global->ECS->make_component_mask<ParallelGravityField>(),
+            .component_filter = Filter::All};
+
+        if (global->ECS->filter(entity_id, parallel_grav_query)) {
+            auto& parallel_field =
+                global->ECS->get_component<ParallelGravityField>(entity_id);
+            //
+            BeginMode2D(*global->camera);
+            // Rectangle gaming {
+            //     .x = body.position.x + parallel_field.field_fumo_rect.width,
+            //     .y = body.position.y - parallel_field.field_fumo_rect.height,
+            //     .width = 100,
+            //     .height = 100};
+            // DrawRectangleRec(gaming, GOLD);
+
+            Rectangle gaming2 {
+                .x = body.position.x,
+                .y = body.position.y,
+                .width = parallel_field.field_fumo_rect.width + MINIMUM_SIZE,
+                .height = parallel_field.field_fumo_rect.height + MINIMUM_SIZE};
+
+            DrawRectangleRec(gaming2, GREEN);
+            EndMode2D();
+
+            if (CheckCollisionPointRec(mouse_position.to_raylib_vec2(),
+                                       gaming2)) {
+                resize_rectangle(parallel_field.field_fumo_rect,
+                                 mouse_position,
+                                 body);
+                return;
+            }
+        }
+    }
+}
+
 void DebugLevelEditor::handle_input() {
     global->camera->zoom += ((float)GetMouseWheelMove() * 0.05f);
     FumoVec2 mouse_position =
@@ -104,6 +174,10 @@ void DebugLevelEditor::handle_input() {
     // DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        if (IsKeyDown(KEY_R)) {
+            drag_resizing(mouse_position);
+            return;
+        }
         move_entity(mouse_position);
         return;
     } else if (IsKeyPressed(KEY_P)) {
@@ -116,7 +190,8 @@ void DebugLevelEditor::handle_input() {
         delete_planet(mouse_position);
     } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
         if (IsKeyPressed(KEY_S)) {
-            const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
+            const auto& level_serializer =
+                global->ECS->get_system<LevelSerializer>();
             // level_serializer->deserialize_levels();
             level_serializer->serialize_levels();
         }
@@ -127,7 +202,7 @@ void DebugLevelEditor::handle_input() {
     // so we spawn the center of the rect on the mouse
     if (IsKeyPressed(KEY_F2)) {
         // spawn_rect_planet(mouse_position);
-     
+
     } else if (IsKeyPressed(KEY_T)) {
         spawn_rect(mouse_position);
     } else if (IsKeyPressed(KEY_F3)) {

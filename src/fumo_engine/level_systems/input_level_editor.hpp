@@ -5,9 +5,7 @@
 class DebugLevelEditor: public System {
 
   public:
-    void sys_call() override {
-        handle_input();
-    }
+    void sys_call() override { handle_input(); }
 
     void handle_input();
     void spawn_rect_planet(FumoVec2 mouse_position);
@@ -17,9 +15,10 @@ class DebugLevelEditor: public System {
     void spawn_transition_rect(FumoVec2 mouse_position);
     void debug_print();
     void move_entity(FumoVec2 mouse_position);
-    void resize_planet(float resize);
+    // void resize_planet(float resize);
     void delete_planet(FumoVec2 mouse_position);
     void reset_position();
+    void drag_resizing(FumoVec2 mouse_position);
 };
 
 struct LevelEditorGUI {

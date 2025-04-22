@@ -1,6 +1,8 @@
 #include <raylib.h>
 #include <raymath.h>
+
 #include <cmath>
+
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/events/event_state_handlers.hpp"
 #include "fumo_raylib.hpp"
@@ -13,7 +15,8 @@ namespace FumoEvent {
 
 void jumped(const Event& event) {
     auto& player_body = global->ECS->get_component<Body>(event.entity_id);
-    auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(event.entity_id);
 
     if (!player_state.can_jump) {
         return;
@@ -37,7 +40,8 @@ void jumped(const Event& event) {
 void idle(const Event& event) {
     auto& player_animation =
         global->ECS->get_component<AnimationInfo>(event.entity_id);
-    auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(event.entity_id);
 
     if (player_state.on_ground) {
         AnimationPlayer::play(player_animation, "idle");
@@ -57,9 +61,11 @@ void idle(const Event& event) {
 }
 
 void swapped_orbits(const Event& event) {
-    auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(event.entity_id);
 
-    auto& moved_event = global->ECS->get_component<MovedEventData>(event.entity_id);
+    auto& moved_event =
+        global->ECS->get_component<MovedEventData>(event.entity_id);
 
     // moved_event.direction = opposite_direction(moved_event.direction);
     // moved_event.continue_in_direction = moved_event.direction;
@@ -69,7 +75,8 @@ void swapped_orbits(const Event& event) {
 }
 
 void collided(const Event& event) {
-    auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(event.entity_id);
 
     player_state.landed = !player_state.can_swap_orbits;
 
@@ -83,7 +90,8 @@ void collided(const Event& event) {
 
 void dashed(const Event& event) {
     auto& player_body = global->ECS->get_component<Body>(event.entity_id);
-    auto& player_state = global->ECS->get_component<EntityState>(event.entity_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(event.entity_id);
     auto& player_animation =
         global->ECS->get_component<AnimationInfo>(event.entity_id);
 
@@ -92,8 +100,8 @@ void dashed(const Event& event) {
     if (player_state.dashes_left == 0) return;
 
     if (!player_state.dashing) {
-        constexpr float dash_length = 600.;
-        
+        constexpr float dash_length = 600.0f;
+
         auto direction = player_state.input_direction;
 
         if (direction.x == 0 && direction.y == 0) {
@@ -101,7 +109,7 @@ void dashed(const Event& event) {
             direction = direction * (player_body.inverse_direction ? -1 : 1);
         }
 
-        player_body.x_direction = direction ;
+        player_body.x_direction = direction;
         player_body.velocity = {.x = 0, .y = 0};
         player_state.dashing = true;
         // set the start and end positions of the dash
@@ -138,10 +146,10 @@ DIRECTION find_real_direction(DIRECTION direction, const Body& body) {
 void MovedWrapper::moved_event() {
     auto& player_body = global->ECS->get_component<Body>(entity_id);
     auto& player_state = global->ECS->get_component<EntityState>(entity_id);
-    auto& move_event_data = global->ECS->get_component<MovedEventData>(entity_id);
+    auto& move_event_data =
+        global->ECS->get_component<MovedEventData>(entity_id);
 
     const auto& grav_direction = player_body.gravity_direction;
-    const auto& rotation = player_body.rotation;
 
     DIRECTION& previous_direction = move_event_data.previous_direction;
     DIRECTION& direction = move_event_data.direction;
@@ -157,7 +165,8 @@ void MovedWrapper::moved_event() {
             // allow the player to transition orbits while holding the arrow keys
             // and keep their relative position (we recalculate when we land)
             // PRINT("SHOULD FLIP HELD KEY");
-            DIRECTION real_direction = find_real_direction(direction, player_body);
+            DIRECTION real_direction =
+                find_real_direction(direction, player_body);
             continue_in_direction = real_direction;
             previous_direction = direction;
         }

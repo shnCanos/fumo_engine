@@ -8,7 +8,8 @@
 // const int screenWidth = 500;
 constexpr int screenWidth = 1920;
 constexpr int screenHeight = 1080;
-constexpr FumoVec2 screenCenter = {(float)screenWidth / 2, (float)screenHeight / 2};
+constexpr FumoVec2 screenCenter = {(float)screenWidth / 2,
+                                   (float)screenHeight / 2};
 #define GRAVITY 9.81
 #define GRAVITATIONAL_CONSTANT 0.6
 #define SCALING_FACTOR 1
@@ -39,8 +40,6 @@ const std::array<FumoColor, 100> all_colors = {FUMO_LIGHTGRAY,
                                                FUMO_VIOLET,
                                                FUMO_BEIGE,
                                                FUMO_ORANGE};
-#define PRINT(x) \
-    std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
 
 #define PRINT_NO_NAME(x) std::cerr << libassert::highlight_stringify(x) << '\n';
 

@@ -1,6 +1,3 @@
-#include <algorithm>
-
-#include "fumo_engine/core/component_array.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_raylib.hpp"
 #include "main_functions.hpp"
@@ -10,7 +7,8 @@ extern std::unique_ptr<GlobalState> global;
 void StateHandler::handle_states() {
     // update all states
     for (const auto& entity_id : sys_entities) {
-        const auto& entity_state = global->ECS->get_component<EntityState>(entity_id);
+        const auto& entity_state =
+            global->ECS->get_component<EntityState>(entity_id);
         handle_state(entity_id, entity_state);
     }
 
@@ -22,15 +20,23 @@ int fall_counter = 0;
 void StateHandler::handle_state(const EntityId& entity_id,
                                 const EntityState& entity_state) {
     auto& player_body = global->ECS->get_component<Body>(entity_id);
-    auto& player_animation = global->ECS->get_component<AnimationInfo>(entity_id);
+    auto& player_animation =
+        global->ECS->get_component<AnimationInfo>(entity_id);
     auto& player_state = global->ECS->get_component<EntityState>(entity_id);
-    auto& moved_event_data = global->ECS->get_component<MovedEventData>(entity_id);
+    auto& moved_event_data =
+        global->ECS->get_component<MovedEventData>(entity_id);
     // if we face left, then we invert the sprite
     player_body.inverse_direction =
         (moved_event_data.continue_in_direction == DIRECTION::LEFT);
 
+    // if (player_state.input_direction == FumoVec2 {.x = -1.0f, .y = 1.0f}
+    //     || player_state.input_direction == FumoVec2 {.x = -1.0f, .y = -1.0f}) {
+    //     player_body.inverse_direction = true;
+    // }
+
     if (player_state.jumping && !player_state.dashing) {
-        if (player_animation.frame_progress != player_animation.sprite_frame_count) {
+        if (player_animation.frame_progress
+            != player_animation.sprite_frame_count) {
             AnimationPlayer::play(player_animation, "jump");
         }
         return;
@@ -67,8 +73,10 @@ float ease_quad_out(float t) { return 1 - (1 - t) * (1 - t); }
 
 void StateHandler::end_of_frame_update() {
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape = global->ECS->get_component<PlayerShape>(global->player_id);
-    auto& player_state = global->ECS->get_component<EntityState>(global->player_id);
+    auto& player_shape =
+        global->ECS->get_component<PlayerShape>(global->player_id);
+    auto& player_state =
+        global->ECS->get_component<EntityState>(global->player_id);
     auto& player_animation =
         global->ECS->get_component<AnimationInfo>(global->player_id);
 
@@ -78,7 +86,7 @@ void StateHandler::end_of_frame_update() {
     // apply movement changes to the player
     // if (true || player_state.can_swap_orbits) {
     if (player_state.dashing) {
-        constexpr float dash_duration = 0.2f;
+        constexpr float dash_duration = 2.0f;
 
         player_state.dash_time += global->frametime;
         float pos_progress = player_state.dash_time / dash_duration;
@@ -92,16 +100,17 @@ void StateHandler::end_of_frame_update() {
         // float flip = player_body.inverse_direction ? -1 : 1;
         player_body.velocity += (new_pos - player_body.position);
 
-        if (player_state.dash_time > dash_duration) player_state.dashing = false;
+        if (player_state.dash_time > dash_duration)
+            player_state.dashing = false;
 
+        // player_body.rotation = std::atan2(player_body.real_x_direction.y,
+        //                                   player_body.real_x_direction.x)
+        //     * RAD2DEG;
         AnimationPlayer::play(player_animation, "dash");
 
     } else {
         player_body.x_direction = {player_body.gravity_direction.y,
                                    -player_body.gravity_direction.x};
-        player_body.rotation =
-            std::atan2(player_body.x_direction.y, player_body.x_direction.x)
-            * RAD2DEG;
     }
     // }
 
@@ -116,7 +125,8 @@ void StateHandler::end_of_frame_update() {
     // -----------------------------------------------------------------
     float dot_vel = player_body.get_dot_y_velocity();
     if (dot_vel >= 800) {
-        player_body.velocity = FumoVec2Normalize(player_body.get_y_velocity()) * 800
+        player_body.velocity =
+            FumoVec2Normalize(player_body.get_y_velocity()) * 800
             + player_body.get_x_velocity();
     }
     // hardcoding ends here
@@ -135,8 +145,8 @@ void StateHandler::end_of_frame_update() {
     // also, we should LERP between the new gravity direction and the old one
     // and slowly rotate the player
 
-    if (!player_state.is_changing_screens) {
-        player_body.velocity =
-            player_body.get_x_velocity() * 0.75f + player_body.get_y_velocity();
-    }
+    // if (!player_state.is_changing_screens) {
+    player_body.velocity =
+        player_body.get_x_velocity() * 0.75f + player_body.get_y_velocity();
+    // }
 }

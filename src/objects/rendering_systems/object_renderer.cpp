@@ -1,5 +1,5 @@
+#include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "raylib.h"
 #include "renderers.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -22,13 +22,15 @@ void ObjectRenderer::draw_planets() {
                                   global->ECS->make_component_mask<Circle>(),
                               .component_filter = Filter::All};
     EntityQuery circle_grav_query {
-        .component_mask = global->ECS->make_component_mask<CircularGravityField>(),
+        .component_mask =
+            global->ECS->make_component_mask<CircularGravityField>(),
         .component_filter = Filter::All};
     EntityQuery rect_query {.component_mask =
                                 global->ECS->make_component_mask<FumoRect>(),
                             .component_filter = Filter::All};
     EntityQuery parallel_grav_query {
-        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_mask =
+            global->ECS->make_component_mask<ParallelGravityField>(),
         .component_filter = Filter::All};
     EntityQuery outline_query {
         .component_mask = global->ECS->make_component_mask<OutlineRectFlag>(),
@@ -42,7 +44,8 @@ void ObjectRenderer::draw_planets() {
         const auto& render = global->ECS->get_component<Render>(entity_id);
 
         if (global->ECS->filter(entity_id, circle_query)) {
-            const auto& circle_shape = global->ECS->get_component<Circle>(entity_id);
+            const auto& circle_shape =
+                global->ECS->get_component<Circle>(entity_id);
             FumoDrawCircleV(body.position, circle_shape.radius, render.color);
 
             if (global->ECS->filter(entity_id, circle_grav_query)) {
@@ -60,18 +63,27 @@ void ObjectRenderer::draw_planets() {
                 DRAW_OUTLINE_RECT(rect);
 
             } else {
-                FumoDrawRectV(body.position, {rect.width, rect.height}, render.color);
+                // FumoDrawRectV(body.position,
+                //               {rect.width, rect.height},
+                //               render.color);
+                // const auto e = Collisions::calculate_sub_rectangles(
+                //     rect,
+                //     body,
+                //     10,
+                //     global->ECS->get_component<PlayerShape>(global->player_id)
+                //         .radius);
             }
 
             if (global->ECS->filter(entity_id, parallel_grav_query)) {
                 const auto& parallel_field =
                     global->ECS->get_component<ParallelGravityField>(entity_id);
 
-                DrawRectangle(parallel_field.field_fumo_rect.x,
-                              parallel_field.field_fumo_rect.y,
-                              parallel_field.field_fumo_rect.width,
-                              parallel_field.field_fumo_rect.height,
-                              FumoColorAlpha(render.color, 0.2f).to_raylib_color());
+                DrawRectangle(
+                    parallel_field.field_fumo_rect.x,
+                    parallel_field.field_fumo_rect.y,
+                    parallel_field.field_fumo_rect.width,
+                    parallel_field.field_fumo_rect.height,
+                    FumoColorAlpha(render.color, 0.2f).to_raylib_color());
             }
         }
     }

@@ -67,7 +67,8 @@ void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
     float fractionSpeed = 0.8f;
 
     camera->offset = {screenWidth / 2.0f, screenHeight / 2.0f};
-    FumoVec2 diff = FumoVec2Subtract(player.position, to_fumo_vec2(camera->target));
+    FumoVec2 diff =
+        FumoVec2Subtract(player.position, to_fumo_vec2(camera->target));
     float length = FumoVec2Length(diff);
 
     float scaling = 8.0f;
@@ -82,16 +83,37 @@ void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
     }
 }
 
-void debug_player_drawing(const PlayerShape& player_shape, const Body& player_body) {
+void debug_player_drawing(const PlayerShape& player_shape,
+                          const Body& player_body) {
     // extra visualization code
     BeginMode2D(*global->camera);
     const auto& render = global->ECS->get_component<Render>(global->player_id);
     DrawCircleV(player_shape.bottom_circle_center.to_raylib_vec2(),
                 player_shape.radius,
-                render.color.to_raylib_color());
+                {static_cast<unsigned char>(render.color.r + 90),
+                 static_cast<unsigned char>(render.color.g + 40),
+                 render.color.b,
+                 static_cast<unsigned char>(render.color.a + 50)});
     DrawCircleV(player_shape.top_circle_center.to_raylib_vec2(),
                 player_shape.radius,
-                render.color.to_raylib_color());
+                {static_cast<unsigned char>(render.color.r + 90),
+                 static_cast<unsigned char>(render.color.g + 140),
+                 render.color.b,
+                 static_cast<unsigned char>(render.color.a + 50)});
+    DrawLineEx(player_shape.left_line.first.to_raylib_vec2(),
+               player_shape.left_line.second.to_raylib_vec2(),
+               4.0f,
+               {static_cast<unsigned char>(render.color.r + 90),
+                 static_cast<unsigned char>(render.color.g + 40),
+                 render.color.b,
+                 static_cast<unsigned char>(render.color.a + 50)});
+    DrawLineEx(player_shape.right_line.first.to_raylib_vec2(),
+               player_shape.right_line.second.to_raylib_vec2(),
+               4.0f,
+               {static_cast<unsigned char>(render.color.r + 90),
+                static_cast<unsigned char>(render.color.g + 40),
+                render.color.b,
+                static_cast<unsigned char>(render.color.a + 50)});
 
     // double gravity_reach = 300.0f;
     // FumoVec2 normalized_velocity = FumoVec2Normalize(player_body.velocity);

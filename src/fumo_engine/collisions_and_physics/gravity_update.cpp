@@ -24,7 +24,8 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
 
     EntityId planet_id = player_state.player_owning_field;
     EntityQuery query_parallel {
-        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_mask =
+            global->ECS->make_component_mask<ParallelGravityField>(),
         .component_filter = Filter::All};
 
     const auto& body_planet = global->ECS->get_component<Body>(planet_id);
@@ -34,7 +35,8 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     // mario galaxy-like changing of the left-right movement to match
     // the player expectation of what right and left should be
     EntityQuery skip_parallel {
-        .component_mask = global->ECS->make_component_mask<ParallelGravityField>(),
+        .component_mask =
+            global->ECS->make_component_mask<ParallelGravityField>(),
         .component_filter = Filter::None};
 
     // --------------------------------------------------------------------
@@ -51,7 +53,8 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
         // methods for circular gravity fields
         auto& circular_field =
             global->ECS->get_component<CircularGravityField>(planet_id);
-        const auto& circle_shape = global->ECS->get_component<Circle>(planet_id);
+        const auto& circle_shape =
+            global->ECS->get_component<Circle>(planet_id);
         circular_field.update_gravity(player_body, body_planet);
 
         gravity_direction = circular_field.gravity_direction;
@@ -62,21 +65,30 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     // --------------------------------------------------------------------
 
     // --------------------------------------------------------------------
-    // FIXME:: replace gravity updating so that we have smoothing or
-    // at least dont add up a fixed value
 
     float factor = 6;
+
+    player_body.real_gravity_direction = gravity_direction;
+    player_body.real_x_direction = {player_body.gravity_direction.y,
+                                    -player_body.gravity_direction.x};
+
+    player_body.rotation = std::atan2(player_body.real_x_direction.y,
+                                      player_body.real_x_direction.x)
+        * RAD2DEG;
 
     if (player_state.dashing) {
         factor = 0;
 
-    player_body.gravity_direction = {player_body.x_direction.y, -player_body.x_direction.x};
+        player_body.gravity_direction = {player_body.x_direction.y,
+                                         -player_body.x_direction.x};
+        return;
     } else {
         player_body.gravity_direction = gravity_direction;
 
         if (player_state.jumping) {
             float jump_progress =
-                FumoVec2DotProduct(player_body.get_y_velocity(), gravity_direction);
+                FumoVec2DotProduct(player_body.get_y_velocity(),
+                                   gravity_direction);
 
             if (jump_progress > 0) {
                 factor += 4;

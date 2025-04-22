@@ -7,6 +7,7 @@ extern std::unique_ptr<GlobalState> global;
 
 void PlayerCollisionRunner::check_collisions() {
     bool collision_happened = false;
+    constexpr float substep_count = 10;
 
     const auto& player_id = global->player_id;
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
@@ -26,12 +27,15 @@ void PlayerCollisionRunner::check_collisions() {
         if (global->ECS->filter(obstacle_id, query_fumo_rect)) {
             const auto& fumo_rect =
                 global->ECS->get_component<FumoRect>(obstacle_id);
-            if (Collisions::player_to_rect_collision_solving(player_shape,
-                                                             player_body,
-                                                             fumo_rect,
-                                                             obstacle_body)) {
+
+            if (Collisions::continuous_rect_collision(player_shape,
+                                                      player_body,
+                                                      fumo_rect,
+                                                      obstacle_body,
+                                                      substep_count)) {
                 collision_happened = true;
             }
+
         } else {
             const auto& circle_shape =
                 global->ECS->get_component<Circle>(obstacle_id);
