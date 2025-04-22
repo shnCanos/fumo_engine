@@ -4,12 +4,11 @@
 
 #include "fumo_engine/core/global_state.hpp"
 #include "systems.hpp"
+#include "constants/movement_constants.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
 // const static float movement_scaling = 20000.0f;
-const static float movement_scaling = 185.0f;
-const static float jump_scaling = 1500.0f;
 
 void BodyMovement::move(const EntityId& entity_id, const DIRECTION& direction) {
     auto& body = global->ECS->get_component<Body>(entity_id);

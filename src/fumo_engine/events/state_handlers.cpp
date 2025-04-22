@@ -1,6 +1,7 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_raylib.hpp"
 #include "main_functions.hpp"
+#include "constants/movement_constants.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -79,7 +80,6 @@ void StateHandler::end_of_frame_update() {
     if (player_state.dashing) {
         player_state.can_jump = false;
         player_state.jumping = false;
-        constexpr float dash_duration = 0.2f;
 
         if (player_state.dash_time == 0) {}
         player_state.dash_time += global->frametime;
@@ -87,13 +87,13 @@ void StateHandler::end_of_frame_update() {
 
         if (pos_progress > 1) pos_progress = 1;
 
-        pos_progress = ExponentialEaseInOut(pos_progress);
+        pos_progress = ease_quad_out(pos_progress);
 
         auto new_pos = player_state.dash_start
             + (player_state.dash_end - player_state.dash_start) * pos_progress;
 
         // float flip = player_body.inverse_direction ? -1 : 1;
-        player_body.velocity += (new_pos - player_body.position);
+        player_body.velocity = (new_pos - player_body.position) / global->frametime;
 
         if (player_state.dash_time > dash_duration)
             player_state.dashing = false;
@@ -119,17 +119,13 @@ void StateHandler::end_of_frame_update() {
             player_body.get_x_velocity() + player_body.get_y_velocity() * 0.05f;
     }
 
-    // hardcoded for a little bit smoother jump, delete later
-    // -----------------------------------------------------------------
     float dot_vel = player_body.get_dot_y_velocity();
-    if (dot_vel >= 800) {
+    if (dot_vel >= jump_speed_cap) {
         player_body.velocity =
-            FumoVec2Normalize(player_body.get_y_velocity()) * 800
+            FumoVec2Normalize(player_body.get_y_velocity()) * jump_speed_cap
             + player_body.get_x_velocity();
     }
-    // hardcoding ends here
-    // -----------------------------------------------------------------
-
+    
     player_body.position += player_body.velocity * global->frametime;
     player_shape.update_capsule_positions(player_body);
     //-----------------------------------------------------------------
@@ -144,6 +140,7 @@ void StateHandler::end_of_frame_update() {
     // and slowly rotate the player
 
     // if (!player_state.is_changing_screens) {
+    // if (!player_state.dashing)
     player_body.velocity =
         player_body.get_x_velocity() * 0.75f + player_body.get_y_velocity();
     // }

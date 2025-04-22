@@ -8,6 +8,7 @@
 #include "fumo_raylib.hpp"
 #include "main_functions.hpp"
 #include "objects/generic_systems/systems.hpp"
+#include "constants/movement_constants.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -86,7 +87,6 @@ void collided(const Event& event) {
     player_state.colliding = true;
     player_state.dashes_left = 1;
 }
-constexpr float dash_length = 669.0f;
 
 void dashed(const Event& event) {
     auto& player_body = global->ECS->get_component<Body>(event.entity_id);
@@ -109,12 +109,12 @@ void dashed(const Event& event) {
         }
 
         player_body.x_direction = direction;
-        player_body.velocity = {.x = 0, .y = 0};
+        // player_body.velocity = {.x = 0, .y = 0};
         player_state.dashing = true;
         // set the start and end positions of the dash
         // for easing
         player_state.dash_start = player_body.position;
-        player_state.dash_end = player_body.position + direction * dash_length;
+        player_state.dash_end = player_body.position + direction * dash_power;
         player_state.dash_time = 0;
         player_state.dashes_left--;
     }

@@ -1,5 +1,6 @@
 #include <raylib.h>
 
+#include "constants/movement_constants.hpp"
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_raylib.hpp"
@@ -72,7 +73,6 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     player_body.real_x_direction = {player_body.gravity_direction.y,
                                     -player_body.gravity_direction.x};
 
-
     if (player_state.dashing) {
         factor = 0;
 
@@ -83,12 +83,19 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
         player_body.gravity_direction = gravity_direction;
 
         if (player_state.jumping) {
-            float jump_progress =
-                FumoVec2DotProduct(player_body.get_y_velocity(),
-                                   gravity_direction);
+            float jump_amount = FumoVec2DotProduct(player_body.get_y_velocity(),
+                                                   gravity_direction);
+            bool going_up = jump_amount < 0;
 
-            if (jump_progress > 0) {
-                factor += 4;
+            if (going_up) {
+                float jump_progress = 1 + jump_amount / jump_scaling;
+                PRINT("jumping up");
+                PRINT(jump_progress);
+            } else {
+                float jump_progress = jump_amount / jump_speed_cap;
+                PRINT("jumping down");
+                PRINT(jump_progress);
+                factor += 4; // use jump_progress for easing if desired
             }
 
             if (IsKeyReleased(KEY_SPACE)) {
