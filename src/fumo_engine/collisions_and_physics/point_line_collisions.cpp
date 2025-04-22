@@ -285,18 +285,14 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
 
     if (closest_dist_intersection.first != 0.0f) {
         // means any side falls along our center
-
-        // BeginMode2D(*global->camera);
-        // DrawCircleV(closest_dist_intersection.second, default_radius, BLUE);
-        // DrawLineV(player_body.position, closest_dist_intersection.second, BLUE);
-        // EndMode2D();
         if (closest_dist_intersection.first < player_shape.radius) {
+            PRINT("COLLISION HAPPENED BOTTOM")
             // this means we collided with the bottom circle
-
             collision.overlap =
                 player_shape.radius - closest_dist_intersection.first;
             collision.push = player_shape.bottom_circle_center
                 - closest_dist_intersection.second;
+            collision.collided_side = DIRECTION::UP;
 
             return collision;
         }
@@ -311,15 +307,13 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
 
     if (closest_dist_intersection.first != 0.0f) {
         // this means we collided with the top circle
-        // PRINT("COLLISION HAPPENED TOP")
-        // BeginMode2D(*global->camera);
-        // DrawCircleV(closest_dist_intersection.second, default_radius, BLUE);
-        // EndMode2D();
         if (closest_dist_intersection.first < player_shape.radius) {
+            PRINT("COLLISION HAPPENED TOP")
             collision.overlap =
                 player_shape.radius - closest_dist_intersection.first;
             collision.push = player_shape.top_circle_center
                 - closest_dist_intersection.second;
+            collision.collided_side = DIRECTION::DOWN;
         }
     }
     return collision;

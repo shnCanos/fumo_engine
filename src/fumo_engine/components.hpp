@@ -31,14 +31,14 @@ enum struct AllComponentTypes {
 
 struct Body {
 
-    float rotation {}; // NOTE: in degrees?
+    float rotation {}; // in degrees
     FumoVec2 position = screenCenter;
     FumoVec2 velocity {0.0f, 0.0f};
     FumoVec2 gravity_direction = {0.0f, 1.0f};
     FumoVec2 x_direction = {-gravity_direction.y, gravity_direction.x};
 
     bool inverse_direction = false;
-    // this code is horrible bad fuck you
+    // this code is horribly bad
     FumoVec2 real_x_direction = {-gravity_direction.y, gravity_direction.x};
     FumoVec2 real_gravity_direction = {0.0f, 1.0f};
 
@@ -60,19 +60,13 @@ struct Body {
 
     void scale_velocity(float scale) { velocity += gravity_direction * scale; }
 
-    // -----------------------------------------------------------------------------
-    // trash to delete
-    int iterations {};
-
     // -------------------------------------------------------------------------------
-    // FumoVec2 acceleration {0.0f, 0.0f};
     SERIALIZE(rotation,
               position,
               velocity,
               gravity_direction,
               x_direction,
-              inverse_direction,
-              iterations);
+              inverse_direction);
 };
 
 struct Circle {

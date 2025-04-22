@@ -48,18 +48,8 @@ void StateHandler::handle_state(const EntityId& entity_id,
 
     player_state.falling = !player_state.on_ground && !player_state.colliding;
 
-    if (!player_state.idle && !player_state.dashing && !player_state.jumping) {
-        //     //-----------------------------------
-        //     // temporary falling code
-        //     // fall_counter++;
-        //     // if (fall_counter > 20) {
-        //     //     fall_counter = 1;
-        //     //     player_state.can_jump = true;
-        //     // }
-        //     //-----------------------------------
-        //
+    if (!player_state.idle && !player_state.dashing) {
         if (player_animation.current_sheet_name != "dash") {
-
             AnimationPlayer::play(player_animation, "jump");
             player_animation.frame_progress = 3;
             player_animation.current_region_rect.x =
@@ -69,7 +59,6 @@ void StateHandler::handle_state(const EntityId& entity_id,
         }
     }
 }
-
 
 // float ease_quad_out(float t) { return 1 - (1 - t) * (1 - t); }
 
@@ -88,6 +77,8 @@ void StateHandler::end_of_frame_update() {
     // apply movement changes to the player
     // if (true || player_state.can_swap_orbits) {
     if (player_state.dashing) {
+        player_state.can_jump = false;
+        player_state.jumping = false;
         constexpr float dash_duration = 0.2f;
 
         if (player_state.dash_time == 0) {}

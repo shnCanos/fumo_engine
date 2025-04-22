@@ -3,11 +3,17 @@
 #include <vector>
 
 #include "fumo_engine/components.hpp"
-#include "raylib.h"
+#include "objects/generic_systems/systems.hpp"
 
 struct Collision {
     float overlap;
     FumoVec2 push;
+    DIRECTION collided_side = DIRECTION::NO_DIRECTION;
+};
+
+struct RectBodyPair {
+    FumoRect fumo_rect;
+    Body body;
 };
 
 namespace Collisions {
@@ -19,11 +25,6 @@ namespace Collisions {
                                              const FumoRect& fumo_rect,
                                              const Body& fumo_rect_body,
                                              const int& substep_count);
-
-struct RectBodyPair {
-    FumoRect fumo_rect;
-    Body body;
-};
 
 [[nodiscard]] std::vector<RectBodyPair>
 calculate_sub_rectangles(const FumoRect& fumo_rect,
@@ -51,9 +52,9 @@ PointToLineDistanceAndIntersection(const FumoVec2& Point,
     const std::vector<std::pair<float, FumoVec2>>& distances);
 [[nodiscard]] FumoVec2 closest_point(const FumoVec2 target,
                                      const std::vector<FumoVec2>& points);
-// [[nodiscard]] FumoVec2 LineToLineIntersection(const std::pair<FumoVec2, FumoVec2>& line1,
-//                                              const std::pair<FumoVec2, FumoVec2>&
-//                                              line2);
+[[nodiscard]] FumoVec2
+LineToLineIntersection(const std::pair<FumoVec2, FumoVec2>& line1,
+                       const std::pair<FumoVec2, FumoVec2>& line2);
 [[nodiscard]] std::pair<float, FumoVec2>
 CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
                                     const float& radius,

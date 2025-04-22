@@ -1,6 +1,5 @@
 #pragma once
 #include "fumo_engine/core/system_base.hpp"
-#include "fumo_engine/components.hpp"
 
 // both used to check collisions for the player agaisnt the planets
 class PlayerCollisionRunner : public System {

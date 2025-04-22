@@ -17,15 +17,8 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
     std::vector<RectBodyPair> sub_rectangles {};
     RectBodyPair current_pair = {.fumo_rect = fumo_rect,
                                  .body = fumo_rect_body};
-    // 10 substeps
-    // 40
-    // 30.5
-    // 21
-    // 11.5
-    // 1.5
-    // -8.5 <- should return
-    //
     // FIXME: remove this update later when not debugging
+    //
     // UpdateCameraCenterSmoothFollow(
     //     global->camera.get(),
     //     global->ECS->get_component<Body>(global->player_id));

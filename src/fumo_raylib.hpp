@@ -55,7 +55,6 @@ inline float ease_quad_in(float t) { return t * t; }
 
 inline float ease_quad_out(float t) { return -(t * (t - 2)); }
 
-
 // Modeled after the overshooting cubic y = x^3-x*sin(x*pi)
 inline float BackEaseIn(float p) { return p * p * p - p * sin(p * M_PI); }
 
@@ -68,37 +67,34 @@ inline float BackEaseOut(float p) {
 inline float ExponentialEaseIn(float p) {
     return (p == 0.0) ? p : pow(2, 10 * (p - 1));
 }
+
 // Modeled after the exponential function y = -2^(-10x) + 1
 inline float ExponentialEaseOut(float p) {
     return (p == 1.0) ? p : 1 - pow(2, -10 * p);
 }
-inline float ExponentialEaseInOut(float p)
-{
-	if(p == 0.0 || p == 1.0) return p;
-	
-	if(p < 0.5)
-	{
-		return 0.5 * pow(2, (20 * p) - 10);
-	}
-	else
-	{
-		return -0.5 * pow(2, (-20 * p) + 10) + 1;
-	}
+
+inline float ExponentialEaseInOut(float p) {
+    if (p == 0.0 || p == 1.0) return p;
+
+    if (p < 0.5) {
+        return 0.5 * pow(2, (20 * p) - 10);
+    } else {
+        return -0.5 * pow(2, (-20 * p) + 10) + 1;
+    }
 }
 
 inline float ElasticEaseOut(float p) {
     return sin(-13 * M_PI_2 * (p + 1)) * pow(2, -10 * p) + 1;
 }
-inline float ElasticEaseInOut(float p)
-{
-	if(p < 0.5)
-	{
-		return 0.5 * sin(13 * M_PI_2 * (2 * p)) * pow(2, 10 * ((2 * p) - 1));
-	}
-	else
-	{
-		return 0.5 * (sin(-13 * M_PI_2 * ((2 * p - 1) + 1)) * pow(2, -10 * (2 * p - 1)) + 2);
-	}
+
+inline float ElasticEaseInOut(float p) {
+    if (p < 0.5) {
+        return 0.5 * sin(13 * M_PI_2 * (2 * p)) * pow(2, 10 * ((2 * p) - 1));
+    } else {
+        return 0.5
+            * (sin(-13 * M_PI_2 * ((2 * p - 1) + 1)) * pow(2, -10 * (2 * p - 1))
+               + 2);
+    }
 }
 
 inline float BackEaseInOut(float p) {
@@ -125,16 +121,12 @@ inline float BounceEaseOut(float p) {
 
 inline float BounceEaseIn(float p) { return 1 - BounceEaseOut(1 - p); }
 
-inline float BounceEaseInOut(float p)
-{
-	if(p < 0.5)
-	{
-		return 0.5 * BounceEaseIn(p*2);
-	}
-	else
-	{
-		return 0.5 * BounceEaseOut(p * 2 - 1) + 0.5;
-	}
+inline float BounceEaseInOut(float p) {
+    if (p < 0.5) {
+        return 0.5 * BounceEaseIn(p * 2);
+    } else {
+        return 0.5 * BounceEaseOut(p * 2 - 1) + 0.5;
+    }
 }
 
 inline FumoColor FumoColorAlpha(FumoColor color, float alpha) {

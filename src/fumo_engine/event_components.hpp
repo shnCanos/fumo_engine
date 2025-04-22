@@ -70,11 +70,12 @@ struct EntityState {
               idle,
               landed,
               colliding,
-              falling)
+              falling,
+              dashing,
+              is_changing_screens)
 };
 
 //-----------------------------------------------------------------
-
 
 struct MovedEventData {
     DIRECTION direction;

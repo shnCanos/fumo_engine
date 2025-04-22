@@ -22,10 +22,9 @@ void jumped(const Event& event) {
         return;
     }
 
-    if (player_state.jumping) {
-        // cancel previous jump if we were in the middle of it
-        player_body.iterations = 0;
-    }
+    // if (player_state.jumping) {
+    //     // cancel previous jump if we were in the middle of it
+    // }
     // TODO: add a falling event so the falling animation frame doesnt
     // play if we jump while falling (and add a timer to limit how long
     // you can jump after falling from a ledge (unsure how to do this properly))

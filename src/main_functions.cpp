@@ -90,30 +90,19 @@ void debug_player_drawing(const PlayerShape& player_shape,
     const auto& render = global->ECS->get_component<Render>(global->player_id);
     DrawCircleV(player_shape.bottom_circle_center.to_raylib_vec2(),
                 player_shape.radius,
-                {static_cast<unsigned char>(render.color.r + 90),
-                 static_cast<unsigned char>(render.color.g + 40),
-                 render.color.b,
-                 static_cast<unsigned char>(render.color.a + 50)});
+                render.color.to_raylib_color());
+
     DrawCircleV(player_shape.top_circle_center.to_raylib_vec2(),
                 player_shape.radius,
-                {static_cast<unsigned char>(render.color.r + 90),
-                 static_cast<unsigned char>(render.color.g + 140),
-                 render.color.b,
-                 static_cast<unsigned char>(render.color.a + 50)});
+                render.color.to_raylib_color());
     DrawLineEx(player_shape.left_line.first.to_raylib_vec2(),
                player_shape.left_line.second.to_raylib_vec2(),
                4.0f,
-               {static_cast<unsigned char>(render.color.r + 90),
-                 static_cast<unsigned char>(render.color.g + 40),
-                 render.color.b,
-                 static_cast<unsigned char>(render.color.a + 50)});
+               render.color.to_raylib_color());
     DrawLineEx(player_shape.right_line.first.to_raylib_vec2(),
                player_shape.right_line.second.to_raylib_vec2(),
                4.0f,
-               {static_cast<unsigned char>(render.color.r + 90),
-                static_cast<unsigned char>(render.color.g + 40),
-                render.color.b,
-                static_cast<unsigned char>(render.color.a + 50)});
+               render.color.to_raylib_color());
 
     // double gravity_reach = 300.0f;
     // FumoVec2 normalized_velocity = FumoVec2Normalize(player_body.velocity);

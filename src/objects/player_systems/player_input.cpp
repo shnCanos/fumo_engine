@@ -87,19 +87,23 @@ void PlayerInputHandler::handle_input() {
                              DIRECTION::RIGHT)) {
         return;
     }
-    // if (key_down_event_moved(KEY_DOWN,
-    //                          EVENT_::ENTITY_MOVED,
-    //                          player_id,
-    //                          DIRECTION::DOWN)) {
-    //     return;
-    // }
+    if (player_state.on_ground && player_body.rotation != 0.0f
+        && std::abs(player_body.rotation) != 180.0f) {
 
-    // if (key_down_event_moved(KEY_UP,
-    //                          EVENT_::ENTITY_MOVED,
-    //                          player_id,
-    //                          DIRECTION::UP)) {
-    //     return;
-    // }
+        if (key_down_event_moved(KEY_DOWN,
+                                 EVENT_::ENTITY_MOVED,
+                                 player_id,
+                                 DIRECTION::DOWN)) {
+            return;
+        }
+
+        if (key_down_event_moved(KEY_UP,
+                                 EVENT_::ENTITY_MOVED,
+                                 player_id,
+                                 DIRECTION::UP)) {
+            return;
+        }
+    }
 
     if (!key_was_pressed) {
         global->event_handler->add_event({EVENT_::ENTITY_IDLE, player_id});
