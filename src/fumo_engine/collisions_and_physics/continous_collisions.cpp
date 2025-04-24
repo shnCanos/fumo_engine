@@ -50,33 +50,61 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
 // the distance between sub_rectangles is, at most, the radius of
 // the player_capsule circles (prevents player from getting stuck
 // inside the rectangle)
-[[nodiscard]] bool continuous_rect_collision_solving(Capsule& player_capsule,
-                                             Body& player_body,
-                                             const FumoRect& fumo_rect,
-                                             const Body& fumo_rect_body,
-                                             const int& substep_count) {
+[[nodiscard]] Collision
+continuous_rect_collision_solving(Capsule& player_capsule,
+                                  Body& player_body,
+                                  const FumoRect& fumo_rect,
+                                  const Body& fumo_rect_body,
+                                  const int& substep_count) {
     // distinguish colliding from the left, right, top and bottom
     // (use the capsule sides for detecting if its from left or right)
 
-    const auto& sub_rectangles = calculate_sub_rectangles(fumo_rect,
-                                                          fumo_rect_body,
-                                                          substep_count,
-                                                          player_capsule.radius);
+    const auto& sub_rectangles =
+        calculate_sub_rectangles(fumo_rect,
+                                 fumo_rect_body,
+                                 substep_count,
+                                 player_capsule.radius);
 
     for (const auto& rect_body_pair : sub_rectangles) {
         capsule_to_rect_collision_solving(player_capsule,
-                                         player_body,
-                                         rect_body_pair.fumo_rect,
-                                         rect_body_pair.body);
+                                          player_body,
+                                          rect_body_pair.fumo_rect,
+                                          rect_body_pair.body);
     }
     // after pushing the player to the outer rectangle
     // (if the player was inside the rectangle)
     // we only need to return whether or not we collided with the outer
     // rectangle like before to decide if there was a collision
     return capsule_to_rect_collision_solving(player_capsule,
-                                            player_body,
-                                            fumo_rect,
-                                            fumo_rect_body);
+                                             player_body,
+                                             fumo_rect,
+                                             fumo_rect_body);
+}
+
+void calculate_collided_side(Collision& collision,
+                             const Capsule& player_capsule) {
+
+    // BeginMode2D(*global->camera);
+    // FumoDrawCircleV(collision.intersection_point, 10.0f, FUMO_GREEN);
+    // EndMode2D();
+    FumoVec2 closest = closest_point(collision.intersection_point,
+                                     {player_capsule.left_line.start,
+                                      player_capsule.left_line.end,
+                                      player_capsule.right_line.start,
+                                      player_capsule.right_line.end,
+                                      player_capsule.middle_line.start,
+                                      player_capsule.middle_line.end});
+
+    collision.collided_capsule_side =
+        (closest == player_capsule.left_line.start
+         || closest == player_capsule.left_line.end)
+        ? DIRECTION::LEFT
+        : (closest == player_capsule.right_line.start
+           || closest == player_capsule.right_line.end)
+        ? DIRECTION::RIGHT
+        : closest == player_capsule.middle_line.start ? DIRECTION::DOWN
+        : closest == player_capsule.middle_line.end   ? DIRECTION::UP
+                                                      : DIRECTION::NO_DIRECTION;
 }
 
 } // namespace Collisions

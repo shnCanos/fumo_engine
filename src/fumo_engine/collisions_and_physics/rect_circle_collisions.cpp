@@ -127,6 +127,28 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
 //  this means we want to move the circle away from the corner, so we take
 //  the closest corner and solve for that
 // -------------------------------------------------------------------------------
+#define CHECK_CAPSULE_CIRCLE(CIRCLE_CENTER) \
+    do { \
+        closest_dist_intersection = \
+            CircleToRectDistanceAndIntersection(CIRCLE_CENTER, \
+                                                player_capsule.radius, \
+                                                fumo_rect, \
+                                                rect_body); \
+        if (closest_dist_intersection.first != 0.0f) { \
+            if (closest_dist_intersection.first < player_capsule.radius) { \
+                collision.overlap = \
+                    player_capsule.radius - closest_dist_intersection.first; \
+                collision.normal_or_push = FumoVec2Normalize( \
+                    CIRCLE_CENTER - closest_dist_intersection.second); \
+                collision.intersection_point = \
+                    closest_dist_intersection.second; \
+                collision.collided = true; \
+                calculate_collided_side(collision, player_capsule); \
+                return collision; \
+            } \
+        } \
+    } while (0)
+
 [[nodiscard]] Collision CapsuleToRectCollision(const Capsule& player_capsule,
                                                const Body& player_body,
                                                const FumoRect& fumo_rect,
@@ -134,77 +156,23 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
 
     std::pair<float, FumoVec2> closest_dist_intersection = {0.0f, {0.0f, 0.0f}};
     Collision collision {};
+
     // -------------------------------------------------------------------------------
     // try the bottom circle for collisions
-    closest_dist_intersection =
-        CircleToRectDistanceAndIntersection(player_capsule.bottom_circle_center,
-                                            player_capsule.radius,
-                                            fumo_rect,
-                                            rect_body);
-
-    if (closest_dist_intersection.first != 0.0f) {
-        // means any side falls along our center
-        if (closest_dist_intersection.first < player_capsule.radius) {
-            // PRINT_NO_NAME("COLLISION HAPPENED BOTTOM")
-            // this means we collided with the bottom circle
-            collision.overlap =
-                player_capsule.radius - closest_dist_intersection.first;
-            collision.normal_or_push =
-                FumoVec2Normalize(player_capsule.bottom_circle_center
-                                  - closest_dist_intersection.second);
-            collision.capsule_collided_side = DIRECTION::UP;
-            collision.collided = true;
-            collision.intersection_point = closest_dist_intersection.second;
-
-            if (LineToRectCollided(player_capsule.left_line,
-                                   fumo_rect,
-                                   rect_body)) {
-                collision.capsule_collided_side = DIRECTION::LEFT;
-                // PRINT_NO_NAME("COLLISION HAPPENED LEFT")
-            }
-            if (LineToRectCollided(player_capsule.right_line,
-                                   fumo_rect,
-                                   rect_body)) {
-                collision.capsule_collided_side = DIRECTION::RIGHT;
-
-                // PRINT_NO_NAME("COLLISION HAPPENED RIGHT")
-            }
-            return collision;
-        }
-    }
-    // -------------------------------------------------------------------------------
+    CHECK_CAPSULE_CIRCLE(player_capsule.bottom_circle_center);
     // // try the top circle for collisions
-    closest_dist_intersection =
-        CircleToRectDistanceAndIntersection(player_capsule.top_circle_center,
-                                            player_capsule.radius,
-                                            fumo_rect,
-                                            rect_body);
+    CHECK_CAPSULE_CIRCLE(player_capsule.top_circle_center);
+    // -------------------------------------------------------------------------------
 
-    if (closest_dist_intersection.first != 0.0f) {
-        // this means we collided with the top circle
-        if (closest_dist_intersection.first < player_capsule.radius) {
-            // PRINT_NO_NAME("COLLISION HAPPENED TOP")
-            collision.overlap =
-                player_capsule.radius - closest_dist_intersection.first;
-            collision.normal_or_push =
-                FumoVec2Normalize(player_capsule.bottom_circle_center
-                                  - closest_dist_intersection.second);
-            collision.capsule_collided_side = DIRECTION::DOWN;
-            collision.intersection_point = closest_dist_intersection.second;
-            collision.collided = true;
-        }
-    }
-
-    if (LineToRectCollided(player_capsule.left_line, fumo_rect, rect_body)) {
-        collision.capsule_collided_side = DIRECTION::LEFT;
-        // PRINT_NO_NAME("COLLISION HAPPENED LEFT")
-    }
-    if (LineToRectCollided(player_capsule.right_line, fumo_rect, rect_body)) {
-        collision.capsule_collided_side = DIRECTION::RIGHT;
-
-        // PRINT_NO_NAME("COLLISION HAPPENED RIGHT")
-    }
     return collision;
+
+    // if (LineToRectCollided(player_capsule.left_line, fumo_rect, rect_body)) {
+    //     // PRINT_NO_NAME("COLLISION HAPPENED LEFT")
+    // }
+    // if (LineToRectCollided(player_capsule.right_line, fumo_rect, rect_body)) {
+    //
+    //     // PRINT_NO_NAME("COLLISION HAPPENED RIGHT")
+    // }
 }
 
 [[nodiscard]] Collision CapsuleToCircleCollision(const Capsule& player_capsule,
@@ -232,10 +200,15 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
         overlap = radius_sum - bottom_distance;
         push_direction = FumoVec2Normalize(player_capsule.bottom_circle_center
                                            - circle_body.position);
-        return {.overlap = overlap,
-                .normal_or_push = push_direction,
-                .distance = bottom_distance,
-                .collided = true};
+        Collision collision = {.overlap = overlap,
+                               .normal_or_push = push_direction,
+                               .intersection_point =
+                                   player_capsule.bottom_circle_center
+                                   - push_direction * player_capsule.radius,
+                               .distance = bottom_distance,
+                               .collided = true};
+        Collisions::calculate_collided_side(collision, player_capsule);
+        return collision;
     }
     // -------------------------------------------------------------------------------
     // top circle collision check
@@ -248,10 +221,17 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
         push_direction = FumoVec2Normalize(player_capsule.top_circle_center
                                            - circle_body.position);
 
-        return {.overlap = overlap,
-                .normal_or_push = push_direction,
-                .distance = top_distance,
-                .collided = true};
+        Collision collision {.overlap = overlap,
+                             .normal_or_push = push_direction,
+                             .intersection_point =
+                                 player_capsule.top_circle_center
+                                 - push_direction * player_capsule.radius,
+                             .distance = top_distance,
+                             .collided = true};
+
+        Collisions::calculate_collided_side(collision, player_capsule);
+
+        return collision;
     }
     // -------------------------------------------------------------------------------
     // NOTE: remove the capsule sides later but for now i want to test them
@@ -269,11 +249,16 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
         overlap = circle_shape.radius - left_line_distance_pair.first;
         push_direction = FumoVec2Normalize(left_line_distance_pair.second
                                            - circle_body.position);
-        return {.overlap = overlap,
-                .normal_or_push = push_direction,
-                .intersection_point = left_line_distance_pair.second,
-                .distance = left_line_distance_pair.first,
-                .collided = true};
+        Collision collision {.overlap = overlap,
+                             .normal_or_push = push_direction,
+                             .intersection_point =
+                                 left_line_distance_pair.second,
+                             .distance = left_line_distance_pair.first,
+                             .collided = true};
+
+        // Collisions::calculate_collided_side(collision, player_capsule);
+
+        return collision;
     }
 
     const auto right_line_distance_pair =
@@ -287,11 +272,16 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
         overlap = circle_shape.radius - right_line_distance_pair.first;
         push_direction = FumoVec2Normalize(right_line_distance_pair.second
                                            - circle_body.position);
-        return {.overlap = overlap,
-                .normal_or_push = push_direction,
-                .intersection_point = right_line_distance_pair.second,
-                .distance = right_line_distance_pair.first,
-                .collided = true};
+        Collision collision {.overlap = overlap,
+                             .normal_or_push = push_direction,
+                             .intersection_point =
+                                 right_line_distance_pair.second,
+                             .distance = right_line_distance_pair.first,
+                             .collided = true};
+
+        // Collisions::calculate_collided_side(collision, player_capsule);
+
+        return collision;
     }
 
     // -------------------------------------------------------------------------------
@@ -299,10 +289,10 @@ CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,
     return {overlap, push_direction};
 }
 
-bool capsule_to_rect_collision_solving(Capsule& player_capsule,
-                                       Body& player_body,
-                                       const FumoRect& fumo_rect,
-                                       const Body& fumo_rect_body) {
+Collision capsule_to_rect_collision_solving(Capsule& player_capsule,
+                                            Body& player_body,
+                                            const FumoRect& fumo_rect,
+                                            const Body& fumo_rect_body) {
     // NOTE: assume fumo_rects are NOT rotated
     // (add rotation support later if i want to add slopes and stuff)
     // FumoRect doesnt store the position, that is stored in the Body
@@ -319,7 +309,7 @@ bool capsule_to_rect_collision_solving(Capsule& player_capsule,
 
     if (!collision.collided) {
         // no collision happened
-        return false;
+        return collision;
     }
     // -------------------------------------------------------------------------------
     // points towards the player_body
@@ -328,14 +318,14 @@ bool capsule_to_rect_collision_solving(Capsule& player_capsule,
     push = FumoVec2Scale(push, collision.overlap * correction);
     player_body.position += push;
     player_capsule.update_capsule_positions(player_body);
-    return true;
+    return collision;
 }
 
-bool capsule_to_circle_collision_solving(Capsule& player_capsule,
-                                         Body& player_body,
-                                         const Circle& circle_shape,
-                                         const Body& circle_body,
-                                         const int& substep_count) {
+Collision capsule_to_circle_collision_solving(Capsule& player_capsule,
+                                              Body& player_body,
+                                              const Circle& circle_shape,
+                                              const Body& circle_body,
+                                              const int& substep_count) {
     // -------------------------------------------------------------------------------
     // solve the collision
     Collision collision = Collisions::CapsuleToCircleCollision(player_capsule,
@@ -344,7 +334,7 @@ bool capsule_to_circle_collision_solving(Capsule& player_capsule,
                                                                circle_body);
     if (!collision.collided) {
         // no collision happened
-        return false;
+        return collision;
     }
     // -------------------------------------------------------------------------------
     // points towards the player_body
@@ -353,7 +343,7 @@ bool capsule_to_circle_collision_solving(Capsule& player_capsule,
     push = FumoVec2Scale(push, collision.overlap * correction);
     player_body.position += push;
     player_capsule.update_capsule_positions(player_body);
-    return true;
+    return collision;
 }
 
 } // namespace Collisions

@@ -24,10 +24,11 @@ void StateHandler::movement_state_handler(Body& player_body,
                 * jump_speed_cap
             + player_body.get_real_x_velocity();
     }
+
+    UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
     player_body.position += player_body.velocity * global->frametime;
     player_capsule.update_capsule_positions(player_body);
     debug_player_drawing(player_capsule, player_body);
-
     //-----------------------------------------------------------------
     // scale down the velocity to prepare for
     // the calculations on the next frame

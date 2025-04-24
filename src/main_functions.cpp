@@ -1,9 +1,30 @@
 #include "main_functions.hpp"
+
 #include "constants/planet_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_raylib.hpp"
 
 extern std::unique_ptr<GlobalState> global;
+
+void print_direction(DIRECTION direction) {
+    switch (direction) {
+        case DIRECTION::LEFT:
+            PRINT_NO_NAME("LEFT");
+            break;
+        case DIRECTION::RIGHT:
+            PRINT_NO_NAME("RIGHT");
+            break;
+        case DIRECTION::UP:
+            PRINT_NO_NAME("UP");
+            break;
+        case DIRECTION::DOWN:
+            PRINT_NO_NAME("DOWN");
+            break;
+        case DIRECTION::NO_DIRECTION:
+            PRINT_NO_NAME("NO_DIRECTION");
+            break;
+    }
+}
 
 DIRECTION opposite_direction(DIRECTION direction) {
     if (direction == DIRECTION::LEFT) {
@@ -88,48 +109,53 @@ void debug_player_drawing(const Capsule& player_capsule,
     // extra visualization code
     BeginMode2D(*global->camera);
     const auto& render = global->ECS->get_component<Render>(global->player_id);
-    // DrawCircleV(player_capsule.bottom_circle_center.to_raylib_vec2(),
-    //             player_capsule.radius,
-    //             render.color.to_raylib_color());
-    //
-    // DrawCircleV(player_capsule.top_circle_center.to_raylib_vec2(),
-    //             player_capsule.radius,
-    //             render.color.to_raylib_color());
-    // DrawLineEx(player_capsule.left_line.first.to_raylib_vec2(),
-    //            player_capsule.left_line.second.to_raylib_vec2(),
-    //            4.0f,
-    //            render.color.to_raylib_color());
-    // DrawLineEx(player_capsule.right_line.first.to_raylib_vec2(),
-    //            player_capsule.right_line.second.to_raylib_vec2(),
-    //            4.0f,
-    //            render.color.to_raylib_color());
-
     DrawCircleV(player_capsule.bottom_circle_center.to_raylib_vec2(),
                 player_capsule.radius,
-                {static_cast<unsigned char>(render.color.r + 90),
-                 static_cast<unsigned char>(render.color.g + 40),
-                 render.color.b,
-                 static_cast<unsigned char>(render.color.a + 105)});
+                render.color.to_raylib_color());
+
     DrawCircleV(player_capsule.top_circle_center.to_raylib_vec2(),
                 player_capsule.radius,
-                {static_cast<unsigned char>(render.color.r + 90),
-                 static_cast<unsigned char>(render.color.g + 40),
-                 render.color.b,
-                 static_cast<unsigned char>(render.color.a + 105)});
+                render.color.to_raylib_color());
     DrawLineEx(player_capsule.left_line.start.to_raylib_vec2(),
                player_capsule.left_line.end.to_raylib_vec2(),
                4.0f,
-               {static_cast<unsigned char>(render.color.r + 90),
-                static_cast<unsigned char>(render.color.g + 40),
-                render.color.b,
-                static_cast<unsigned char>(render.color.a + 105)});
+               render.color.to_raylib_color());
     DrawLineEx(player_capsule.right_line.start.to_raylib_vec2(),
                player_capsule.right_line.end.to_raylib_vec2(),
                4.0f,
-               {static_cast<unsigned char>(render.color.r + 90),
-                static_cast<unsigned char>(render.color.g + 40),
-                render.color.b,
-                static_cast<unsigned char>(render.color.a + 105)});
+               render.color.to_raylib_color());
+
+    DrawLineEx(player_capsule.middle_line.start.to_raylib_vec2(),
+               player_capsule.middle_line.end.to_raylib_vec2(),
+               4.0f,
+               render.color.to_raylib_color());
+
+    // DrawCircleV(player_capsule.bottom_circle_center.to_raylib_vec2(),
+    //             player_capsule.radius,
+    //             {static_cast<unsigned char>(render.color.r + 90),
+    //              static_cast<unsigned char>(render.color.g + 40),
+    //              render.color.b,
+    //              static_cast<unsigned char>(render.color.a + 105)});
+    // DrawCircleV(player_capsule.top_circle_center.to_raylib_vec2(),
+    //             player_capsule.radius,
+    //             {static_cast<unsigned char>(render.color.r + 90),
+    //              static_cast<unsigned char>(render.color.g + 40),
+    //              render.color.b,
+    //              static_cast<unsigned char>(render.color.a + 105)});
+    // DrawLineEx(player_capsule.left_line.start.to_raylib_vec2(),
+    //            player_capsule.left_line.end.to_raylib_vec2(),
+    //            4.0f,
+    //            {static_cast<unsigned char>(render.color.r + 90),
+    //             static_cast<unsigned char>(render.color.g + 40),
+    //             render.color.b,
+    //             static_cast<unsigned char>(render.color.a + 105)});
+    // DrawLineEx(player_capsule.right_line.start.to_raylib_vec2(),
+    //            player_capsule.right_line.end.to_raylib_vec2(),
+    //            4.0f,
+    //            {static_cast<unsigned char>(render.color.r + 90),
+    //             static_cast<unsigned char>(render.color.g + 40),
+    //             render.color.b,
+    //             static_cast<unsigned char>(render.color.a + 105)});
     // double gravity_reach = 300.0f;
     // FumoVec2 normalized_velocity = FumoVec2Normalize(player_body.velocity);
     // FumoVec2 line_end = player_body.position + normalized_velocity * gravity_reach;

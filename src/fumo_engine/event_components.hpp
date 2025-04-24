@@ -1,12 +1,11 @@
 #pragma once
 #include <memory>
 
-#include "constants/constants.hpp"
 #include "constants/engine_constants.hpp"
+#include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/system_base.hpp"
 #include "fumo_raylib.hpp"
 #include "objects/generic_systems/systems.hpp"
-#include "raylib.h"
 
 // slowly rotate player to the new gravity direction
 // change controls like mario galaxy (relative to the screen)
@@ -83,6 +82,11 @@ struct MovedEventData {
     DIRECTION continue_in_direction;
 
     SERIALIZE(direction, previous_direction, continue_in_direction)
+};
+
+struct CollisionEventData {
+    std::vector<Collision> all_collisions {};
+    SERIALIZE(all_collisions);
 };
 
 //-----------------------------------------------------------------

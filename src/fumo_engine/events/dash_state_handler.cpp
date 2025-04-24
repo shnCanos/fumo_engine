@@ -43,6 +43,7 @@ void StateHandler::dash_state_handler(Body& player_body,
         FumoVec2 new_velocity = new_pos - previous_pos;
 
         if (collision.collided) {
+
             new_velocity += collision.normal_or_push * player_capsule.radius;
             new_velocity -= collision.normal_or_push
                 * FumoVec2DotProduct(new_velocity, collision.normal_or_push);

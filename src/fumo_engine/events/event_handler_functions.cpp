@@ -1,14 +1,8 @@
-#include <raylib.h>
-#include <raymath.h>
-
 #include <cmath>
 
-#include "fumo_engine/core/global_state.hpp"
-#include "fumo_engine/events/event_state_handlers.hpp"
-#include "fumo_raylib.hpp"
-#include "main_functions.hpp"
-#include "objects/generic_systems/systems.hpp"
 #include "constants/movement_constants.hpp"
+#include "fumo_engine/core/global_state.hpp"
+#include "main_functions.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -72,20 +66,6 @@ void swapped_orbits(const Event& event) {
     // moved_event.previous_direction;
 
     player_state.can_swap_orbits = false;
-}
-
-void collided(const Event& event) {
-    auto& player_state =
-        global->ECS->get_component<EntityState>(event.entity_id);
-
-    player_state.landed = !player_state.can_swap_orbits;
-
-    player_state.on_ground = true;
-    player_state.can_swap_orbits = true;
-    player_state.jumping = false;
-    player_state.can_jump = true;
-    player_state.colliding = true;
-    player_state.dashes_left = 1;
 }
 
 void dashed(const Event& event) {

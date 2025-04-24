@@ -94,7 +94,6 @@ PointToLineDistanceAndIntersection(const FumoVec2& Point,
     return collision; // closest point does not fall along the line
 }
 
-
 [[nodiscard]] FumoVec2 closest_point(const FumoVec2 target,
                                      const std::vector<FumoVec2>& points) {
     FumoVec2 closest_point {6969, 6969};

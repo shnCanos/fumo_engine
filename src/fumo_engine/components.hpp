@@ -25,7 +25,8 @@ enum struct AllComponentTypes {
     LevelId,
     // FIXME: dont forget to serialize
     ScreenTransitionRect,
-    Line
+    Line,
+    CollisionEventData,
 };
 
 struct Line {
@@ -66,6 +67,7 @@ struct Body {
         return dash_x_direction
             * FumoVec2DotProduct(velocity, dash_x_direction);
     }
+
     // -------------------------------------------------------------------------------
 
     [[nodiscard]] FumoVec2 get_real_y_velocity() {
@@ -104,8 +106,9 @@ struct Capsule {
     FumoVec2 bottom_circle_center;
 
     // PERF: should remove the capsule lines later on if need optimization
-    Line left_line; // .first is the bottom point
-    Line right_line; // .first is the bottom point
+    Line left_line; // .start is the bottom point
+    Line right_line; // .start is the bottom point
+    Line middle_line; // starts on the bottom ends on the top of the capsule
 
     void update_capsule_positions(const Body& player_body) {
         // this is all peidro's fault his code is beyond horrible
@@ -123,13 +126,19 @@ struct Capsule {
             top_circle_center + player_body.real_x_direction * radius;
         right_line.start =
             bottom_circle_center + player_body.real_x_direction * radius;
+
+        middle_line.start =
+            bottom_circle_center + player_body.real_gravity_direction * radius;
+        middle_line.end =
+            top_circle_center - player_body.real_gravity_direction * radius;
     }
 
     SERIALIZE(radius,
               top_circle_center,
               bottom_circle_center,
               left_line,
-              right_line);
+              right_line,
+              middle_line);
 };
 
 // NOTE: we only want a single side for now, add a fumo_rect version

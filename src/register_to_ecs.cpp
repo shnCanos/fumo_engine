@@ -27,6 +27,7 @@ void register_all_to_ECS() {
 // OutlineRectFlag
 // EntityState
 // MovedEventData
+// CollisionEventData
 // Screen
 // LevelId
 // ScreenTransitionRect
@@ -52,6 +53,7 @@ void register_components() {
     // new
     // ------
     global->ECS->register_component<ScreenTransitionRect>();
+    global->ECS->register_component<CollisionEventData>();
 
     // global->ECS->register_component<OnScreen>();
 }

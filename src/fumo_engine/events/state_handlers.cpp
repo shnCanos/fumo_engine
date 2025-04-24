@@ -33,8 +33,6 @@ void StateHandler::handle_state(const EntityId& entity_id,
         (moved_event_data.continue_in_direction == DIRECTION::LEFT);
 
     if (!player_state.colliding) {
-        // FIXME: add different results based on if its a side collision
-        // bottom collision, or top collision
         player_state.on_ground = false;
     }
 
@@ -54,10 +52,9 @@ void StateHandler::handle_state(const EntityId& entity_id,
 }
 
 void StateHandler::end_of_frame_update() {
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    // auto& player_body = global->ECS->get_component<Body>(global->player_id);
 
     // camera follows player
-    UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
 
     // if (!player_state.is_changing_screens) {
     //     // freeze the player in place if we change screens

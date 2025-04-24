@@ -66,12 +66,6 @@ void ObjectRenderer::draw_planets() {
                 FumoDrawRectV(body.position,
                               {rect.width, rect.height},
                               render.color);
-                // const auto e = Collisions::calculate_sub_rectangles(
-                //     rect,
-                //     body,
-                //     10,
-                //     global->ECS->get_component<PlayerShape>(global->player_id)
-                //         .radius);
             }
 
             if (global->ECS->filter(entity_id, parallel_grav_query)) {

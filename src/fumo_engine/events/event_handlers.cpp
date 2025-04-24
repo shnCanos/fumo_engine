@@ -48,7 +48,8 @@ void EntityEventHandler::handle_event(const Event& event) {
 // NOTE: this function is very unoptimal, and if we REALLY
 // want to check events like this often, then we should stop using a queue
 // and switch to a deque or even simply a vector
-bool EntityEventHandler::did_event_happen(const EVENT_& EVENT, EntityId entity_id) {
+bool EntityEventHandler::did_event_happen(const EVENT_& EVENT,
+                                          EntityId entity_id) {
     auto copycopy(event_queue_copy);
     while (!event_queue_copy.empty()) {
         const Event& event = event_queue_copy.front();

@@ -176,6 +176,10 @@ void deserialize_component_by_id(const EntityId& entity_id,
         case AllComponentTypes::Line:
             DESERIALIZE_COMPONENT(Line);
             break;
+
+        case AllComponentTypes::CollisionEventData:
+            DESERIALIZE_COMPONENT(CollisionEventData);
+            break;
     }
 }
 } // namespace FumoSerializer

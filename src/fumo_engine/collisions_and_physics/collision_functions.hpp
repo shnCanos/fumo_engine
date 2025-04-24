@@ -15,12 +15,21 @@ struct Collision {
     // it will connect the collided corner with the shape at some angle
     FumoVec2 normal_or_push = {0.0f, 0.0f};
     FumoVec2 normal = {0.0f, 0.0f};
-    DIRECTION capsule_collided_side = DIRECTION::NO_DIRECTION;
+    DIRECTION collided_capsule_side = DIRECTION::NO_DIRECTION;
     // NOTE: there isnt an intersection point between 2 circles
     FumoVec2 intersection_point = {0.0f, 0.0f};
     float distance = 0.0f;
     bool collided = false;
     SHAPE collided_shape = SHAPE::NO_SHAPE;
+
+    SERIALIZE(overlap,
+              normal_or_push,
+              normal,
+              collided_capsule_side,
+              intersection_point,
+              distance,
+              collided,
+              collided_shape)
 };
 
 struct RectBodyPair {
@@ -29,27 +38,30 @@ struct RectBodyPair {
 };
 
 namespace Collisions {
-[[nodiscard]] bool continuous_rect_collision_solving(Capsule& player_shape,
-                                                     Body& player_body,
-                                                     const FumoRect& fumo_rect,
-                                                     const Body& fumo_rect_body,
-                                                     const int& substep_count);
+void calculate_collided_side(Collision& collision,
+                             const Capsule& player_capsule);
+[[nodiscard]] Collision
+continuous_rect_collision_solving(Capsule& player_shape,
+                                  Body& player_body,
+                                  const FumoRect& fumo_rect,
+                                  const Body& fumo_rect_body,
+                                  const int& substep_count);
 [[nodiscard]] std::vector<RectBodyPair>
 calculate_sub_rectangles(const FumoRect& fumo_rect,
                          const Body& fumo_rect_body,
                          const int& substep_count,
                          const int& max_sub_distance);
 
-bool capsule_to_rect_collision_solving(Capsule& player_shape,
-                                       Body& player_body,
-                                       const FumoRect& fumo_rect,
-                                       const Body& fumo_rect_body);
+Collision capsule_to_rect_collision_solving(Capsule& player_shape,
+                                            Body& player_body,
+                                            const FumoRect& fumo_rect,
+                                            const Body& fumo_rect_body);
 
-bool capsule_to_circle_collision_solving(Capsule& player_shape,
-                                         Body& player_body,
-                                         const Circle& circle_shape,
-                                         const Body& circle_body,
-                                         const int& substep_count);
+Collision capsule_to_circle_collision_solving(Capsule& player_shape,
+                                              Body& player_body,
+                                              const Circle& circle_shape,
+                                              const Body& circle_body,
+                                              const int& substep_count);
 [[nodiscard]] std::pair<float, FumoVec2>
 PointToLineDistanceAndIntersection(const FumoVec2& Point,
                                    const FumoVec2& LineStart,

@@ -26,6 +26,7 @@ EntityId PlayerInitializer::initialize_player() {
     player_capsule.update_capsule_positions(player_body);
     global->ECS->entity_add_component(player_id, player_capsule);
     global->ECS->entity_add_component(player_id, MovedEventData {});
+    global->ECS->entity_add_component(player_id, CollisionEventData {});
 
     return player_id;
 }

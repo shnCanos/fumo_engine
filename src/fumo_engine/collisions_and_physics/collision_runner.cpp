@@ -2,12 +2,17 @@
 
 #include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
+#include "main_functions.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
 void CollisionRunner::check_collisions() {
     // TODO: change the collisions to use raycasting (so they work very consistently)
     // (do this later once its finished since it is good enough for now)
+    Collision collision {};
+    CollisionEventData& collision_event =
+        global->ECS->get_component<CollisionEventData>(global->player_id);
+
     bool collision_happened = false;
     constexpr float substep_count = 10;
 
@@ -33,31 +38,42 @@ void CollisionRunner::check_collisions() {
         if (global->ECS->filter(obstacle_id, fumo_rect_query)) {
             const auto& fumo_rect =
                 global->ECS->get_component<FumoRect>(obstacle_id);
-
-            if (Collisions::continuous_rect_collision_solving(player_capsule,
+            collision =
+                Collisions::continuous_rect_collision_solving(player_capsule,
                                                               player_body,
                                                               fumo_rect,
                                                               obstacle_body,
-                                                              substep_count)) {
+                                                              substep_count);
+            if (collision.collided) {
                 collision_happened = true;
+                collision_event.all_collisions.push_back(collision);
+                // print_direction(collision.collided_capsule_side);
             }
             continue;
         }
+
         const auto& circle_shape =
             global->ECS->get_component<Circle>(obstacle_id);
-        if (Collisions::capsule_to_circle_collision_solving(player_capsule,
+        collision =
+            Collisions::capsule_to_circle_collision_solving(player_capsule,
                                                             player_body,
                                                             circle_shape,
                                                             obstacle_body,
-                                                            substep_count)) {
+                                                            substep_count);
+        if (collision.collided) {
             collision_happened = true;
+            collision_event.all_collisions.push_back(collision);
+            // print_direction(collision.collided_capsule_side);
         }
+        continue;
     }
 
     player_state.colliding = collision_happened;
+
     if (collision_happened) {
-        global->event_handler->add_event({EVENT_::ENTITY_COLLIDED, player_id});
-        return;
+        // PRINT(collision_event.all_collisions.size())
+        global->event_handler->add_event(
+            {.event = EVENT_::ENTITY_COLLIDED, .entity_id = global->player_id});
     }
 }
 
