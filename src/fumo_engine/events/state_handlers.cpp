@@ -1,7 +1,5 @@
 #include "constants/movement_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "fumo_raylib.hpp"
-#include "main_functions.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -43,6 +41,7 @@ void StateHandler::handle_state(const EntityId& entity_id,
 
     if (!player_state.dashing) {
         jump_and_gravity_state_handler(player_body,
+                                       player_capsule,
                                        player_animation,
                                        player_state);
     }

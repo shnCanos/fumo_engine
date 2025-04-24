@@ -78,7 +78,7 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<GravFieldFlag>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system<CollisionRunner, 4>(
+    global->ECS->register_system<CollisionRunner, MAX_PRIORITY - 1>(
         EntityQuery {.component_mask =
                          global->ECS->make_component_mask<ColliderObjectFlag>(),
                      .component_filter = Filter::Any});
@@ -87,7 +87,7 @@ void register_systems_scheduled() {
             global->ECS->make_component_mask<Body, ScreenTransitionRect>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system<StateHandler, MAX_PRIORITY - 1>(EntityQuery {
+    global->ECS->register_system<StateHandler, MAX_PRIORITY - 2>(EntityQuery {
         .component_mask = global->ECS->make_component_mask<EntityState>(),
         .component_filter = Filter::All});
     //--------------------------------------------------------------------------------------

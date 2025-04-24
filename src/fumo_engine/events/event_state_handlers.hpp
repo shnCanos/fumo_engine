@@ -60,6 +60,7 @@ struct StateHandler: System {
                       const EntityState& entity_state);
     void end_of_frame_update();
     void jump_and_gravity_state_handler(Body& player_body,
+                                        Capsule& player_capsule,
                                         AnimationInfo& player_animation,
                                         EntityState& player_state);
     void dash_state_handler(Body& player_body,

@@ -1,6 +1,7 @@
 #pragma once
+#include "constants/movement_constants.hpp"
 #include "fumo_engine/components.hpp"
-#include "fumo_engine/core/system_base.hpp"
+#include "fumo_engine/core/system_base.hpp" // IWYU pragma: export
 
 // class BodyMovement : public System {
 // prefer making a body movement system, instead of
@@ -10,8 +11,6 @@
 // otherwise the compiler wont allocate a vtable for this class,
 // since it will treat it as virtual and not allow instantiations of it
 // void sys_call() override {};
-
-enum struct DIRECTION { LEFT, RIGHT, UP, DOWN , NO_DIRECTION};
 
 namespace BodyMovement {
 void jump(Body& body, const EntityId& entity_id);

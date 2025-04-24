@@ -3,6 +3,7 @@
 #include <iostream> // IWYU pragma: export
 #include <libassert/assert.hpp>
 
+#include "constants/direction_constants.hpp"
 #include "fumo_serialize_macros.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -11,6 +12,8 @@
 
 #define PRINT(x) \
     std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
+
+void print_direction(DIRECTION direction);
 
 struct FumoVec2 {
     float x; // Vector x component
@@ -54,6 +57,10 @@ void FumoDrawLineEx(FumoVec2 StartPos,
                     FumoVec2 EndPos,
                     float thick,
                     FumoColor color);
+
+DIRECTION opposite_direction(DIRECTION direction);
+[[nodiscard]] FumoVec2 direction_to_vector(DIRECTION direction);
+[[nodiscard]] DIRECTION vector_to_direction(const FumoVec2& vector);
 
 inline float ease_quad_in(float t) { return t * t; }
 
@@ -265,13 +272,8 @@ inline bool operator!=(const FumoVec2& lhs, const FumoVec2& rhs) {
     return !FloatEquals(lhs.x, rhs.x) || !FloatEquals(lhs.y, rhs.y);
 }
 
-inline FumoVec2 FumoVec2Snap(FumoVec2 v1, int directions) {
-    float angle = std::atan2(v1.y, v1.x) * RAD2DEG;
-    angle = std::round(angle / (360.0f) * directions) / directions * (360.0f);
-
-    return FumoVec2Rotate({1, 0}, angle) * FumoVec2Length(v1);
-}
-
+[[nodiscard]] FumoVec2 FumoVec2Snap8Directions(FumoVec2 v1);
+[[nodiscard]] FumoVec2 FumoVec2Snap4Directions(FumoVec2 v1);
 // Some Basic Colors
 // NOTE: Custom raylib color palette for amazing visuals on WHITE background
 #define FUMO_LIGHTGRAY CLITERAL(FumoColor) {200, 200, 200, 255} // Light Gray

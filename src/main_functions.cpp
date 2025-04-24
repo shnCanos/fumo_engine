@@ -6,60 +6,6 @@
 
 extern std::unique_ptr<GlobalState> global;
 
-void print_direction(DIRECTION direction) {
-    switch (direction) {
-        case DIRECTION::LEFT:
-            PRINT_NO_NAME("LEFT");
-            break;
-        case DIRECTION::RIGHT:
-            PRINT_NO_NAME("RIGHT");
-            break;
-        case DIRECTION::UP:
-            PRINT_NO_NAME("UP");
-            break;
-        case DIRECTION::DOWN:
-            PRINT_NO_NAME("DOWN");
-            break;
-        case DIRECTION::NO_DIRECTION:
-            PRINT_NO_NAME("NO_DIRECTION");
-            break;
-    }
-}
-
-DIRECTION opposite_direction(DIRECTION direction) {
-    if (direction == DIRECTION::LEFT) {
-        return DIRECTION::RIGHT;
-    }
-    if (direction == DIRECTION::RIGHT) {
-        return DIRECTION::LEFT;
-    }
-    if (direction == DIRECTION::UP) {
-        return DIRECTION::DOWN;
-    }
-    if (direction == DIRECTION::DOWN) {
-        return DIRECTION::UP;
-    }
-    PANIC("UNREACHABLE OR GAVE PREVIOUS_DIRECTION (FIX THIS)");
-    std::unreachable();
-}
-
-[[nodiscard]] FumoVec2 direction_to_vector(DIRECTION direction) {
-    switch (direction) {
-        case DIRECTION::LEFT:
-            return {-1.0f, 0.0f};
-        case DIRECTION::RIGHT:
-            return {1.0f, 0.0f};
-        case DIRECTION::UP:
-            return {0.0f, -1.0f};
-        case DIRECTION::DOWN:
-            return {0.0f, 1.0f};
-        default:
-            PRINT("sent to unreachable code NO_DIRECTION");
-            std::unreachable();
-            break;
-    }
-}
-
 // bool IsKeyStillDown(int key) {
 //     bool still_down = false;
 //

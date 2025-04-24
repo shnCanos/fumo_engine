@@ -2,7 +2,6 @@
 
 #include "constants/movement_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "main_functions.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -84,9 +83,12 @@ void dashed(const Event& event) {
         auto direction = player_state.input_direction;
 
         if (direction.x == 0 && direction.y == 0) {
-            direction = FumoVec2Snap(player_body.dash_x_direction, 8);
+            direction = FumoVec2Snap8Directions(player_body.dash_x_direction);
             direction = direction * (player_body.inverse_direction ? -1 : 1);
         }
+
+        player_state.input_direction =
+            FumoVec2Snap8Directions(player_state.input_direction);
 
         player_body.dash_x_direction = direction;
         // player_body.velocity = {.x = 0, .y = 0};
@@ -94,7 +96,11 @@ void dashed(const Event& event) {
         // set the start and end positions of the dash
         // for easing
         player_state.dash_start = player_body.position;
-        player_state.dash_end = player_body.position + direction * dash_power;
+        player_state.dash_end =
+            player_state.dash_start + direction * dash_length;
+
+        player_state.fixed_dash_end =
+            player_body.position + direction * dash_length;
         player_state.dash_time = 0;
         player_state.dashes_left--;
     }

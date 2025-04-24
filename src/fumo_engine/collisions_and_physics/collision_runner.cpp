@@ -2,7 +2,6 @@
 
 #include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "main_functions.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -113,5 +112,6 @@ CollisionRunner::check_raycast_line(const Line& line) {
         CHECK_COLLISION(FumoRect, fumo_rect_query, LineToRectCollision);
         CHECK_COLLISION(Circle, circle_query, LineToCircleCollision);
     }
+
     return closest_collision;
 }

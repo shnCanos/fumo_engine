@@ -32,11 +32,13 @@ namespace Collisions {
         if (collision.collided \
             && (collision.distance < closest_collision.distance \
                 || closest_collision.distance == 0.0f)) { \
-            collision.normal_or_push = \
+            collision.push_direction = \
                 FumoVec2Normalize(line.start - collision.intersection_point); \
             collision.overlap = \
                 FumoVec2Distance(line.start, line.end) - collision.distance; \
             collision.collided_shape = SHAPE::Rectangle; \
+            collision.normal = \
+                FumoVec2Snap4Directions(collision.push_direction); \
             closest_collision = collision; \
         } \
     } while (0)
@@ -57,6 +59,13 @@ namespace Collisions {
     const Line left_side {TopLeft, BottomLeft},
         right_side {TopRight, BottomRight}, top_side {TopLeft, TopRight},
         bottom_side {BottomLeft, BottomRight};
+
+    // NOTE: if we add rotations, you need to replace FumoVec2Snap4Directions()
+    // with actually finding the normal to the surface
+
+    // PRINT(collision.normal.x);
+    // PRINT(collision.normal.y)
+    // print_direction(vector_to_direction(collision.normal));
 
     LINE_TO_SIDE_COLLISION(line, left_side);
     LINE_TO_SIDE_COLLISION(line, right_side);

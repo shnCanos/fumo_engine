@@ -63,6 +63,10 @@ struct Body {
         return FumoVec2DotProduct(velocity, dash_gravity_direction);
     }
 
+    [[nodiscard]] float get_dash_dot_x_velocity() {
+        return FumoVec2DotProduct(velocity, dash_x_direction);
+    }
+
     [[nodiscard]] FumoVec2 get_dash_x_velocity() {
         return dash_x_direction
             * FumoVec2DotProduct(velocity, dash_x_direction);
@@ -157,6 +161,7 @@ struct ParallelGravityField {
     FumoVec2 gravity_direction = {0.0f, 1.0f}; // default is vertical
     float gravity_strength {};
     float rotation {}; // in degrees
+    // extern std::unique_ptr<GlobalState> global;
     // FumoVec2 position = screenCenter;
 
     bool is_inside_field(const Body& player_body,

@@ -5,6 +5,7 @@ extern std::unique_ptr<GlobalState> global;
 
 void StateHandler::jump_and_gravity_state_handler(
     Body& player_body,
+    Capsule& player_capsule,
     AnimationInfo& player_animation,
     EntityState& player_state) {
 

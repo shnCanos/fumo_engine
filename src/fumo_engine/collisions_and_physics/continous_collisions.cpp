@@ -63,7 +63,7 @@ continuous_rect_collision_solving(Capsule& player_capsule,
         calculate_sub_rectangles(fumo_rect,
                                  fumo_rect_body,
                                  substep_count,
-                                 player_capsule.radius);
+                                 player_capsule.radius - 5.0f);
 
     for (const auto& rect_body_pair : sub_rectangles) {
         capsule_to_rect_collision_solving(player_capsule,
@@ -81,8 +81,9 @@ continuous_rect_collision_solving(Capsule& player_capsule,
                                              fumo_rect_body);
 }
 
-void calculate_collided_side(Collision& collision,
-                             const Capsule& player_capsule) {
+void calculate_collided_region(Collision& collision,
+                               const Capsule& player_capsule) {
+    // TODO: add all 8 points of the capsule (for more complete collision info)
 
     // BeginMode2D(*global->camera);
     // FumoDrawCircleV(collision.intersection_point, 10.0f, FUMO_GREEN);

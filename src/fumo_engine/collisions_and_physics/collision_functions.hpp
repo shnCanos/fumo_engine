@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "fumo_engine/components.hpp"
-#include "objects/generic_systems/systems.hpp"
 enum struct SHAPE { NO_SHAPE, Rectangle, Circle };
 
 // WARNING:
@@ -13,7 +12,7 @@ struct Collision {
     // NOTE: if the collision is with a rectangle corner,
     // it wont be normal to one of the sides,
     // it will connect the collided corner with the shape at some angle
-    FumoVec2 normal_or_push = {0.0f, 0.0f};
+    FumoVec2 push_direction = {0.0f, 0.0f};
     FumoVec2 normal = {0.0f, 0.0f};
     DIRECTION collided_capsule_side = DIRECTION::NO_DIRECTION;
     // NOTE: there isnt an intersection point between 2 circles
@@ -21,9 +20,10 @@ struct Collision {
     float distance = 0.0f;
     bool collided = false;
     SHAPE collided_shape = SHAPE::NO_SHAPE;
+    bool corner_collision = false;
 
     SERIALIZE(overlap,
-              normal_or_push,
+              push_direction,
               normal,
               collided_capsule_side,
               intersection_point,
@@ -38,8 +38,8 @@ struct RectBodyPair {
 };
 
 namespace Collisions {
-void calculate_collided_side(Collision& collision,
-                             const Capsule& player_capsule);
+void calculate_collided_region(Collision& collision,
+                               const Capsule& player_capsule);
 [[nodiscard]] Collision
 continuous_rect_collision_solving(Capsule& player_shape,
                                   Body& player_body,
@@ -89,9 +89,9 @@ PointToLineDistanceAndIntersection(const FumoVec2& Point,
                                                     const Circle& circle_shape,
                                                     const Body& circle_body);
 
-[[nodiscard]] FumoVec2 ClosestPointLineIntersection(const FumoVec2& Point,
-                                                    const Line& line,
-                                                    const float& radius);
+[[nodiscard]] FumoVec2 ClosestCircleLineIntersection(const FumoVec2& Point,
+                                                     const float& radius,
+                                                     const Line& line);
 
 [[nodiscard]] std::pair<float, FumoVec2>
 CircleToRectDistanceAndIntersection(const FumoVec2& circle_center,

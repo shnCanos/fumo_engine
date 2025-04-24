@@ -45,9 +45,9 @@ int FindLineCircleIntersections(float cx,
 }
 
 //cx,cy is center point of the circle
-[[nodiscard]] FumoVec2 ClosestPointLineIntersection(const FumoVec2& Point,
-                                                    const Line& line,
-                                                    const float& radius) {
+[[nodiscard]] FumoVec2 ClosestCircleLineIntersection(const FumoVec2& Point,
+                                                     const float& radius,
+                                                     const Line& line) {
     FumoVec2 intersection1;
     FumoVec2 intersection2;
     int intersections = FindLineCircleIntersections(Point.x,
@@ -71,7 +71,6 @@ int FindLineCircleIntersections(float cx,
     return {0.0f, 0.0f}; // no intersections at all
 }
 
-
 [[nodiscard]] const Collision LineToCircleCollision(const Line& line,
                                                     const Circle& circle_shape,
                                                     const Body& circle_body) {
@@ -79,9 +78,9 @@ int FindLineCircleIntersections(float cx,
     Collision collision {};
 
     const FumoVec2 closest_intersection =
-        ClosestPointLineIntersection(circle_body.position,
-                                     line,
-                                     circle_shape.radius);
+        ClosestCircleLineIntersection(circle_body.position,
+                                      circle_shape.radius,
+                                      line);
     if (closest_intersection != FumoVec2 {0.0f, 0.0f}) {
         float buffer = 0.1f;
         // distance from each end of the line should add up to the length
@@ -92,12 +91,14 @@ int FindLineCircleIntersections(float cx,
 
         if (d1 + d2 >= LineLength - buffer && d1 + d2 <= LineLength + buffer) {
             collision.intersection_point = closest_intersection;
-            collision.normal_or_push =
+            collision.push_direction =
                 FumoVec2Normalize(closest_intersection - circle_body.position);
-            collision.normal = collision.normal_or_push;
+            collision.normal = collision.push_direction;
             collision.collided = true;
             collision.distance =
                 FumoVec2Distance(line.start, closest_intersection);
+            collision.overlap =
+                FumoVec2Distance(line.end, collision.intersection_point);
             collision.collided_shape = SHAPE::Circle;
         }
         // not all collision information is guaranteed to be filled
