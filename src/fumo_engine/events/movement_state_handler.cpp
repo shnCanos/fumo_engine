@@ -21,8 +21,8 @@ void raycast_jumping(Body& player_body,
         {.start = previous_pos, .end = new_pos});
 
     // PRINT(collision.collided)
-    BeginMode2D(*global->camera);
-    FumoDrawLineEx(previous_pos, new_pos, 20.0f, FUMO_GOLD);
+    // BeginMode2D(*global->camera);
+    // FumoDrawLineEx(previous_pos, new_pos, 20.0f, FUMO_GOLD);
     // FumoDrawCircleV(collision.intersection_point, 200.0f, FUMO_GREEN);
 
     if (collision.collided) {
@@ -40,7 +40,7 @@ void raycast_jumping(Body& player_body,
     //                previous_pos + player_body.velocity,
     //                50.0f,
     //                FUMO_PINK);
-    EndMode2D();
+    // EndMode2D();
 }
 
 void StateHandler::movement_state_handler(Body& player_body,
