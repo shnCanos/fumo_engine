@@ -4,9 +4,7 @@
 #include <cereal/types/vector.hpp>
 #include <string_view>
 
-#include "constants/constants.hpp"
-#include "fumo_raylib.hpp"
-#include "raylib.h"
+#include "constants/fumo_raylib_constants.hpp"
 
 enum struct AllComponentTypes {
     Body,
@@ -15,7 +13,7 @@ enum struct AllComponentTypes {
     Timer,
     Render,
     FumoRect,
-    PlayerShape,
+    Capsule,
     ParallelGravityField,
     CircularGravityField,
     ColliderObjectFlag,
@@ -26,7 +24,14 @@ enum struct AllComponentTypes {
     Screen,
     LevelId,
     // FIXME: dont forget to serialize
-    ScreenTransitionRect
+    ScreenTransitionRect,
+    Line
+};
+
+struct Line {
+    FumoVec2 start;
+    FumoVec2 end;
+    SERIALIZE(start, end)
 };
 
 struct Body {
@@ -34,38 +39,56 @@ struct Body {
     float rotation {}; // in degrees
     FumoVec2 position = screenCenter;
     FumoVec2 velocity {0.0f, 0.0f};
-    FumoVec2 gravity_direction = {0.0f, 1.0f};
-    FumoVec2 x_direction = {-gravity_direction.y, gravity_direction.x};
-
     bool inverse_direction = false;
     // this code is horribly bad
-    FumoVec2 real_x_direction = {-gravity_direction.y, gravity_direction.x};
     FumoVec2 real_gravity_direction = {0.0f, 1.0f};
+    FumoVec2 real_x_direction = {-real_gravity_direction.y,
+                                 real_gravity_direction.x};
+    float current_gravity_strength {};
+
+    FumoVec2 dash_gravity_direction = {0.0f, 1.0f};
+    FumoVec2 dash_x_direction = {-dash_gravity_direction.y,
+                                 dash_gravity_direction.x};
 
     // player events and state
 
     // NOTE: follows the gravity direction, not the vertical player direction
-    [[nodiscard]] FumoVec2 get_y_velocity() {
-        return gravity_direction
-            * FumoVec2DotProduct(velocity, gravity_direction);
+    [[nodiscard]] FumoVec2 get_dash_y_velocity() {
+        return dash_gravity_direction
+            * FumoVec2DotProduct(velocity, dash_gravity_direction);
     }
 
-    [[nodiscard]] float get_dot_y_velocity() {
-        return FumoVec2DotProduct(velocity, gravity_direction);
+    [[nodiscard]] float get_dash_dot_y_velocity() {
+        return FumoVec2DotProduct(velocity, dash_gravity_direction);
     }
 
-    [[nodiscard]] FumoVec2 get_x_velocity() {
-        return x_direction * FumoVec2DotProduct(velocity, x_direction);
+    [[nodiscard]] FumoVec2 get_dash_x_velocity() {
+        return dash_x_direction
+            * FumoVec2DotProduct(velocity, dash_x_direction);
     }
-
-    void scale_velocity(float scale) { velocity += gravity_direction * scale; }
-
     // -------------------------------------------------------------------------------
+
+    [[nodiscard]] FumoVec2 get_real_y_velocity() {
+        return real_gravity_direction
+            * FumoVec2DotProduct(velocity, real_gravity_direction);
+    }
+
+    [[nodiscard]] float get_real_dot_y_velocity() {
+        return FumoVec2DotProduct(velocity, real_gravity_direction);
+    }
+
+    [[nodiscard]] FumoVec2 get_real_x_velocity() {
+        return real_x_direction
+            * FumoVec2DotProduct(velocity, real_x_direction);
+    }
+
+    // void scale_velocity(float scale) { velocity += gravity_direction * scale; }
+
     SERIALIZE(rotation,
               position,
               velocity,
-              gravity_direction,
-              x_direction,
+              dash_gravity_direction,
+              dash_x_direction,
               inverse_direction);
 };
 
@@ -74,15 +97,15 @@ struct Circle {
     SERIALIZE(radius)
 };
 
-struct PlayerShape {
+struct Capsule {
 
     float radius;
     FumoVec2 top_circle_center;
     FumoVec2 bottom_circle_center;
 
     // PERF: should remove the capsule lines later on if need optimization
-    std::pair<FumoVec2, FumoVec2> left_line; // .first is the bottom point
-    std::pair<FumoVec2, FumoVec2> right_line; // .first is the bottom point
+    Line left_line; // .first is the bottom point
+    Line right_line; // .first is the bottom point
 
     void update_capsule_positions(const Body& player_body) {
         // this is all peidro's fault his code is beyond horrible
@@ -91,14 +114,14 @@ struct PlayerShape {
         bottom_circle_center =
             player_body.position + player_body.real_gravity_direction * radius;
 
-        left_line.second =
+        left_line.end =
             top_circle_center - player_body.real_x_direction * radius;
-        left_line.first =
+        left_line.start =
             bottom_circle_center - player_body.real_x_direction * radius;
 
-        right_line.second =
+        right_line.end =
             top_circle_center + player_body.real_x_direction * radius;
-        right_line.first =
+        right_line.start =
             bottom_circle_center + player_body.real_x_direction * radius;
     }
 
@@ -128,7 +151,7 @@ struct ParallelGravityField {
     // FumoVec2 position = screenCenter;
 
     bool is_inside_field(const Body& player_body,
-                         const PlayerShape& player_shape,
+                         const Capsule& player_shape,
                          const Body& parallel_body) const;
     void update_gravity(Body& player_body);
 
@@ -145,7 +168,7 @@ struct CircularGravityField {
     FumoVec2 gravity_direction;
 
     bool is_inside_field(const Body& player_body,
-                         const PlayerShape& player_shape,
+                         const Capsule& player_shape,
                          const Body& circular_body) const;
     void update_gravity(Body& player_body, const Body& body_planet);
 

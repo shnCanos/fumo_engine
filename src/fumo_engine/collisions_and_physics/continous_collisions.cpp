@@ -1,7 +1,4 @@
-#include "fumo_engine/core/global_state.hpp"
-#include "main_functions.hpp"
-#include "point_line_collisions.hpp"
-extern std::unique_ptr<GlobalState> global;
+#include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 
 namespace Collisions {
 
@@ -51,9 +48,9 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
 // do collision detection with smaller rectangles inside
 // the rectangle we pass in.
 // the distance between sub_rectangles is, at most, the radius of
-// the player_shape circles (prevents player from getting stuck
+// the player_capsule circles (prevents player from getting stuck
 // inside the rectangle)
-[[nodiscard]] bool continuous_rect_collision(PlayerShape& player_shape,
+[[nodiscard]] bool continuous_rect_collision_solving(Capsule& player_capsule,
                                              Body& player_body,
                                              const FumoRect& fumo_rect,
                                              const Body& fumo_rect_body,
@@ -64,10 +61,10 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
     const auto& sub_rectangles = calculate_sub_rectangles(fumo_rect,
                                                           fumo_rect_body,
                                                           substep_count,
-                                                          player_shape.radius);
+                                                          player_capsule.radius);
 
     for (const auto& rect_body_pair : sub_rectangles) {
-        player_to_rect_collision_solving(player_shape,
+        capsule_to_rect_collision_solving(player_capsule,
                                          player_body,
                                          rect_body_pair.fumo_rect,
                                          rect_body_pair.body);
@@ -76,7 +73,7 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
     // (if the player was inside the rectangle)
     // we only need to return whether or not we collided with the outer
     // rectangle like before to decide if there was a collision
-    return player_to_rect_collision_solving(player_shape,
+    return capsule_to_rect_collision_solving(player_capsule,
                                             player_body,
                                             fumo_rect,
                                             fumo_rect_body);

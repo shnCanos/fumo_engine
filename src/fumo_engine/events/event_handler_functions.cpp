@@ -104,11 +104,11 @@ void dashed(const Event& event) {
         auto direction = player_state.input_direction;
 
         if (direction.x == 0 && direction.y == 0) {
-            direction = FumoVec2Snap(player_body.x_direction, 8);
+            direction = FumoVec2Snap(player_body.dash_x_direction, 8);
             direction = direction * (player_body.inverse_direction ? -1 : 1);
         }
 
-        player_body.x_direction = direction;
+        player_body.dash_x_direction = direction;
         // player_body.velocity = {.x = 0, .y = 0};
         player_state.dashing = true;
         // set the start and end positions of the dash
@@ -137,7 +137,7 @@ enum struct ACCEPT { HORIZONTAL, VERTICAL, HORIZONTAL_INVERT, VERTICAL_INVERT };
 
 DIRECTION find_real_direction(DIRECTION direction, const Body& body) {
     FumoVec2 vec_direction = direction_to_vector(direction);
-    return (FumoVec2DotProduct(vec_direction, body.x_direction) > 0)
+    return (FumoVec2DotProduct(vec_direction, body.real_x_direction) > 0)
         ? DIRECTION::RIGHT
         : DIRECTION::LEFT;
 }
@@ -148,7 +148,7 @@ void MovedWrapper::moved_event() {
     auto& move_event_data =
         global->ECS->get_component<MovedEventData>(entity_id);
 
-    const auto& grav_direction = player_body.gravity_direction;
+    const auto& grav_direction = player_body.dash_gravity_direction;
     const auto& rotation = player_body.rotation;
 
     DIRECTION& previous_direction = move_event_data.previous_direction;

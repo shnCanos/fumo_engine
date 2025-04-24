@@ -19,8 +19,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -69,8 +68,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -127,8 +125,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -177,8 +174,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -230,8 +226,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -283,8 +278,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -336,8 +330,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -369,13 +362,13 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 27,
+    "entity_id": 8,
     "component_mask": 49713,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 320.0,
-            "value1": 540.0
+            "value0": -451.34619140625,
+            "value1": 416.7998352050781
         },
         "value2": {
             "value0": 0.0,
@@ -389,116 +382,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
-    },
-    "Render": {
-        "value0": {
-            "value0": 230,
-            "value1": 41,
-            "value2": 55,
-            "value3": 255
-        }
-    },
-    "FumoRect": {
-        "value0": 320.0,
-        "value1": 540.0,
-        "value2": 200.0,
-        "value3": 200.0
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 0
-    },
-    "entity_id": 28,
-    "component_mask": 50321,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 320.0,
-            "value1": 340.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false,
-        "value6": 0
-    },
-    "Render": {
-        "value0": {
-            "value0": 255,
-            "value1": 161,
-            "value2": 0,
-            "value3": 255
-        }
-    },
-    "ParallelGravityField": {
-        "value0": {
-            "value0": 320.0,
-            "value1": 340.0,
-            "value2": 200.0,
-            "value3": 200.0
-        },
-        "value1": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value2": 900.0,
-        "value3": 0.0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 0
-    },
-    "entity_id": 29,
-    "component_mask": 49713,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": -320.0,
-            "value1": 540.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -527,13 +411,13 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 30,
+    "entity_id": 9,
     "component_mask": 50321,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": -320.0,
-            "value1": 340.0
+            "value0": -448.84619140625,
+            "value1": 183.0498504638672
         },
         "value2": {
             "value0": 0.0,
@@ -547,8 +431,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -560,8 +443,8 @@
     },
     "ParallelGravityField": {
         "value0": {
-            "value0": -320.0,
-            "value1": 340.0,
+            "value0": -448.84619140625,
+            "value1": 183.0498504638672,
             "value2": 200.0,
             "value3": 200.0
         },
@@ -585,7 +468,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 31,
+    "entity_id": 10,
     "component_mask": 49713,
     "Body": {
         "value0": 0.0,
@@ -605,8 +488,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -635,7 +517,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 32,
+    "entity_id": 11,
     "component_mask": 50321,
     "Body": {
         "value0": 0.0,
@@ -655,8 +537,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -693,7 +574,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 33,
+    "entity_id": 12,
     "component_mask": 49713,
     "Body": {
         "value0": 0.0,
@@ -713,8 +594,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -743,7 +623,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 34,
+    "entity_id": 13,
     "component_mask": 50321,
     "Body": {
         "value0": 0.0,
@@ -763,8 +643,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -801,7 +680,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 35,
+    "entity_id": 14,
     "component_mask": 49713,
     "Body": {
         "value0": 0.0,
@@ -821,8 +700,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -851,7 +729,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 36,
+    "entity_id": 15,
     "component_mask": 50321,
     "Body": {
         "value0": 0.0,
@@ -871,8 +749,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -909,7 +786,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 37,
+    "entity_id": 16,
     "component_mask": 49713,
     "Body": {
         "value0": 0.0,
@@ -929,8 +806,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -959,7 +835,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 38,
+    "entity_id": 17,
     "component_mask": 50321,
     "Body": {
         "value0": 0.0,
@@ -979,8 +855,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -1017,7 +892,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 39,
+    "entity_id": 18,
     "component_mask": 49713,
     "Body": {
         "value0": 0.0,
@@ -1037,8 +912,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -1067,7 +941,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 40,
+    "entity_id": 19,
     "component_mask": 50321,
     "Body": {
         "value0": 0.0,
@@ -1087,8 +961,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -1125,7 +998,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 41,
+    "entity_id": 20,
     "component_mask": 51761,
     "Body": {
         "value0": 0.0,
@@ -1145,8 +1018,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -1178,7 +1050,7 @@
     "LevelId": {
         "value0": 0
     },
-    "entity_id": 42,
+    "entity_id": 21,
     "component_mask": 49713,
     "Body": {
         "value0": 0.0,
@@ -1198,8 +1070,7 @@
             "value0": -1.0,
             "value1": 0.0
         },
-        "value5": false,
-        "value6": 0
+        "value5": false
     },
     "Render": {
         "value0": {
@@ -1212,6 +1083,104 @@
     "FumoRect": {
         "value0": -161.25001525878907,
         "value1": 681.790283203125,
+        "value2": 200.0,
+        "value3": 200.0
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 0
+    },
+    "entity_id": 22,
+    "component_mask": 49713,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": -773.5726318359375,
+            "value1": -35.705902099609378
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false
+    },
+    "Render": {
+        "value0": {
+            "value0": 230,
+            "value1": 41,
+            "value2": 55,
+            "value3": 255
+        }
+    },
+    "FumoRect": {
+        "value0": -597.0341186523438,
+        "value1": 17.274917602539064,
+        "value2": 200.0,
+        "value3": 200.0
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 0
+    },
+    "entity_id": 23,
+    "component_mask": 49713,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": 863.4302368164063,
+            "value1": -2.81817626953125
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false
+    },
+    "Render": {
+        "value0": {
+            "value0": 230,
+            "value1": 41,
+            "value2": 55,
+            "value3": 255
+        }
+    },
+    "FumoRect": {
+        "value0": 334.1484375,
+        "value1": 188.74246215820313,
         "value2": 200.0,
         "value3": 200.0
     },

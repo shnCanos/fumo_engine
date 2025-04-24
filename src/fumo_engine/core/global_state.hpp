@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "fumo_engine/components.hpp"
+#include "fumo_engine/components.hpp" // IWYU pragma: export
 #include "constants/engine_constants.hpp"
 #include "fumo_engine/core/scheduler_ecs.hpp"
 #include "fumo_engine/events/event_state_handlers.hpp"

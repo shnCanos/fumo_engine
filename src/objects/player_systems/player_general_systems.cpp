@@ -22,9 +22,9 @@ EntityId PlayerInitializer::initialize_player() {
 
     global->ECS->entity_add_component(player_id, player_body);
 
-    PlayerShape player_shape {.radius = 26.0f};
-    player_shape.update_capsule_positions(player_body);
-    global->ECS->entity_add_component(player_id, player_shape);
+    Capsule player_capsule {.radius = 26.0f};
+    player_capsule.update_capsule_positions(player_body);
+    global->ECS->entity_add_component(player_id, player_capsule);
     global->ECS->entity_add_component(player_id, MovedEventData {});
 
     return player_id;

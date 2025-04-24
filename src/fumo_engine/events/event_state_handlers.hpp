@@ -16,9 +16,7 @@ class EntityEventHandler {
     std::vector<Event> lasting_event_vector {};
 
   public:
-    inline void add_event(const Event& event) {
-        event_queue.push(event);
-    }
+    inline void add_event(const Event& event) { event_queue.push(event); }
 
     bool did_event_happen(const EVENT_& EVENT, EntityId entity_id);
 
@@ -53,23 +51,30 @@ std::shared_ptr<T> create_delegate(EntityId entity_id) {
 } // namespace FumoEvent
 
 struct StateHandler: System {
-    Timer coyotte_timer;
+    // Timer coyotte_timer;
 
-    void sys_call() override {
-        handle_states();
-    }
+    void sys_call() override { handle_states(); }
 
     void handle_states();
-    void handle_state(const EntityId& entity_id, const EntityState& entity_state);
+    void handle_state(const EntityId& entity_id,
+                      const EntityState& entity_state);
     void end_of_frame_update();
+    void jump_and_gravity_state_handler(Body& player_body,
+                                        AnimationInfo& player_animation,
+                                        EntityState& player_state);
+    void dash_state_handler(Body& player_body,
+                            Capsule& player_capsule,
+                            AnimationInfo& player_animation,
+                            EntityState& player_state);
+    void movement_state_handler(Body& player_body,
+                                Capsule& player_shape,
+                                EntityState& player_state);
 };
 
 struct MovedWrapper: System {
     EntityId entity_id;
 
-    void sys_call() override {
-        moved_event();
-    }
+    void sys_call() override { moved_event(); }
 
     void moved_event();
 };

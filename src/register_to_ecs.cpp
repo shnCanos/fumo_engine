@@ -27,6 +27,9 @@ void register_all_to_ECS() {
 // OutlineRectFlag
 // EntityState
 // MovedEventData
+// Screen
+// LevelId
+// ScreenTransitionRect
 
 void register_components() {
     global->ECS->register_component<Body>();
@@ -35,7 +38,7 @@ void register_components() {
     global->ECS->register_component<Timer>();
     global->ECS->register_component<Render>();
     global->ECS->register_component<FumoRect>();
-    global->ECS->register_component<PlayerShape>();
+    global->ECS->register_component<Capsule>();
     global->ECS->register_component<ParallelGravityField>();
     global->ECS->register_component<CircularGravityField>();
     global->ECS->register_component<ColliderObjectFlag>();
@@ -73,7 +76,7 @@ void register_systems_scheduled() {
         .component_mask = global->ECS->make_component_mask<GravFieldFlag>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system<PlayerCollisionRunner, 4>(
+    global->ECS->register_system<CollisionRunner, 4>(
         EntityQuery {.component_mask =
                          global->ECS->make_component_mask<ColliderObjectFlag>(),
                      .component_filter = Filter::Any});

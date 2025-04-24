@@ -140,8 +140,8 @@ void deserialize_component_by_id(const EntityId& entity_id,
         case AllComponentTypes::FumoRect:
             DESERIALIZE_COMPONENT(FumoRect);
             break;
-        case AllComponentTypes::PlayerShape:
-            DESERIALIZE_COMPONENT(PlayerShape);
+        case AllComponentTypes::Capsule:
+            DESERIALIZE_COMPONENT(Capsule);
             break;
         case AllComponentTypes::ParallelGravityField:
             DESERIALIZE_COMPONENT(ParallelGravityField);
@@ -172,6 +172,9 @@ void deserialize_component_by_id(const EntityId& entity_id,
             break;
         case AllComponentTypes::ScreenTransitionRect:
             DESERIALIZE_COMPONENT(ScreenTransitionRect);
+            break;
+        case AllComponentTypes::Line:
+            DESERIALIZE_COMPONENT(Line);
             break;
     }
 }

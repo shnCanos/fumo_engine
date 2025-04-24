@@ -1,6 +1,6 @@
 #include "fumo_engine/collisions_and_physics/gravity_field_systems.hpp"
 
-#include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
+#include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
 
 extern std::unique_ptr<GlobalState> global;
@@ -22,8 +22,8 @@ void GravityFieldHandler::find_gravity_field() {
 
     const auto& player_id = global->player_id;
     auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    auto& player_shape =
-        global->ECS->get_component<PlayerShape>(global->player_id);
+    auto& player_capsule =
+        global->ECS->get_component<Capsule>(global->player_id);
 
     EntityQuery query_parallel {
         .component_mask =
@@ -38,7 +38,7 @@ void GravityFieldHandler::find_gravity_field() {
             const auto& parallel_field =
                 global->ECS->get_component<ParallelGravityField>(planet_id);
             if (parallel_field.is_inside_field(player_body,
-                                               player_shape,
+                                               player_capsule,
                                                body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
@@ -48,7 +48,7 @@ void GravityFieldHandler::find_gravity_field() {
                 global->ECS->get_component<CircularGravityField>(planet_id);
 
             if (circular_field.is_inside_field(player_body,
-                                               player_shape,
+                                               player_capsule,
                                                body_planet)) {
                 candidate_planets.push_back(planet_id);
             }
@@ -76,12 +76,12 @@ void GravityFieldHandler::find_gravity_field() {
 }
 
 bool ParallelGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape,
+                                           const Capsule& player_capsule,
                                            const Body& parallel_body) const {
-    Collision collision = Collisions::PlayerToRectCollision(player_shape,
-                                                            player_body,
-                                                            field_fumo_rect,
-                                                            parallel_body);
+    Collision collision = Collisions::CapsuleToRectCollision(player_capsule,
+                                                             player_body,
+                                                             field_fumo_rect,
+                                                             parallel_body);
     // Body {.position = {field_fumo_rect.x, field_fumo_rect.y}});
 
     // if overlap == 0, then there was no collision
@@ -89,25 +89,26 @@ bool ParallelGravityField::is_inside_field(const Body& player_body,
 }
 
 bool CircularGravityField::is_inside_field(const Body& player_body,
-                                           const PlayerShape& player_shape,
+                                           const Capsule& player_capsule,
                                            const Body& circular_body) const {
     // -------------------------------------------------------------------------------
     // check for collisions with capsule
     // -------------------------------------------------------------------------------
-    float radius_sum = player_shape.radius + gravity_radius;
+    float radius_sum = player_capsule.radius + gravity_radius;
 
     // -------------------------------------------------------------------------------
     // top circle collision check
     float top_distance = FumoVec2Distance(circular_body.position,
-                                          player_shape.top_circle_center);
+                                          player_capsule.top_circle_center);
     if (top_distance < radius_sum) {
         // collided with top circle
         return true;
     }
     // -------------------------------------------------------------------------------
     // bottom circle collision check
-    float bottom_distance = FumoVec2Distance(circular_body.position,
-                                             player_shape.bottom_circle_center);
+    float bottom_distance =
+        FumoVec2Distance(circular_body.position,
+                         player_capsule.bottom_circle_center);
     if (bottom_distance < radius_sum) {
         // collided with top circle
         return true;
@@ -118,7 +119,7 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     //
     // capsule sides collision check
     // const auto left_line_distance_pair = PointToLineDistanceAndIntersection(
-    //     circular_body.position, player_shape.left_line);
+    //     circular_body.position, player_capsule.left_line);
     //
     // if (left_line_distance_pair.first != 0 &&
     //     left_line_distance_pair.first < gravity_radius) {
@@ -127,7 +128,7 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     // }
     //
     // const auto right_line_distance_pair = PointToLineDistanceAndIntersection(
-    //     circular_body.position, player_shape.right_line);
+    //     circular_body.position, player_capsule.right_line);
     //
     // if (right_line_distance_pair.first != 0 &&
     //     right_line_distance_pair.first < gravity_radius) {

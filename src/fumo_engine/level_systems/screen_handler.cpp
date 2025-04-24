@@ -1,6 +1,6 @@
 #include "fumo_engine/level_systems/screen_handler.hpp"
 
-#include "fumo_engine/collisions_and_physics/point_line_collisions.hpp"
+#include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/screen_components.hpp"
 #include "main_functions.hpp"
@@ -12,8 +12,8 @@ void ScreenTransitionHandler::check_for_screen_transition() {
     // and associate the camera to these new rectangles
 
     const auto& player_id = global->player_id;
-    const auto& player_shape =
-        global->ECS->get_component<PlayerShape>(global->player_id);
+    const auto& player_capsule =
+        global->ECS->get_component<Capsule>(global->player_id);
     const auto& player_body =
         global->ECS->get_component<Body>(global->player_id);
     auto& player_state =
@@ -27,7 +27,7 @@ void ScreenTransitionHandler::check_for_screen_transition() {
             global->ECS->get_component<ScreenTransitionRect>(entity_id);
 
         const auto& collision =
-            Collisions::PlayerToRectCollision(player_shape,
+            Collisions::CapsuleToRectCollision(player_capsule,
                                               player_body,
                                               transition_rect.transition_rect,
                                               body);

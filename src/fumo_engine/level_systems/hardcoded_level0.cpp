@@ -1,8 +1,7 @@
+#include "constants/fumo_raylib_constants.hpp"
 #include "constants/planet_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/generic_systems/factory_systems.hpp"
-#include "raylib.h"
-// const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
 
 extern std::unique_ptr<GlobalState> global;
 

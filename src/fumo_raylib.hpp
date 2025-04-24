@@ -48,8 +48,12 @@ struct FumoRect {
 };
 
 void FumoDrawCircleV(FumoVec2 center, float radius, FumoColor color);
-void FumoDrawLineV(FumoVec2 TopLeft, FumoVec2 TopRight, FumoColor color);
+void FumoDrawLineV(FumoVec2 StartPos, FumoVec2 EndPos, FumoColor color);
 void FumoDrawRectV(FumoVec2 position, FumoVec2 size, FumoColor color);
+void FumoDrawLineEx(FumoVec2 StartPos,
+                    FumoVec2 EndPos,
+                    float thick,
+                    FumoColor color);
 
 inline float ease_quad_in(float t) { return t * t; }
 
@@ -262,8 +266,8 @@ inline bool operator!=(const FumoVec2& lhs, const FumoVec2& rhs) {
 }
 
 inline FumoVec2 FumoVec2Snap(FumoVec2 v1, int directions) {
-    float angle = std::atan2(v1.y, v1.x);
-    angle = std::round(angle / (2 * PI) * directions) / directions * (2 * PI);
+    float angle = std::atan2(v1.y, v1.x) * RAD2DEG;
+    angle = std::round(angle / (360.0f) * directions) / directions * (360.0f);
 
     return FumoVec2Rotate({1, 0}, angle) * FumoVec2Length(v1);
 }

@@ -1,0 +1,5 @@
+arg **/*.cpp
+argadd **/*.hpp
+
+argdo %s/"fumo_engine\/collisions_and_physics\/point_line_collisions.hpp"/"fumo_engine\/collisions_and_physics\/point_line_collisions.hpp"/ge | update
+

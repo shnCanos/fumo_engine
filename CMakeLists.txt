@@ -124,9 +124,9 @@ if(USE_RAYLIB)
 
     FetchContent_GetProperties(${dep})
     if(NOT ${dep}_POPULATED)
-        configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/external/raylib/config.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/build/_deps/raylib-src/src/config.h COPYONLY)
+        # configure_file(
+      # ${CMAKE_CURRENT_SOURCE_DIR}/src/external/raylib/config.h
+      # ${CMAKE_CURRENT_SOURCE_DIR}/build/_deps/raylib-src/src/config.h COPYONLY)
         FetchContent_MakeAvailable(${dep})
         add_subdirectory(${${dep}_SOURCE_DIR} ${${dep}_BINARY_DIR})
     endif()
@@ -134,6 +134,7 @@ if(USE_RAYLIB)
     # add the dependency here to be linked
     list(APPEND LIBRARIES ${dep})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLFW_WAYLAND")
+
 endif()
 # GLFW_LINUX_ENABLE_WAYLAND = TRUE GLFW_LINUX_ENABLE_X11 = FALSE
 
