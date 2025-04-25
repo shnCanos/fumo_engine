@@ -26,7 +26,7 @@
 
 enum class Filter { All, Any, Only, None };
 
-class EntityQuery {
+struct EntityQuery {
   public:
     ComponentMask component_mask;
     Filter component_filter;

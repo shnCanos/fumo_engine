@@ -117,6 +117,12 @@ if(USE_RAYLIB)
     set(CUSTOMIZE_BUILD
       OFF
       CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_WAYLAND 
+        OFF
+      CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_X11 
+        ON
+      CACHE BOOL "" FORCE)
 
     set(dep raylib)
     add_git_dependency(${dep} https://github.com/raysan5/raylib.git "c1ab645")
@@ -133,7 +139,7 @@ if(USE_RAYLIB)
 
     # add the dependency here to be linked
     list(APPEND LIBRARIES ${dep})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLFW_WAYLAND")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
 
 endif()
 # GLFW_LINUX_ENABLE_WAYLAND = TRUE GLFW_LINUX_ENABLE_X11 = FALSE

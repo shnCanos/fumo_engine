@@ -1,8 +1,8 @@
+#include "fumo_engine/all_components_macro.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "include_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
-
 void register_components();
 void register_systems();
 void register_unregistered_systems_unscheduled();
@@ -13,49 +13,18 @@ void register_all_to_ECS() {
     register_systems();
 }
 
-// Body
-// Circle
-// AnimationInfo
-// Timer
-// Render
-// FumoRect
-// PlayerShape
-// ParallelGravityField
-// CircularGravityField
-// ColliderObjectFlag
-// GravFieldFlag
-// OutlineRectFlag
-// EntityState
-// MovedEventData
-// CollisionEventData
-// Screen
-// LevelId
-// ScreenTransitionRect
-
 void register_components() {
-    global->ECS->register_component<Body>();
-    global->ECS->register_component<Circle>();
-    global->ECS->register_component<AnimationInfo>();
-    global->ECS->register_component<Timer>();
-    global->ECS->register_component<Render>();
-    global->ECS->register_component<FumoRect>();
-    global->ECS->register_component<Capsule>();
-    global->ECS->register_component<ParallelGravityField>();
-    global->ECS->register_component<CircularGravityField>();
-    global->ECS->register_component<ColliderObjectFlag>();
-    global->ECS->register_component<GravFieldFlag>();
-    global->ECS->register_component<OutlineRectFlag>();
-    global->ECS->register_component<EntityState>();
-    global->ECS->register_component<MovedEventData>();
-    global->ECS->register_component<Screen>();
-    global->ECS->register_component<LevelId>();
 
-    // new
-    // ------
-    global->ECS->register_component<ScreenTransitionRect>();
-    global->ECS->register_component<CollisionEventData>();
+#define XMACRO_ACTION(Type) \
+    global->ECS->register_component<Type>(); \
+    Type##_query = {.component_mask = \
+                        global->ECS->make_component_mask<Type>(), \
+                    .component_filter = Filter::All};
 
-    // global->ECS->register_component<OnScreen>();
+    // calls the macro
+    ALL_COMPONENTS_X_MACRO()
+// undef so we can use it again later
+#undef XMACRO_ACTION
 }
 
 void register_systems() {
@@ -103,22 +72,21 @@ void register_systems_scheduled() {
 
     //--------------------------------------------------------------------------------------
     // render everything at the end
-    global->ECS->register_system<ObjectRenderer, MAX_PRIORITY>(
-        EntityQuery {.component_mask =
-                         global->ECS->make_component_mask<ColliderObjectFlag>(),
-                     .component_filter = Filter::All});
+    global->ECS->register_system<ObjectRenderer, MAX_PRIORITY>(EntityQuery {
+        .component_mask = global->ECS->make_component_mask<Render>(),
+        .component_filter = Filter::All});
 
     global->ECS->register_system<AnimationRenderer, MAX_PRIORITY>(EntityQuery {
         .component_mask =
             global->ECS->make_component_mask<Body, AnimationInfo>(),
         .component_filter = Filter::All});
 
-    global->ECS->register_system<GravFieldRenderer, MAX_PRIORITY>(EntityQuery {
-        .component_mask = global->ECS->make_component_mask<ParallelGravityField,
-                                                           Render,
-                                                           Body,
-                                                           GravFieldFlag>(),
-        .component_filter = Filter::All});
+    // global->ECS->register_system<GravFieldRenderer, MAX_PRIORITY>(EntityQuery {
+    //     .component_mask = global->ECS->make_component_mask<ParallelGravityField,
+    //                                                        Render,
+    //                                                        Body,
+    //                                                        GravFieldFlag>(),
+    //     .component_filter = Filter::All});
     //--------------------------------------------------------------------------------------
 }
 

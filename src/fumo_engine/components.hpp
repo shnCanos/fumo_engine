@@ -4,34 +4,15 @@
 #include <cereal/types/vector.hpp>
 #include <string_view>
 
-#include "constants/fumo_raylib_constants.hpp"
-
-enum struct AllComponentTypes {
-    Body,
-    Circle,
-    AnimationInfo,
-    Timer,
-    Render,
-    FumoRect,
-    Capsule,
-    ParallelGravityField,
-    CircularGravityField,
-    ColliderObjectFlag,
-    GravFieldFlag,
-    OutlineRectFlag,
-    EntityState,
-    MovedEventData,
-    Screen,
-    LevelId,
-    // FIXME: dont forget to serialize
-    ScreenTransitionRect,
-    Line,
-    CollisionEventData,
-};
+#include "fumo_engine/core/entity_query.hpp"
+#include "fumo_raylib.hpp"
+#include "fumo_serialize_macros.hpp"
+#include "raylib.h"
 
 struct Line {
     FumoVec2 start;
     FumoVec2 end;
+    void draw() const;
     SERIALIZE(start, end)
 };
 
@@ -100,6 +81,7 @@ struct Body {
 
 struct Circle {
     float radius;
+    void draw(const FumoColor& color, const FumoVec2& position) const;
     SERIALIZE(radius)
 };
 
@@ -137,6 +119,7 @@ struct Capsule {
             top_circle_center - player_body.real_gravity_direction * radius;
     }
 
+    void draw() const;
     SERIALIZE(radius,
               top_circle_center,
               bottom_circle_center,
@@ -169,6 +152,8 @@ struct ParallelGravityField {
                          const Body& parallel_body) const;
     void update_gravity(Body& player_body);
 
+    void draw(const FumoColor& color, const FumoVec2& position) const;
+
     SERIALIZE(field_fumo_rect, gravity_direction, gravity_strength, rotation)
 };
 
@@ -186,6 +171,7 @@ struct CircularGravityField {
                          const Body& circular_body) const;
     void update_gravity(Body& player_body, const Body& body_planet);
 
+    void draw(const FumoColor& color, const FumoVec2& position) const;
     SERIALIZE(gravity_radius, gravity_strength, position, gravity_direction)
 };
 

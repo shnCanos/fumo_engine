@@ -1,19 +1,9 @@
-#include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "renderers.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
 // this is a macro because calling BeginMode2D is expensive and we want to avoid it
-#define DRAW_OUTLINE_RECT(rect) \
-    FumoVec2 TopLeft = {rect.x, rect.y}; \
-    FumoVec2 TopRight = {rect.x + rect.width, rect.y}; \
-    FumoVec2 BottomLeft = {rect.x, rect.y + rect.height}; \
-    FumoVec2 BottomRight = {rect.x + rect.width, rect.y + rect.height}; \
-    FumoDrawLineV(TopLeft, TopRight, FUMO_GREEN); \
-    FumoDrawLineV(TopLeft, BottomLeft, FUMO_GREEN); \
-    FumoDrawLineV(TopRight, BottomRight, FUMO_GREEN); \
-    FumoDrawLineV(BottomLeft, BottomRight, FUMO_GREEN);
 
 void ObjectRenderer::draw_planets() {
     DrawFPS(10, 10);
@@ -47,57 +37,48 @@ void ObjectRenderer::draw_planets() {
         if (global->ECS->filter(entity_id, circle_query)) {
             const auto& circle_shape =
                 global->ECS->get_component<Circle>(entity_id);
-            FumoDrawCircleV(body.position, circle_shape.radius, render.color);
+            circle_shape.draw(render.color, body.position);
 
             if (global->ECS->filter(entity_id, circle_grav_query)) {
                 const auto& gravity_field =
                     global->ECS->get_component<CircularGravityField>(entity_id);
-                FumoDrawCircleV(gravity_field.position,
-                                gravity_field.gravity_radius,
-                                FumoColorAlpha(render.color, 0.2f));
+                gravity_field.draw(render.color, body.position);
             }
+            continue;
+        }
 
-        } else if (global->ECS->filter(entity_id, rect_query)) {
+        if (global->ECS->filter(entity_id, parallel_grav_query)) {
+            const auto& parallel_field =
+                global->ECS->get_component<ParallelGravityField>(entity_id);
+            parallel_field.draw(render.color, body.position);
+        }
+
+        if (global->ECS->filter(entity_id, outline_query)) {
             const auto& rect = global->ECS->get_component<FumoRect>(entity_id);
-
-            if (global->ECS->filter(entity_id, outline_query)) {
-                DRAW_OUTLINE_RECT(rect);
-
-            } else {
-                FumoDrawRectV(body.position,
-                              {rect.width, rect.height},
-                              render.color);
-            }
-
-            if (global->ECS->filter(entity_id, parallel_grav_query)) {
-                const auto& parallel_field =
-                    global->ECS->get_component<ParallelGravityField>(entity_id);
-
-                DrawRectangle(
-                    parallel_field.field_fumo_rect.x,
-                    parallel_field.field_fumo_rect.y,
-                    parallel_field.field_fumo_rect.width,
-                    parallel_field.field_fumo_rect.height,
-                    FumoColorAlpha(render.color, 0.2f).to_raylib_color());
-            }
+            rect.draw_outline(render.color, body.position);
+        }
+        if (global->ECS->filter(entity_id, rect_query)
+            && !global->ECS->filter(entity_id, outline_query)) {
+            const auto& rect = global->ECS->get_component<FumoRect>(entity_id);
+            rect.draw(render.color, body.position);
         }
     }
 
     EndMode2D();
 }
 
-void GravFieldRenderer::draw_fields() {
-    BeginMode2D(*global->camera);
-    for (const auto& entity_id : sys_entities) {
-        const auto& render = global->ECS->get_component<Render>(entity_id);
-        const auto& parallel_field =
-            global->ECS->get_component<ParallelGravityField>(entity_id);
-
-        DrawRectangle(parallel_field.field_fumo_rect.x,
-                      parallel_field.field_fumo_rect.y,
-                      parallel_field.field_fumo_rect.width,
-                      parallel_field.field_fumo_rect.height,
-                      FumoColorAlpha(render.color, 0.2f).to_raylib_color());
-    }
-    EndMode2D();
-}
+// void GravFieldRenderer::draw_fields() {
+//     BeginMode2D(*global->camera);
+//     for (const auto& entity_id : sys_entities) {
+//         const auto& render = global->ECS->get_component<Render>(entity_id);
+//         const auto& parallel_field =
+//             global->ECS->get_component<ParallelGravityField>(entity_id);
+//
+//         DrawRectangle(parallel_field.field_fumo_rect.x,
+//                       parallel_field.field_fumo_rect.y,
+//                       parallel_field.field_fumo_rect.width,
+//                       parallel_field.field_fumo_rect.height,
+//                       FumoColorAlpha(render.color, 0.2f).to_raylib_color());
+//     }
+//     EndMode2D();
+// }

@@ -26,6 +26,10 @@ void FumoDrawRectV(FumoVec2 position, FumoVec2 size, FumoColor color) {
                    color.to_raylib_color());
 }
 
+void FumoDrawRect(FumoRect rect, FumoColor color) {
+    DrawRectangleRec(rect.to_raylib_rect(), color.to_raylib_color());
+}
+
 void print_direction(DIRECTION direction) {
     switch (direction) {
         case DIRECTION::LEFT:

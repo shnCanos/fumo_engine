@@ -23,4 +23,6 @@ class LevelEntityFactory: public System {
     EntityId create_rect_planet(FumoVec2 position);
 
     EntityId create_screen_transition(FumoVec2 position);
+
+    EntityId debug__internal__create_rect_field(FumoVec2 position);
 };

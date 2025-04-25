@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "filesystem"
+#include "fumo_engine/all_components_macro.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/screen_components.hpp"
 
@@ -121,70 +122,16 @@ namespace FumoSerializer {
 void deserialize_component_by_id(const EntityId& entity_id,
                                  const ComponentId& component_id,
                                  cereal::JSONInputArchive& in_archive) {
-    switch (AllComponentTypes {component_id}) {
-        case AllComponentTypes::Body:
-            DESERIALIZE_COMPONENT(Body);
-            break;
-        case AllComponentTypes::Circle:
-            DESERIALIZE_COMPONENT(Circle);
-            break;
-        case AllComponentTypes::AnimationInfo:
-            DESERIALIZE_COMPONENT(AnimationInfo);
-            break;
-        case AllComponentTypes::Timer:
-            DESERIALIZE_COMPONENT(Timer);
-            break;
-        case AllComponentTypes::Render:
-            DESERIALIZE_COMPONENT(Render);
-            break;
-        case AllComponentTypes::FumoRect:
-            DESERIALIZE_COMPONENT(FumoRect);
-            break;
-        case AllComponentTypes::Capsule:
-            DESERIALIZE_COMPONENT(Capsule);
-            break;
-        case AllComponentTypes::ParallelGravityField:
-            DESERIALIZE_COMPONENT(ParallelGravityField);
-            break;
-        case AllComponentTypes::CircularGravityField:
-            DESERIALIZE_COMPONENT(CircularGravityField);
-            break;
-        case AllComponentTypes::ColliderObjectFlag:
-            DESERIALIZE_COMPONENT(ColliderObjectFlag);
-            break;
-        case AllComponentTypes::GravFieldFlag:
-            DESERIALIZE_COMPONENT(GravFieldFlag);
-            break;
-        case AllComponentTypes::OutlineRectFlag:
-            DESERIALIZE_COMPONENT(OutlineRectFlag);
-            break;
-        case AllComponentTypes::EntityState:
-            DESERIALIZE_COMPONENT(EntityState);
-            break;
-        case AllComponentTypes::MovedEventData:
-            DESERIALIZE_COMPONENT(MovedEventData);
-            break;
-        case AllComponentTypes::Screen:
-            DESERIALIZE_COMPONENT(Screen);
-            break;
-        case AllComponentTypes::LevelId:
-            DESERIALIZE_COMPONENT(LevelId);
-            break;
-        case AllComponentTypes::ScreenTransitionRect:
-            DESERIALIZE_COMPONENT(ScreenTransitionRect);
-            break;
-        case AllComponentTypes::Line:
-            DESERIALIZE_COMPONENT(Line);
-            break;
+#define XMACRO_ACTION(Type) \
+    case AllComponentTypes::Type: \
+        DESERIALIZE_COMPONENT(Type); \
+        break;
 
-        case AllComponentTypes::CollisionEventData:
-            DESERIALIZE_COMPONENT(CollisionEventData);
-            break;
-    }
+    switch (AllComponentTypes {component_id}) { ALL_COMPONENTS_X_MACRO() }
+
+// undefine it so we can reuse it later
+#undef XMACRO_ACTION
 }
-} // namespace FumoSerializer
-
-namespace FumoSerializer {
 
 void serialize_entity(const EntityId& entity_id,
                       cereal::JSONOutputArchive& out_archive) {

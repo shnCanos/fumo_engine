@@ -7,13 +7,10 @@
 #include "fumo_serialize_macros.hpp"
 #include "raylib.h"
 #include "raymath.h"
-
 #define PRINT_NO_NAME(x) std::cerr << libassert::highlight_stringify(x) << '\n';
 
 #define PRINT(x) \
     std::cerr << #x << " ---> " << libassert::highlight_stringify(x) << '\n';
-
-void print_direction(DIRECTION direction);
 
 struct FumoVec2 {
     float x; // Vector x component
@@ -33,8 +30,6 @@ struct FumoColor {
     SERIALIZE(r, g, b, a)
 };
 
-inline FumoColor to_fumo_color(Color c) { return {c.r, c.g, c.b, c.a}; }
-
 struct FumoRect {
     // NOTE: does not store positions most of the time
     // (x and y are not used very often)
@@ -47,12 +42,20 @@ struct FumoRect {
     float width; // FumoRect width
     float height; // FumoRect height
 
+    void draw(const FumoColor& color, const FumoVec2& position) const;
+    void draw_outline(const FumoColor& color, const FumoVec2& position) const;
+
     Rectangle to_raylib_rect() { return {x, y, width, height}; }
 };
+
+inline FumoColor to_fumo_color(Color c) { return {c.r, c.g, c.b, c.a}; }
+
+void print_direction(DIRECTION direction);
 
 void FumoDrawCircleV(FumoVec2 center, float radius, FumoColor color);
 void FumoDrawLineV(FumoVec2 StartPos, FumoVec2 EndPos, FumoColor color);
 void FumoDrawRectV(FumoVec2 position, FumoVec2 size, FumoColor color);
+void FumoDrawRect(FumoRect rect, FumoColor color);
 void FumoDrawLineEx(FumoVec2 StartPos,
                     FumoVec2 EndPos,
                     float thick,
@@ -303,3 +306,13 @@ inline bool operator!=(const FumoVec2& lhs, const FumoVec2& rhs) {
 #define FUMO_MAGENTA CLITERAL(FumoColor) {255, 0, 255, 255} // Magenta
 #define FUMO_RAYWHITE \
     CLITERAL(FumoColor) {245, 245, 245, 255} // My own White (raylib logo)
+
+constexpr static int screenWidth = 1920;
+constexpr static int screenHeight = 1080;
+constexpr static FumoVec2 screenCenter = {(float)screenWidth / 2.0f,
+                                          (float)screenHeight / 2.0f};
+
+constexpr FumoVec2 starter_player_position = {.x = 1920.0f / 2.0f,
+                                              .y = screenCenter.y};
+
+const float mouse_radius = 120.0f;

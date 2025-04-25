@@ -76,11 +76,11 @@ void CollisionRunner::check_collisions() {
     }
 }
 
-#define CHECK_COLLISION(Shape, query, function_name) \
+#define CHECK_COLLISION(_SHAPE, query, function_name) \
     do { \
         if (global->ECS->filter(obstacle_id, query)) { \
             const auto& shape = \
-                global->ECS->get_component<Shape>(obstacle_id); \
+                global->ECS->get_component<_SHAPE>(obstacle_id); \
             Collision collision = \
                 Collisions::function_name(line, shape, obstacle_body); \
             if (collision.collided \

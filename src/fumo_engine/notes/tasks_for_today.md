@@ -1,5 +1,7 @@
 # Must complete today
+
 - [-] add screen transition
+
 - [ ] improve the level editor (fix the resizing properly, add for circles resizing too)
 > [!TLDR] what to do concretely
 > print out each shortcut and the associated action to that shorcut on the left

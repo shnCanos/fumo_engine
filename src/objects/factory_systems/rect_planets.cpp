@@ -119,10 +119,40 @@ EntityId LevelEntityFactory::create_rect_field(FumoVec2 position,
             .height = RECT_HEIGHT};
 }
 
+// TODO: remove these 2 functions later
+// --------------------------------------------------------------------
 EntityId LevelEntityFactory::create_rect_planet(FumoVec2 position) {
 
     EntityId entity_id = create_rect(position);
-    create_rect_field({.x = position.x, .y = position.y - RECT_HEIGHT});
+    debug__internal__create_rect_field(
+        {.x = position.x, .y = position.y - RECT_HEIGHT});
+
+    return entity_id;
+}
+
+EntityId
+LevelEntityFactory::debug__internal__create_rect_field(FumoVec2 position) {
+    EntityId entity_id = global->ECS->create_entity();
+
+    FumoRect grav_field_fumo_rect = make_default_field_rect(position);
+    global->ECS->entity_add_component(
+        entity_id,
+        ParallelGravityField {
+            .field_fumo_rect = grav_field_fumo_rect,
+            .gravity_strength = GRAV_STRENGTH,
+        });
+
+    global->ECS->entity_add_component(entity_id, GravFieldFlag {});
+    global->ECS->entity_add_component(entity_id, Render {.color = FUMO_ORANGE});
+    global->ECS->entity_add_component(
+        entity_id,
+        Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},
+              .velocity = {0.0f, 0.0f}});
+
+    global->ECS->entity_add_component(entity_id, Screen {0});
+    global->ECS->entity_add_component(entity_id, LevelId {0});
+
+    sys_entities.insert(entity_id);
 
     return entity_id;
 }
