@@ -16,6 +16,7 @@ class LevelEntityFactory: public System {
     EntityId create_circular_planet(FumoVec2 position);
 
     EntityId create_rect(FumoVec2 position);
+    EntityId create_outline_rect(FumoVec2 position);
     EntityId create_rect_field(FumoVec2 position);
     EntityId create_rect_field(FumoVec2 position, FumoVec2 grav_direction);
 

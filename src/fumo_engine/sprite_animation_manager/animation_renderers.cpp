@@ -5,17 +5,19 @@
 #include "raylib.h"
 #include "sprite_and_animation_systems.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void AnimationRenderer::draw_animations() {
     for (auto entity_id : sys_entities) {
         const auto& animation_info =
-            global->ECS->get_component<AnimationInfo>(entity_id);
+            fumo_engine->ECS->get_component<AnimationInfo>(entity_id);
 
-        const auto& sheet_texture = global->sprite_manager->get_sprite_texture(
-            animation_info.current_sheet_name);
+        const auto& sheet_texture =
+            fumo_engine->sprite_manager->get_sprite_texture(
+                animation_info.current_sheet_name);
 
-        const auto& entity_body = global->ECS->get_component<Body>(entity_id);
+        const auto& entity_body =
+            fumo_engine->ECS->get_component<Body>(entity_id);
 
         draw_animation(animation_info, sheet_texture, entity_body);
     }
@@ -33,10 +35,10 @@ void AnimationRenderer::draw_animation(const AnimationInfo& animation_info,
     // PRINT("GAMING");
     // debug_print_animation_info(animation_info);
 
-    BeginMode2D(*global->camera);
+    BeginMode2D(*fumo_engine->camera);
 
     auto& player_state =
-        global->ECS->get_component<EntityState>(global->player_id);
+        fumo_engine->ECS->get_component<EntityState>(fumo_engine->player_id);
 
     FumoRect destination = {body.position.x,
                             body.position.y,

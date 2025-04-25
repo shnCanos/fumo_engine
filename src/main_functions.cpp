@@ -4,7 +4,7 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_raylib.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 // bool IsKeyStillDown(int key) {
 //     bool still_down = false;
@@ -17,6 +17,17 @@ extern std::unique_ptr<GlobalState> global;
 //     return still_down;
 //
 // }
+
+void PRINT_COMPONENT_NAME(const ComponentId& component_id) {
+#define XMACRO(Type) \
+    case AllComponentTypes::Type: \
+        PRINT_NO_NAME(#Type) \
+        break;
+
+    switch (AllComponentTypes {component_id}) { ALL_COMPONENTS_X_MACRO() }
+
+#undef XMACRO // NOTE: dont forget to undefine the xmacro
+}
 
 void debug_print_animation_info(const AnimationInfo& animation_info) {
     PRINT(animation_info.current_region_rect.x);
@@ -43,9 +54,10 @@ void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
     if (length > minEffectLength) {
         float speed = fmaxf(fractionSpeed * length, minSpeed);
         camera->target =
-            FumoVec2Add(to_fumo_vec2(camera->target),
-                        FumoVec2Scale(diff, speed * global->frametime / length)
-                            * scaling)
+            FumoVec2Add(
+                to_fumo_vec2(camera->target),
+                FumoVec2Scale(diff, speed * fumo_engine->frametime / length)
+                    * scaling)
                 .to_raylib_vec2();
     }
 }
@@ -53,8 +65,9 @@ void UpdateCameraCenterSmoothFollow(Camera2D* camera, const Body& player) {
 void debug_player_drawing(const Capsule& player_capsule,
                           const Body& player_body) {
     // extra visualization code
-    BeginMode2D(*global->camera);
-    const auto& render = global->ECS->get_component<Render>(global->player_id);
+    BeginMode2D(*fumo_engine->camera);
+    const auto& render =
+        fumo_engine->ECS->get_component<Render>(fumo_engine->player_id);
     DrawCircleV(player_capsule.bottom_circle_center.to_raylib_vec2(),
                 player_capsule.radius,
                 render.color.to_raylib_color());
@@ -120,7 +133,7 @@ void weird_debug_print(std::pair<float, FumoVec2> closest_pair,
                        std::pair<float, FumoVec2> top_pair) {
     // -------------------------------------------------------------------------------
     // DEBUG
-    BeginMode2D(*global->camera);
+    BeginMode2D(*fumo_engine->camera);
 
     if (closest_pair.first == 0.0f) {
     } else if (closest_pair.first == bottom_pair.first) {

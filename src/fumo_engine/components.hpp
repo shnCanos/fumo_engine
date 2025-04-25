@@ -4,7 +4,6 @@
 #include <cereal/types/vector.hpp>
 #include <string_view>
 
-#include "fumo_engine/core/entity_query.hpp"
 #include "fumo_raylib.hpp"
 #include "fumo_serialize_macros.hpp"
 #include "raylib.h"
@@ -12,7 +11,8 @@
 struct Line {
     FumoVec2 start;
     FumoVec2 end;
-    void draw() const;
+
+    void draw(const FumoColor& color, const FumoVec2& position) const;
     SERIALIZE(start, end)
 };
 
@@ -85,6 +85,12 @@ struct Circle {
     SERIALIZE(radius)
 };
 
+struct OutlineRect {
+    FumoRect outline_rect;
+    void draw(const FumoColor& color, const FumoVec2& position) const;
+    SERIALIZE(outline_rect)
+};
+
 struct Capsule {
 
     float radius;
@@ -119,7 +125,7 @@ struct Capsule {
             top_circle_center - player_body.real_gravity_direction * radius;
     }
 
-    void draw() const;
+    void draw(const FumoColor& color, const FumoVec2& position) const;
     SERIALIZE(radius,
               top_circle_center,
               bottom_circle_center,

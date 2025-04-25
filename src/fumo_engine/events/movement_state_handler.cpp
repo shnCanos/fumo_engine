@@ -2,7 +2,7 @@
 #include "fumo_engine/collisions_and_physics/collision_runner.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "main_functions.hpp"
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void raycast_jumping(Body& player_body,
                      Capsule& player_capsule,
@@ -14,14 +14,15 @@ void raycast_jumping(Body& player_body,
     new_capsule.update_capsule_positions(player_body);
     const FumoVec2& previous_pos = new_capsule.top_circle_center;
 
-    FumoVec2 new_pos = previous_pos + new_velocity * global->frametime;
+    FumoVec2 new_pos = previous_pos + new_velocity * fumo_engine->frametime;
 
-    const auto& collision_runner = global->ECS->get_system<CollisionRunner>();
+    const auto& collision_runner =
+        fumo_engine->ECS->get_system<CollisionRunner>();
     const Collision& collision = collision_runner->check_raycast_line(
         {.start = previous_pos, .end = new_pos});
 
     // PRINT(collision.collided)
-    // BeginMode2D(*global->camera);
+    // BeginMode2D(*fumo_engine->camera);
     // FumoDrawLineEx(previous_pos, new_pos, 20.0f, FUMO_GOLD);
     // FumoDrawCircleV(collision.intersection_point, 200.0f, FUMO_GREEN);
 
@@ -65,11 +66,11 @@ void StateHandler::movement_state_handler(Body& player_body,
             + player_body.get_real_x_velocity();
     }
 
-    UpdateCameraCenterSmoothFollow(global->camera.get(), player_body);
+    UpdateCameraCenterSmoothFollow(fumo_engine->camera.get(), player_body);
 
     raycast_jumping(player_body, player_capsule, player_state);
 
-    player_body.position += player_body.velocity * global->frametime;
+    player_body.position += player_body.velocity * fumo_engine->frametime;
     player_capsule.update_capsule_positions(player_body);
 
     debug_player_drawing(player_capsule, player_body);

@@ -10,4 +10,4 @@
 #include "objects/factory_systems/factory_systems.hpp" // IWYU pragma: export
 #include "objects/generic_systems/systems.hpp" // IWYU pragma: export
 #include "objects/player_systems/player_general_systems.hpp" // IWYU pragma: export
-#include "objects/rendering_systems/renderers.hpp" // IWYU pragma: export
+#include "objects/rendering_systems/component_renderer.hpp" // IWYU pragma: export

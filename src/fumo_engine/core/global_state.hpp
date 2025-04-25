@@ -1,14 +1,13 @@
 #pragma once
 #include <memory>
 
-#include "fumo_engine/components.hpp" // IWYU pragma: export
 #include "constants/engine_constants.hpp"
+#include "fumo_engine/components.hpp" // IWYU pragma: export
 #include "fumo_engine/core/scheduler_ecs.hpp"
 #include "fumo_engine/events/event_state_handlers.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
 
-
-class GlobalState {
+class FumoEngine {
   public:
     float frametime;
     std::shared_ptr<SchedulerECS> ECS;
@@ -18,7 +17,6 @@ class GlobalState {
     std::unique_ptr<Camera2D> camera;
 
     std::unique_ptr<EntityEventHandler> event_handler;
-
 
     EntityId
         player_id; // NOTE: storing the player id globally for now for optimisation
@@ -32,9 +30,7 @@ class GlobalState {
         event_handler = std::make_unique<EntityEventHandler>();
     }
 
-    void handle_events() {
-        event_handler->handle_events();
-    }
+    void handle_events() { event_handler->handle_events(); }
 
     void setup_game_state();
 

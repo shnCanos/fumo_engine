@@ -1,13 +1,13 @@
 #include "constants/movement_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void StateHandler::handle_states() {
     // update all states
     for (const auto& entity_id : sys_entities) {
         const auto& entity_state =
-            global->ECS->get_component<EntityState>(entity_id);
+            fumo_engine->ECS->get_component<EntityState>(entity_id);
         handle_state(entity_id, entity_state);
     }
 
@@ -18,13 +18,14 @@ void StateHandler::handle_states() {
 void StateHandler::handle_state(const EntityId& entity_id,
                                 const EntityState& entity_state) {
 
-    auto& player_body = global->ECS->get_component<Body>(entity_id);
-    auto& player_capsule = global->ECS->get_component<Capsule>(entity_id);
+    auto& player_body = fumo_engine->ECS->get_component<Body>(entity_id);
+    auto& player_capsule = fumo_engine->ECS->get_component<Capsule>(entity_id);
     auto& player_animation =
-        global->ECS->get_component<AnimationInfo>(entity_id);
-    auto& player_state = global->ECS->get_component<EntityState>(entity_id);
+        fumo_engine->ECS->get_component<AnimationInfo>(entity_id);
+    auto& player_state =
+        fumo_engine->ECS->get_component<EntityState>(entity_id);
     auto& moved_event_data =
-        global->ECS->get_component<MovedEventData>(entity_id);
+        fumo_engine->ECS->get_component<MovedEventData>(entity_id);
 
     // if we face left, then we invert the sprite
     player_body.inverse_direction =
@@ -51,7 +52,7 @@ void StateHandler::handle_state(const EntityId& entity_id,
 }
 
 void StateHandler::end_of_frame_update() {
-    // auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    // auto& player_body = fumo_engine->ECS->get_component<Body>(fumo_engine->player_id);
 
     // camera follows player
 

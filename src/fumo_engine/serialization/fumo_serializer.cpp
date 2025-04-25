@@ -7,7 +7,7 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/screen_components.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 namespace fs = std::filesystem;
 
@@ -73,8 +73,9 @@ void LevelSerializer::serialize_levels() {
         // FIXME: add Screen to each entity instead of the screenId
 
         // ---------------------------------------------------------------------
-        const auto& screen = global->ECS->get_component<Screen>(entity_id);
-        const auto& level_id = global->ECS->get_component<LevelId>(entity_id);
+        const auto& screen = fumo_engine->ECS->get_component<Screen>(entity_id);
+        const auto& level_id =
+            fumo_engine->ECS->get_component<LevelId>(entity_id);
         // ---------------------------------------------------------------------
 
         fs::path level_screen_path = std::format("level{}", level_id.level_id);
@@ -113,7 +114,7 @@ void LevelSerializer::serialize_levels() {
 namespace FumoSerializer {
 
 #define DESERIALIZE_COMPONENT(Type) \
-    global->ECS->entity_add_component( \
+    fumo_engine->ECS->entity_add_component( \
         entity_id, \
         FumoSerializer::deserialize_component<Type>(#Type, \
                                                     component_id, \
@@ -122,7 +123,7 @@ namespace FumoSerializer {
 void deserialize_component_by_id(const EntityId& entity_id,
                                  const ComponentId& component_id,
                                  cereal::JSONInputArchive& in_archive) {
-#define XMACRO_ACTION(Type) \
+#define XMACRO(Type) \
     case AllComponentTypes::Type: \
         DESERIALIZE_COMPONENT(Type); \
         break;
@@ -130,23 +131,23 @@ void deserialize_component_by_id(const EntityId& entity_id,
     switch (AllComponentTypes {component_id}) { ALL_COMPONENTS_X_MACRO() }
 
 // undefine it so we can reuse it later
-#undef XMACRO_ACTION
+#undef XMACRO
 }
 
 void serialize_entity(const EntityId& entity_id,
                       cereal::JSONOutputArchive& out_archive) {
-    auto component_mask = global->ECS->get_component_mask(entity_id);
+    auto component_mask = fumo_engine->ECS->get_component_mask(entity_id);
 
     out_archive(CEREAL_NVP(entity_id));
     out_archive(CEREAL_NVP(component_mask));
 
-    // global->ECS->debug_print_entity(entity_id);
+    // fumo_engine->ECS->debug_print_entity(entity_id);
 
     for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
         uint64_t iterate = 1;
         iterate <<= id;
         if (component_mask & (iterate)) {
-            global->ECS->serialize_component(entity_id, id, out_archive);
+            fumo_engine->ECS->serialize_component(entity_id, id, out_archive);
         }
     }
 }
@@ -158,7 +159,7 @@ void deserialize_entity(cereal::JSONInputArchive& in_archive) {
     EntityId entity_id;
     ComponentMask component_mask;
     in_archive(entity_id, component_mask);
-    entity_id = global->ECS->create_entity();
+    entity_id = fumo_engine->ECS->create_entity();
 
     for (ComponentId id = 0; id < MAX_COMPONENTS; ++id) {
         uint64_t iterate = 1;

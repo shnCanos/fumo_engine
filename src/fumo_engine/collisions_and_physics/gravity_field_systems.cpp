@@ -3,7 +3,7 @@
 #include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 // RULES:
 // - give priority to field change
@@ -11,7 +11,7 @@ extern std::unique_ptr<GlobalState> global;
 // - only allow picking candidates again if the player touches the ground
 void GravityFieldHandler::find_gravity_field() {
     auto& player_state =
-        global->ECS->get_component<EntityState>(global->player_id);
+        fumo_engine->ECS->get_component<EntityState>(fumo_engine->player_id);
 
     if (!player_state.can_swap_orbits || player_state.on_ground) {
         return;
@@ -20,23 +20,26 @@ void GravityFieldHandler::find_gravity_field() {
     std::vector<EntityId> candidate_planets;
     candidate_planets.reserve(10);
 
-    const auto& player_id = global->player_id;
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    const auto& player_id = fumo_engine->player_id;
+    auto& player_body =
+        fumo_engine->ECS->get_component<Body>(fumo_engine->player_id);
     auto& player_capsule =
-        global->ECS->get_component<Capsule>(global->player_id);
+        fumo_engine->ECS->get_component<Capsule>(fumo_engine->player_id);
 
     EntityQuery query_parallel {
         .component_mask =
-            global->ECS->make_component_mask<ParallelGravityField>(),
+            fumo_engine->ECS->make_component_mask<ParallelGravityField>(),
         .component_filter = Filter::All};
 
     for (const auto& planet_id : sys_entities) {
-        const auto& body_planet = global->ECS->get_component<Body>(planet_id);
+        const auto& body_planet =
+            fumo_engine->ECS->get_component<Body>(planet_id);
 
-        if (global->ECS->filter(planet_id, query_parallel)) {
+        if (fumo_engine->ECS->filter(planet_id, query_parallel)) {
             // methods for parallel gravity fields
             const auto& parallel_field =
-                global->ECS->get_component<ParallelGravityField>(planet_id);
+                fumo_engine->ECS->get_component<ParallelGravityField>(
+                    planet_id);
             if (parallel_field.is_inside_field(player_body,
                                                player_capsule,
                                                body_planet)) {
@@ -45,7 +48,8 @@ void GravityFieldHandler::find_gravity_field() {
         } else {
             // methods for circular gravity fields
             const auto& circular_field =
-                global->ECS->get_component<CircularGravityField>(planet_id);
+                fumo_engine->ECS->get_component<CircularGravityField>(
+                    planet_id);
 
             if (circular_field.is_inside_field(player_body,
                                                player_capsule,
@@ -66,7 +70,7 @@ void GravityFieldHandler::find_gravity_field() {
         if (planet_id != player_state.player_owning_field) {
             player_state.player_owning_field = planet_id;
 
-            global->event_handler->add_event(
+            fumo_engine->event_handler->add_event(
                 {.event = EVENT_::ENTITY_SWAPPED_ORBITS,
                  .entity_id = player_id});
 

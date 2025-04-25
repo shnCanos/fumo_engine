@@ -20,10 +20,10 @@ struct LevelId {
     SERIALIZE(level_id)
 };
 
-
 struct ScreenTransitionRect {
     FumoRect transition_rect;
     Screen previous_screen;
     Screen next_screen;
     SERIALIZE(transition_rect, previous_screen, next_screen);
+    void draw(const FumoColor& color, const FumoVec2& position) const;
 };

@@ -1,12 +1,12 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/level_editor/level_editor.hpp"
 #include "fumo_engine/serialization/fumo_serializer.hpp"
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void DebugLevelEditor::handle_input() {
-    global->camera->zoom += ((float)GetMouseWheelMove() * 0.05f);
-    FumoVec2 mouse_position =
-        to_fumo_vec2(GetScreenToWorld2D(GetMousePosition(), *global->camera));
+    fumo_engine->camera->zoom += ((float)GetMouseWheelMove() * 0.05f);
+    FumoVec2 mouse_position = to_fumo_vec2(
+        GetScreenToWorld2D(GetMousePosition(), *fumo_engine->camera));
     // DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         if (IsKeyDown(KEY_R)) {
@@ -44,12 +44,13 @@ void DebugLevelEditor::handle_input() {
 // generic functionality
 
 void DebugLevelEditor::save_level() {
-    const auto& level_serializer = global->ECS->get_system<LevelSerializer>();
+    const auto& level_serializer =
+        fumo_engine->ECS->get_system<LevelSerializer>();
     // level_serializer->deserialize_levels();
     level_serializer->serialize_levels();
 }
 
 void DebugLevelEditor::reset_position() {
-    auto& body = global->ECS->get_component<Body>(global->player_id);
+    auto& body = fumo_engine->ECS->get_component<Body>(fumo_engine->player_id);
     body.position = screenCenter;
 }

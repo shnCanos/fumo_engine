@@ -3,40 +3,42 @@
 #include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void CollisionRunner::check_collisions() {
     // TODO: change the collisions to use raycasting (so they work very consistently)
     // (do this later once its finished since it is good enough for now)
     Collision collision {};
     CollisionEventData& collision_event =
-        global->ECS->get_component<CollisionEventData>(global->player_id);
+        fumo_engine->ECS->get_component<CollisionEventData>(
+            fumo_engine->player_id);
 
     bool collision_happened = false;
     constexpr float substep_count = 10;
 
-    const auto& player_id = global->player_id;
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
+    const auto& player_id = fumo_engine->player_id;
+    auto& player_body =
+        fumo_engine->ECS->get_component<Body>(fumo_engine->player_id);
     auto& player_capsule =
-        global->ECS->get_component<Capsule>(global->player_id);
+        fumo_engine->ECS->get_component<Capsule>(fumo_engine->player_id);
     auto& player_state =
-        global->ECS->get_component<EntityState>(global->player_id);
+        fumo_engine->ECS->get_component<EntityState>(fumo_engine->player_id);
 
     const EntityQuery fumo_rect_query {
-        .component_mask = global->ECS->make_component_mask<FumoRect>(),
+        .component_mask = fumo_engine->ECS->make_component_mask<FumoRect>(),
         .component_filter = Filter::All};
 
     const EntityQuery circle_query {
-        .component_mask = global->ECS->make_component_mask<FumoRect>(),
+        .component_mask = fumo_engine->ECS->make_component_mask<FumoRect>(),
         .component_filter = Filter::All};
 
     for (const auto& obstacle_id : sys_entities) {
         const auto& obstacle_body =
-            global->ECS->get_component<Body>(obstacle_id);
+            fumo_engine->ECS->get_component<Body>(obstacle_id);
 
-        if (global->ECS->filter(obstacle_id, fumo_rect_query)) {
+        if (fumo_engine->ECS->filter(obstacle_id, fumo_rect_query)) {
             const auto& fumo_rect =
-                global->ECS->get_component<FumoRect>(obstacle_id);
+                fumo_engine->ECS->get_component<FumoRect>(obstacle_id);
             collision =
                 Collisions::continuous_rect_collision_solving(player_capsule,
                                                               player_body,
@@ -52,7 +54,7 @@ void CollisionRunner::check_collisions() {
         }
 
         const auto& circle_shape =
-            global->ECS->get_component<Circle>(obstacle_id);
+            fumo_engine->ECS->get_component<Circle>(obstacle_id);
         collision =
             Collisions::capsule_to_circle_collision_solving(player_capsule,
                                                             player_body,
@@ -71,16 +73,17 @@ void CollisionRunner::check_collisions() {
 
     if (collision_happened) {
         // PRINT(collision_event.all_collisions.size())
-        global->event_handler->add_event(
-            {.event = EVENT_::ENTITY_COLLIDED, .entity_id = global->player_id});
+        fumo_engine->event_handler->add_event(
+            {.event = EVENT_::ENTITY_COLLIDED,
+             .entity_id = fumo_engine->player_id});
     }
 }
 
 #define CHECK_COLLISION(_SHAPE, query, function_name) \
     do { \
-        if (global->ECS->filter(obstacle_id, query)) { \
+        if (fumo_engine->ECS->filter(obstacle_id, query)) { \
             const auto& shape = \
-                global->ECS->get_component<_SHAPE>(obstacle_id); \
+                fumo_engine->ECS->get_component<_SHAPE>(obstacle_id); \
             Collision collision = \
                 Collisions::function_name(line, shape, obstacle_body); \
             if (collision.collided \
@@ -98,16 +101,16 @@ CollisionRunner::check_raycast_line(const Line& line) {
     Collision closest_collision;
 
     const EntityQuery fumo_rect_query {
-        .component_mask = global->ECS->make_component_mask<FumoRect>(),
+        .component_mask = fumo_engine->ECS->make_component_mask<FumoRect>(),
         .component_filter = Filter::All};
 
     const EntityQuery circle_query {
-        .component_mask = global->ECS->make_component_mask<Circle>(),
+        .component_mask = fumo_engine->ECS->make_component_mask<Circle>(),
         .component_filter = Filter::All};
 
     for (const auto& obstacle_id : sys_entities) {
         const auto& obstacle_body =
-            global->ECS->get_component<Body>(obstacle_id);
+            fumo_engine->ECS->get_component<Body>(obstacle_id);
 
         CHECK_COLLISION(FumoRect, fumo_rect_query, LineToRectCollision);
         CHECK_COLLISION(Circle, circle_query, LineToCircleCollision);

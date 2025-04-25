@@ -138,8 +138,7 @@ struct GravFieldFlag {
     char satisfy_cereal;
 };
 
-struct OutlineRectFlag {
-    void draw(const FumoRect& rect);
+struct NormalRectFlag {
     SERIALIZE(satisfy_cereal)
   private:
     char satisfy_cereal;

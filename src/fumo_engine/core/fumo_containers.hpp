@@ -21,8 +21,8 @@ class NamedComponentContainer {
     template<typename U>
     void add_component_by_name(std::string_view entity_name, U component) {
 
-        EntityId entity_id = global->ECS->create_entity();
-        global->ECS->entity_add_component(entity_id, component);
+        EntityId entity_id = fumo_engine->ECS->create_entity();
+        fumo_engine->ECS->entity_add_component(entity_id, component);
 
         add_entity_id<U>(entity_id, entity_name);
     }
@@ -41,7 +41,7 @@ class NamedComponentContainer {
     //     DEBUG_ASSERT(erased_count != 0, "this id wasnt in this container.",
     //                  component_type_name);
     //
-    //     global->ECS->destroy_entity(entity_id);
+    //     fumo_engine->ECS->destroy_entity(entity_id);
     // }
 
     [[nodiscard]] T& get_component_by_name(std::string_view entity_name) {
@@ -50,7 +50,7 @@ class NamedComponentContainer {
                      "this component name hasn't been added to this container.",
                      entity_name, named_entity_ids);
 
-        return global->ECS->get_component<T>(named_entity_ids[entity_name]);
+        return fumo_engine->ECS->get_component<T>(named_entity_ids[entity_name]);
     }
 
   private:
@@ -63,7 +63,7 @@ class NamedComponentContainer {
             component_type_name);
 
         // make sure this component is actually in this entity_id
-        // global->ECS->check_for_component<U>(entity_id);
+        // fumo_engine->ECS->check_for_component<U>(entity_id);
 
         named_entity_ids.insert({entity_name, entity_id});
     }

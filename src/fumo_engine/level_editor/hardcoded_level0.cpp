@@ -3,7 +3,7 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/factory_systems/factory_systems.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 FumoVec2 starter_position = {0.0f, screenCenter.y + 400};
 float previous_width = 500.0f;
@@ -12,49 +12,52 @@ void make_some_rects();
 void screen_border_lines();
 
 void debug_spawn_level_objects() {
-    make_some_rects();
-    screen_border_lines();
-    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+    // make_some_rects();
+    // screen_border_lines();
+    const auto& planet_factory =
+        fumo_engine->ECS->get_system<LevelEntityFactory>();
 
     {
-        EntityId id_planet = planet_factory->create_rect(starter_position);
-        global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
+        EntityId id_planet = planet_factory->create_outline_rect({0.0f, 0.0f});
 
-        FumoRect& outline_rect =
-            global->ECS->get_component<FumoRect>(id_planet);
-        outline_rect = {.x = 0.0f,
-                        .y = 0.0f,
-                        .width = screenWidth,
-                        .height = screenHeight};
+        OutlineRect& outline_rect =
+            fumo_engine->ECS->get_component<OutlineRect>(id_planet);
+        outline_rect.outline_rect = {.x = 0.0f,
+                                     .y = 0.0f,
+                                     .width = screenWidth,
+                                     .height = screenHeight};
     }
-    // {
-    //     // make first planet that owns the player
-    //     EntityId id_planet = planet_factory->create_rect_planet(
-    //         {starter_position.x - screenWidth * 3, starter_position.y});
-    //
-    //     auto& player_state =
-    //         global->ECS->get_component<EntityState>(global->player_id);
-    //     player_state.player_owning_field = id_planet + 1;
-    //
-    //     FumoRect& rect_planet = global->ECS->get_component<FumoRect>(id_planet);
-    //     rect_planet.width = rect_planet.width * 100;
-    //     previous_width = rect_planet.width;
-    //
-    //     ParallelGravityField& rect_field =
-    //         global->ECS->get_component<ParallelGravityField>(id_planet + 1);
-    //     rect_field.field_fumo_rect.width = rect_planet.width;
-    // }
+    {
+        // make first planet that owns the player
+        EntityId id_planet = planet_factory->create_rect_planet(
+            {starter_position.x, starter_position.y});
+
+        auto& player_state = fumo_engine->ECS->get_component<EntityState>(
+            fumo_engine->player_id);
+        player_state.player_owning_field = id_planet + 1;
+
+        FumoRect& rect_planet =
+            fumo_engine->ECS->get_component<FumoRect>(id_planet);
+        rect_planet.width = screenWidth;
+        previous_width = rect_planet.width;
+
+        ParallelGravityField& rect_field =
+            fumo_engine->ECS->get_component<ParallelGravityField>(id_planet
+                                                                  + 1);
+        rect_field.field_fumo_rect.width = rect_planet.width;
+    }
 }
 
 void screen_border_lines() {
-    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+    const auto& planet_factory =
+        fumo_engine->ECS->get_system<LevelEntityFactory>();
 
     {
         EntityId id_planet = planet_factory->create_rect(starter_position);
-        global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
+        fumo_engine->ECS->entity_add_component(id_planet, OutlineRect {});
 
         FumoRect& outline_rect =
-            global->ECS->get_component<FumoRect>(id_planet);
+            fumo_engine->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = 0.0f,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -62,10 +65,10 @@ void screen_border_lines() {
     }
     {
         EntityId id_planet = planet_factory->create_rect(starter_position);
-        global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
+        fumo_engine->ECS->entity_add_component(id_planet, OutlineRect {});
 
         FumoRect& outline_rect =
-            global->ECS->get_component<FumoRect>(id_planet);
+            fumo_engine->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = screenWidth,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -73,10 +76,10 @@ void screen_border_lines() {
     }
     {
         EntityId id_planet = planet_factory->create_rect(starter_position);
-        global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
+        fumo_engine->ECS->entity_add_component(id_planet, OutlineRect {});
 
         FumoRect& outline_rect =
-            global->ECS->get_component<FumoRect>(id_planet);
+            fumo_engine->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = screenWidth * 2,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -84,10 +87,10 @@ void screen_border_lines() {
     }
     {
         EntityId id_planet = planet_factory->create_rect(starter_position);
-        global->ECS->entity_add_component(id_planet, OutlineRectFlag {});
+        fumo_engine->ECS->entity_add_component(id_planet, OutlineRect {});
 
         FumoRect& outline_rect =
-            global->ECS->get_component<FumoRect>(id_planet);
+            fumo_engine->ECS->get_component<FumoRect>(id_planet);
         outline_rect = {.x = screenWidth * 3,
                         .y = 0.0f,
                         .width = screenWidth,
@@ -180,7 +183,8 @@ void screen_border_lines() {
 }
 
 void make_some_rects() {
-    const auto& planet_factory = global->ECS->get_system<LevelEntityFactory>();
+    const auto& planet_factory =
+        fumo_engine->ECS->get_system<LevelEntityFactory>();
 
     {
         // make first planet that owns the player
@@ -190,16 +194,17 @@ void make_some_rects() {
         EntityId field_id = planet_factory->create_rect_field(
             {starter_position.x - screenWidth * 3,
              starter_position.y - RECT_HEIGHT});
-        auto& player_state =
-            global->ECS->get_component<EntityState>(global->player_id);
+        auto& player_state = fumo_engine->ECS->get_component<EntityState>(
+            fumo_engine->player_id);
         player_state.player_owning_field = field_id;
 
-        FumoRect& rect_planet = global->ECS->get_component<FumoRect>(id_planet);
+        FumoRect& rect_planet =
+            fumo_engine->ECS->get_component<FumoRect>(id_planet);
         rect_planet.width = rect_planet.width * 100;
         previous_width = rect_planet.width;
 
         ParallelGravityField& rect_field =
-            global->ECS->get_component<ParallelGravityField>(field_id);
+            fumo_engine->ECS->get_component<ParallelGravityField>(field_id);
         rect_field.field_fumo_rect.width = rect_planet.width;
     }
 
@@ -208,7 +213,7 @@ void make_some_rects() {
 
         EntityId id_planet = planet_factory->create_rect(starter_position);
         FumoRect& no_grav_rect =
-            global->ECS->get_component<FumoRect>(id_planet);
+            fumo_engine->ECS->get_component<FumoRect>(id_planet);
 
         previous_width = no_grav_rect.width;
     }

@@ -1,72 +1,11 @@
 {
-    "entity_id": 27,
-    "component_mask": 50963,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 377.8089599609375,
-            "value1": 589.63818359375
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false
-    },
-    "Circle": {
-        "value0": 200.0
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
-        }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 377.8089599609375,
-            "value1": 589.63818359375
-        },
-        "value3": {
-            "value0": -0.6342277526855469,
-            "value1": -0.7731463313102722
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 1
-    },
     "entity_id": 28,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 1860.0,
-            "value1": -590.0
+            "value0": 377.8089599609375,
+            "value1": 589.63818359375
         },
         "value2": {
             "value0": 0.0,
@@ -97,12 +36,12 @@
         "value0": 450.0,
         "value1": 900.0,
         "value2": {
-            "value0": 1860.0,
-            "value1": -590.0
+            "value0": 377.8089599609375,
+            "value1": 589.63818359375
         },
         "value3": {
-            "value0": 0.0,
-            "value1": 0.0
+            "value0": -0.996361255645752,
+            "value1": 0.08522942662239075
         }
     },
     "ColliderObjectFlag": {
@@ -122,6 +61,67 @@
         "value0": 1
     },
     "entity_id": 29,
+    "component_mask": 50963,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": 1860.0,
+            "value1": -590.0
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false
+    },
+    "Circle": {
+        "value0": 200.0
+    },
+    "Render": {
+        "value0": {
+            "value0": 0,
+            "value1": 121,
+            "value2": 241,
+            "value3": 255
+        }
+    },
+    "CircularGravityField": {
+        "value0": 450.0,
+        "value1": 900.0,
+        "value2": {
+            "value0": 1860.0,
+            "value1": -590.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "GravFieldFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 1
+    },
+    "entity_id": 30,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
@@ -182,74 +182,13 @@
     "LevelId": {
         "value0": 1
     },
-    "entity_id": 30,
-    "component_mask": 50963,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 2760.0,
-            "value1": -590.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false
-    },
-    "Circle": {
-        "value0": 200.0
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
-        }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 2760.0,
-            "value1": -590.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 1
-    },
     "entity_id": 31,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 3660.0,
-            "value1": 310.0
+            "value0": 2760.0,
+            "value1": -590.0
         },
         "value2": {
             "value0": 0.0,
@@ -280,8 +219,8 @@
         "value0": 450.0,
         "value1": 900.0,
         "value2": {
-            "value0": 3660.0,
-            "value1": 310.0
+            "value0": 2760.0,
+            "value1": -590.0
         },
         "value3": {
             "value0": 0.0,
@@ -310,6 +249,67 @@
         "value0": 0.0,
         "value1": {
             "value0": 3660.0,
+            "value1": 310.0
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false
+    },
+    "Circle": {
+        "value0": 200.0
+    },
+    "Render": {
+        "value0": {
+            "value0": 0,
+            "value1": 121,
+            "value2": 241,
+            "value3": 255
+        }
+    },
+    "CircularGravityField": {
+        "value0": 450.0,
+        "value1": 900.0,
+        "value2": {
+            "value0": 3660.0,
+            "value1": 310.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "GravFieldFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 1
+    },
+    "entity_id": 33,
+    "component_mask": 50963,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": 3660.0,
             "value1": -590.0
         },
         "value2": {
@@ -365,74 +365,13 @@
     "LevelId": {
         "value0": 1
     },
-    "entity_id": 33,
-    "component_mask": 50963,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 4560.0,
-            "value1": 310.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false
-    },
-    "Circle": {
-        "value0": 200.0
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
-        }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 4560.0,
-            "value1": 310.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 1
-    },
     "entity_id": 34,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
             "value0": 4560.0,
-            "value1": -590.0
+            "value1": 310.0
         },
         "value2": {
             "value0": 0.0,
@@ -464,7 +403,7 @@
         "value1": 900.0,
         "value2": {
             "value0": 4560.0,
-            "value1": -590.0
+            "value1": 310.0
         },
         "value3": {
             "value0": 0.0,
@@ -492,8 +431,8 @@
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 5460.0,
-            "value1": 310.0
+            "value0": 4560.0,
+            "value1": -590.0
         },
         "value2": {
             "value0": 0.0,
@@ -524,8 +463,8 @@
         "value0": 450.0,
         "value1": 900.0,
         "value2": {
-            "value0": 5460.0,
-            "value1": 310.0
+            "value0": 4560.0,
+            "value1": -590.0
         },
         "value3": {
             "value0": 0.0,
@@ -554,6 +493,67 @@
         "value0": 0.0,
         "value1": {
             "value0": 5460.0,
+            "value1": 310.0
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false
+    },
+    "Circle": {
+        "value0": 200.0
+    },
+    "Render": {
+        "value0": {
+            "value0": 0,
+            "value1": 121,
+            "value2": 241,
+            "value3": 255
+        }
+    },
+    "CircularGravityField": {
+        "value0": 450.0,
+        "value1": 900.0,
+        "value2": {
+            "value0": 5460.0,
+            "value1": 310.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "GravFieldFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 1
+    },
+    "entity_id": 37,
+    "component_mask": 50963,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": 5460.0,
             "value1": -590.0
         },
         "value2": {
@@ -609,74 +609,13 @@
     "LevelId": {
         "value0": 1
     },
-    "entity_id": 37,
-    "component_mask": 50963,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 6360.0,
-            "value1": 310.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false
-    },
-    "Circle": {
-        "value0": 200.0
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
-        }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 6360.0,
-            "value1": 310.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 1
-    },
     "entity_id": 38,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
             "value0": 6360.0,
-            "value1": -590.0
+            "value1": 310.0
         },
         "value2": {
             "value0": 0.0,
@@ -708,7 +647,7 @@
         "value1": 900.0,
         "value2": {
             "value0": 6360.0,
-            "value1": -590.0
+            "value1": 310.0
         },
         "value3": {
             "value0": 0.0,
@@ -736,8 +675,8 @@
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 7260.0,
-            "value1": 310.0
+            "value0": 6360.0,
+            "value1": -590.0
         },
         "value2": {
             "value0": 0.0,
@@ -768,8 +707,8 @@
         "value0": 450.0,
         "value1": 900.0,
         "value2": {
-            "value0": 7260.0,
-            "value1": 310.0
+            "value0": 6360.0,
+            "value1": -590.0
         },
         "value3": {
             "value0": 0.0,
@@ -798,6 +737,67 @@
         "value0": 0.0,
         "value1": {
             "value0": 7260.0,
+            "value1": 310.0
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false
+    },
+    "Circle": {
+        "value0": 200.0
+    },
+    "Render": {
+        "value0": {
+            "value0": 0,
+            "value1": 121,
+            "value2": 241,
+            "value3": 255
+        }
+    },
+    "CircularGravityField": {
+        "value0": 450.0,
+        "value1": 900.0,
+        "value2": {
+            "value0": 7260.0,
+            "value1": 310.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "GravFieldFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 1
+    },
+    "entity_id": 41,
+    "component_mask": 50963,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
+            "value0": 7260.0,
             "value1": -590.0
         },
         "value2": {
@@ -853,74 +853,13 @@
     "LevelId": {
         "value0": 1
     },
-    "entity_id": 41,
-    "component_mask": 50963,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 8160.0,
-            "value1": 310.0
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false
-    },
-    "Circle": {
-        "value0": 200.0
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
-        }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 8160.0,
-            "value1": 310.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 1
-    },
     "entity_id": 42,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
             "value0": 8160.0,
-            "value1": -590.0
+            "value1": 310.0
         },
         "value2": {
             "value0": 0.0,
@@ -952,7 +891,7 @@
         "value1": 900.0,
         "value2": {
             "value0": 8160.0,
-            "value1": -590.0
+            "value1": 310.0
         },
         "value3": {
             "value0": 0.0,
@@ -980,6 +919,67 @@
     "Body": {
         "value0": 0.0,
         "value1": {
+            "value0": 8160.0,
+            "value1": -590.0
+        },
+        "value2": {
+            "value0": 0.0,
+            "value1": 0.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 1.0
+        },
+        "value4": {
+            "value0": -1.0,
+            "value1": 0.0
+        },
+        "value5": false
+    },
+    "Circle": {
+        "value0": 200.0
+    },
+    "Render": {
+        "value0": {
+            "value0": 0,
+            "value1": 121,
+            "value2": 241,
+            "value3": 255
+        }
+    },
+    "CircularGravityField": {
+        "value0": 450.0,
+        "value1": 900.0,
+        "value2": {
+            "value0": 8160.0,
+            "value1": -590.0
+        },
+        "value3": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "ColliderObjectFlag": {
+        "value0": 0
+    },
+    "GravFieldFlag": {
+        "value0": 0
+    },
+    "Screen": {
+        "value0": 0,
+        "value1": {
+            "value0": 0.0,
+            "value1": 0.0
+        }
+    },
+    "LevelId": {
+        "value0": 1
+    },
+    "entity_id": 44,
+    "component_mask": 50963,
+    "Body": {
+        "value0": 0.0,
+        "value1": {
             "value0": 9060.0,
             "value1": 310.0
         },
@@ -1036,7 +1036,7 @@
     "LevelId": {
         "value0": 1
     },
-    "entity_id": 44,
+    "entity_id": 45,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,

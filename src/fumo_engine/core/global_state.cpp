@@ -7,7 +7,7 @@ void initialize_directories();
 
 }
 
-void GlobalState::setup_game_state() {
+void FumoEngine::setup_game_state() {
     Initialization::initialize_directories();
 
     player_id = PlayerInitializer::initialize_player();

@@ -1,16 +1,16 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/event_components.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 namespace FumoEvent {
 
 void collided(const Event& event) {
     auto& player_state =
-        global->ECS->get_component<EntityState>(event.entity_id);
+        fumo_engine->ECS->get_component<EntityState>(event.entity_id);
 
     CollisionEventData& collided_event =
-        global->ECS->get_component<CollisionEventData>(event.entity_id);
+        fumo_engine->ECS->get_component<CollisionEventData>(event.entity_id);
 
     // reset previous info about corner collision
     player_state.colliding_with_corner = false;

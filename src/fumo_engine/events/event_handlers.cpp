@@ -1,7 +1,7 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/events/event_state_handlers.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void EntityEventHandler::handle_events() {
     std::queue<Event> event_queue_copy(event_queue);

@@ -6,7 +6,7 @@
 #include "objects/player_systems/player_general_systems.hpp"
 #include "raylib.h"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 int key_down_event(const int& Key, const EVENT_& event, const EntityId& id);
 int key_pressed_event(const int& Key, const EVENT_& event, const EntityId& id);
 int dash_key_check(const int& Key,
@@ -55,12 +55,12 @@ int peidros_cool_dash(const EntityId& player_id, EntityState& player_state) {
 }
 
 void PlayerInputHandler::handle_input() {
-    const auto& player_id = global->player_id;
-    auto& player_body = global->ECS->get_component<Body>(player_id);
+    const auto& player_id = fumo_engine->player_id;
+    auto& player_body = fumo_engine->ECS->get_component<Body>(player_id);
     auto& player_animation =
-        global->ECS->get_component<AnimationInfo>(player_id);
+        fumo_engine->ECS->get_component<AnimationInfo>(player_id);
     auto& player_state =
-        global->ECS->get_component<EntityState>(global->player_id);
+        fumo_engine->ECS->get_component<EntityState>(fumo_engine->player_id);
 
     int key_was_pressed = 0;
 
@@ -106,13 +106,14 @@ void PlayerInputHandler::handle_input() {
     }
 
     if (!key_was_pressed) {
-        global->event_handler->add_event({EVENT_::ENTITY_IDLE, player_id});
+        fumo_engine->event_handler->add_event({EVENT_::ENTITY_IDLE, player_id});
     }
 }
 
 int key_down_event(const int& Key, const EVENT_& event, const EntityId& id) {
     if (IsKeyDown(Key)) {
-        global->event_handler->add_event({.event = event, .entity_id = id});
+        fumo_engine->event_handler->add_event(
+            {.event = event, .entity_id = id});
         return 1;
     }
     return 0;
@@ -120,7 +121,8 @@ int key_down_event(const int& Key, const EVENT_& event, const EntityId& id) {
 
 int key_pressed_event(const int& Key, const EVENT_& event, const EntityId& id) {
     if (IsKeyPressed(Key)) {
-        global->event_handler->add_event({.event = event, .entity_id = id});
+        fumo_engine->event_handler->add_event(
+            {.event = event, .entity_id = id});
         return 1;
     }
     return 0;
@@ -131,8 +133,8 @@ int dash_key_check(const int& Key,
                    const EntityId& entity_id,
                    const DIRECTION& direction) {
     if (IsKeyDown(Key)) {
-        auto& player_state =
-            global->ECS->get_component<EntityState>(global->player_id);
+        auto& player_state = fumo_engine->ECS->get_component<EntityState>(
+            fumo_engine->player_id);
         player_state.input_direction += direction_to_vector(direction);
         return 1;
     }
@@ -146,10 +148,10 @@ int key_down_event_moved(const int& Key,
                          const DIRECTION& direction) {
     if (IsKeyDown(Key)) {
         auto& moved_event =
-            global->ECS->get_component<MovedEventData>(entity_id);
+            fumo_engine->ECS->get_component<MovedEventData>(entity_id);
         moved_event.direction = direction;
 
-        global->event_handler->add_event(
+        fumo_engine->event_handler->add_event(
             {.event = event,
              .entity_id = entity_id,
              .delegate_system =
@@ -162,11 +164,11 @@ int key_down_event_moved(const int& Key,
     //     delegate->entity_id = entity_id;
     //     return delegate;
     // };
-    // const auto& moved_wrapper = global->ECS->get_system<MovedWrapper>();
+    // const auto& moved_wrapper = fumo_engine->ECS->get_system<MovedWrapper>();
     // moved_wrapper->entity_id = entity_id;
-    // auto& moved_event = global->ECS->get_component<MovedEventData>(entity_id);
+    // auto& moved_event = fumo_engine->ECS->get_component<MovedEventData>(entity_id);
     // moved_event.direction = direction;
-    // global->event_handler->add_event({.event = event,
+    // fumo_engine->event_handler->add_event({.event = event,
     //                                   .entity_id = entity_id,
     //                                   .delegate_system = moved_wrapper});
     // return 1;

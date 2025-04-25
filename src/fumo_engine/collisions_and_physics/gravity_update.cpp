@@ -5,16 +5,18 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_raylib.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void GravityUpdater::gravity_update() {
-    auto& player_body = global->ECS->get_component<Body>(global->player_id);
-    update_gravity(global->player_id, player_body);
+    auto& player_body =
+        fumo_engine->ECS->get_component<Body>(fumo_engine->player_id);
+    update_gravity(fumo_engine->player_id, player_body);
 }
 
 void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     // NOTE: points towards the planet's planet_body
-    auto& player_state = global->ECS->get_component<EntityState>(entity_id);
+    auto& player_state =
+        fumo_engine->ECS->get_component<EntityState>(entity_id);
 
     if (player_state.player_owning_field == NO_ENTITY_FOUND
         || player_state.player_owning_field == 0) {
@@ -26,10 +28,10 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     EntityId planet_id = player_state.player_owning_field;
     EntityQuery query_parallel {
         .component_mask =
-            global->ECS->make_component_mask<ParallelGravityField>(),
+            fumo_engine->ECS->make_component_mask<ParallelGravityField>(),
         .component_filter = Filter::All};
 
-    const auto& body_planet = global->ECS->get_component<Body>(planet_id);
+    const auto& body_planet = fumo_engine->ECS->get_component<Body>(planet_id);
     FumoVec2 gravity_direction {};
 
     // --------------------------------------------------------------------
@@ -37,15 +39,15 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     // the player expectation of what right and left should be
     EntityQuery skip_parallel {
         .component_mask =
-            global->ECS->make_component_mask<ParallelGravityField>(),
+            fumo_engine->ECS->make_component_mask<ParallelGravityField>(),
         .component_filter = Filter::None};
 
     // --------------------------------------------------------------------
 
-    if (global->ECS->filter(planet_id, query_parallel)) {
+    if (fumo_engine->ECS->filter(planet_id, query_parallel)) {
         // methods for parallel gravity fields
         auto& parallel_field =
-            global->ECS->get_component<ParallelGravityField>(planet_id);
+            fumo_engine->ECS->get_component<ParallelGravityField>(planet_id);
         parallel_field.update_gravity(player_body);
 
         gravity_direction = parallel_field.gravity_direction;
@@ -53,9 +55,9 @@ void GravityUpdater::update_gravity(EntityId entity_id, Body& player_body) {
     } else {
         // methods for circular gravity fields
         auto& circular_field =
-            global->ECS->get_component<CircularGravityField>(planet_id);
+            fumo_engine->ECS->get_component<CircularGravityField>(planet_id);
         const auto& circle_shape =
-            global->ECS->get_component<Circle>(planet_id);
+            fumo_engine->ECS->get_component<Circle>(planet_id);
         circular_field.update_gravity(player_body, body_planet);
 
         gravity_direction = circular_field.gravity_direction;
@@ -139,4 +141,4 @@ void CircularGravityField::update_gravity(Body& player_body,
 //
 // FumoVec2 acceleration = gravity_direction * gravity_strength * factor;
 //
-// player_body.velocity += acceleration * global->frametime;
+// player_body.velocity += acceleration * fumo_engine->frametime;

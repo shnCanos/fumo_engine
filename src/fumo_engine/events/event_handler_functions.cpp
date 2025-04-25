@@ -4,14 +4,14 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "objects/generic_systems/systems.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 namespace FumoEvent {
 
 void jumped(const Event& event) {
-    auto& player_body = global->ECS->get_component<Body>(event.entity_id);
+    auto& player_body = fumo_engine->ECS->get_component<Body>(event.entity_id);
     auto& player_state =
-        global->ECS->get_component<EntityState>(event.entity_id);
+        fumo_engine->ECS->get_component<EntityState>(event.entity_id);
 
     if (!player_state.can_jump) {
         return;
@@ -33,9 +33,9 @@ void jumped(const Event& event) {
 
 void idle(const Event& event) {
     auto& player_animation =
-        global->ECS->get_component<AnimationInfo>(event.entity_id);
+        fumo_engine->ECS->get_component<AnimationInfo>(event.entity_id);
     auto& player_state =
-        global->ECS->get_component<EntityState>(event.entity_id);
+        fumo_engine->ECS->get_component<EntityState>(event.entity_id);
 
     if (player_state.on_ground) {
         AnimationPlayer::play(player_animation, "idle");
@@ -44,22 +44,23 @@ void idle(const Event& event) {
     // reset moved_wrapper so we can allow for smoother controls,
     // whilc also not breaking the direction of the movement when we stop
     EntityQuery query_moved_event {
-        .component_mask = global->ECS->make_component_mask<MovedEventData>(),
+        .component_mask =
+            fumo_engine->ECS->make_component_mask<MovedEventData>(),
         .component_filter = Filter::All};
 
-    if (global->ECS->filter(event.entity_id, query_moved_event)) {
+    if (fumo_engine->ECS->filter(event.entity_id, query_moved_event)) {
         auto& moved_event_data =
-            global->ECS->get_component<MovedEventData>(event.entity_id);
+            fumo_engine->ECS->get_component<MovedEventData>(event.entity_id);
         moved_event_data.previous_direction = DIRECTION::NO_DIRECTION;
     }
 }
 
 void swapped_orbits(const Event& event) {
     auto& player_state =
-        global->ECS->get_component<EntityState>(event.entity_id);
+        fumo_engine->ECS->get_component<EntityState>(event.entity_id);
 
     auto& moved_event =
-        global->ECS->get_component<MovedEventData>(event.entity_id);
+        fumo_engine->ECS->get_component<MovedEventData>(event.entity_id);
 
     // moved_event.direction = opposite_direction(moved_event.direction);
     // moved_event.continue_in_direction = moved_event.direction;
@@ -69,11 +70,11 @@ void swapped_orbits(const Event& event) {
 }
 
 void dashed(const Event& event) {
-    auto& player_body = global->ECS->get_component<Body>(event.entity_id);
+    auto& player_body = fumo_engine->ECS->get_component<Body>(event.entity_id);
     auto& player_state =
-        global->ECS->get_component<EntityState>(event.entity_id);
+        fumo_engine->ECS->get_component<EntityState>(event.entity_id);
     auto& player_animation =
-        global->ECS->get_component<AnimationInfo>(event.entity_id);
+        fumo_engine->ECS->get_component<AnimationInfo>(event.entity_id);
 
     // FIXME: can double dash if dashing from the floor
     // maybe fix by being smart!
@@ -130,10 +131,11 @@ DIRECTION find_real_direction(DIRECTION direction, const Body& body) {
 }
 
 void MovedWrapper::moved_event() {
-    auto& player_body = global->ECS->get_component<Body>(entity_id);
-    auto& player_state = global->ECS->get_component<EntityState>(entity_id);
+    auto& player_body = fumo_engine->ECS->get_component<Body>(entity_id);
+    auto& player_state =
+        fumo_engine->ECS->get_component<EntityState>(entity_id);
     auto& move_event_data =
-        global->ECS->get_component<MovedEventData>(entity_id);
+        fumo_engine->ECS->get_component<MovedEventData>(entity_id);
 
     const auto& grav_direction = player_body.dash_gravity_direction;
     const auto& rotation = player_body.rotation;

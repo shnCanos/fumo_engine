@@ -3,7 +3,7 @@
 #include "fumo_engine/collisions_and_physics/collision_runner.hpp"
 #include "fumo_engine/core/global_state.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 #define FIX_CORNER_ISSUES() \
     do { \
@@ -30,7 +30,7 @@ void StateHandler::dash_state_handler(Body& player_body,
         player_state.can_jump = false;
         player_state.jumping = false;
 
-        player_state.dash_time += global->frametime;
+        player_state.dash_time += fumo_engine->frametime;
         float pos_progress = player_state.dash_time / DASH_DURATION;
 
         if (pos_progress > 1) pos_progress = 1;
@@ -43,7 +43,7 @@ void StateHandler::dash_state_handler(Body& player_body,
             + (player_state.dash_end - player_state.dash_start) * pos_progress;
 
         const auto& collision_runner =
-            global->ECS->get_system<CollisionRunner>();
+            fumo_engine->ECS->get_system<CollisionRunner>();
         const Collision& collision = collision_runner->check_raycast_line(
             {.start = previous_pos, .end = new_pos});
         FumoVec2 new_velocity = new_pos - previous_pos;
@@ -56,10 +56,10 @@ void StateHandler::dash_state_handler(Body& player_body,
             // }
         }
 
-        player_body.velocity = new_velocity / global->frametime;
+        player_body.velocity = new_velocity / fumo_engine->frametime;
 
         // PRINT(collision.collided)
-        // BeginMode2D(*global->camera);
+        // BeginMode2D(*fumo_engine->camera);
         // FumoDrawLineEx(previous_pos, new_pos, 20.0f, FUMO_GOLD);
         // FumoDrawCircleV(collision.intersection_point, 200.0f, FUMO_GREEN);
 

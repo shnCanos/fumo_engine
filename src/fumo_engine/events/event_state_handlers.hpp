@@ -7,7 +7,7 @@
 // NOTE: while this is ONLY for the player,
 // this class might be generalized to any entity in the future
 class EntityEventHandler {
-    friend class GlobalState;
+    friend class FumoEngine;
 
   private:
     std::queue<Event> event_queue {};

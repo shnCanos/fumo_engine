@@ -1,7 +1,7 @@
 #include "constants/movement_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
 
-extern std::unique_ptr<GlobalState> global;
+extern std::unique_ptr<FumoEngine> fumo_engine;
 
 void StateHandler::jump_and_gravity_state_handler(
     Body& player_body,
@@ -50,7 +50,7 @@ void StateHandler::jump_and_gravity_state_handler(
 
     // apply gravity changes
     FumoVec2 acceleration = gravity_direction * gravity_strength * factor;
-    player_body.velocity += acceleration * global->frametime;
+    player_body.velocity += acceleration * fumo_engine->frametime;
 
     // update animation when nothing is happening so it looks nicer
     if (!player_state.idle) {

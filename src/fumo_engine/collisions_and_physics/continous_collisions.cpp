@@ -17,9 +17,9 @@ calculate_sub_rectangles(const FumoRect& fumo_rect,
     // FIXME: remove this update later when not debugging
     //
     // UpdateCameraCenterSmoothFollow(
-    //     global->camera.get(),
-    //     global->ECS->get_component<Body>(global->player_id));
-    // BeginMode2D(*global->camera);
+    //     fumo_engine->camera.get(),
+    //     fumo_engine->ECS->get_component<Body>(fumo_engine->player_id));
+    // BeginMode2D(*fumo_engine->camera);
     // FumoDrawRectV(fumo_rect_body.position,
     //               {fumo_rect.width, fumo_rect.height},
     //               FUMO_RED);
@@ -85,7 +85,7 @@ void calculate_collided_region(Collision& collision,
                                const Capsule& player_capsule) {
     // TODO: add all 8 points of the capsule (for more complete collision info)
 
-    // BeginMode2D(*global->camera);
+    // BeginMode2D(*fumo_engine->camera);
     // FumoDrawCircleV(collision.intersection_point, 10.0f, FUMO_GREEN);
     // EndMode2D();
     FumoVec2 closest = closest_point(collision.intersection_point,
