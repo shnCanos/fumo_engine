@@ -1,9 +1,9 @@
 #pragma once
-constexpr static float default_grav_strength = 900.0f;
-constexpr static float default_gravity_reach = 150.0f;
-constexpr static int default_rect_width = 200.0f;
-constexpr static int default_rect_height = 200.0f;
+constexpr static float GRAV_STRENGTH = 900.0f;
+constexpr static float GRAV_REACH = 150.0f;
+constexpr static int RECT_WIDTH = 200.0f;
+constexpr static int RECT_HEIGHT = 200.0f;
 
-constexpr static float default_radius = 50.0f;
-constexpr static float default_planet_radius = 150.0f;
+constexpr static float CIRCLE_RADIUS = 50.0f;
 
+constexpr static float MINIMUM_OBJECT_SIZE = 10.0f;

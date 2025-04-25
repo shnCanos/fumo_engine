@@ -1,7 +1,7 @@
 #include "constants/fumo_raylib_constants.hpp"
 #include "constants/planet_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
-#include "objects/generic_systems/factory_systems.hpp"
+#include "objects/factory_systems/factory_systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -188,7 +188,8 @@ void make_some_rects() {
             {starter_position.x - screenWidth * 3, starter_position.y});
 
         EntityId field_id = planet_factory->create_rect_field(
-            {starter_position.x - screenWidth * 3, starter_position.y - default_rect_height});
+            {starter_position.x - screenWidth * 3,
+             starter_position.y - RECT_HEIGHT});
         auto& player_state =
             global->ECS->get_component<EntityState>(global->player_id);
         player_state.player_owning_field = field_id;

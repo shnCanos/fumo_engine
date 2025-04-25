@@ -1,6 +1,6 @@
 #pragma once
-constexpr static float movement_scaling = 185.0f;
-constexpr static float jump_scaling = 1500.0f;
-constexpr static float dash_length = 360.0f;
-constexpr static float dash_duration = 0.35f;
-constexpr static float jump_speed_cap = 800.f;
+constexpr static float MOVEMENT_SCALING = 185.0f;
+constexpr static float JUMP_SCALING = 1500.0f;
+constexpr static float DASH_LENGTH = 360.0f;
+constexpr static float DASH_DURATION = 0.35f;
+constexpr static float JUMP_SPEED_CAP = 800.f;

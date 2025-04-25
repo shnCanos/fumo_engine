@@ -58,10 +58,10 @@ void StateHandler::movement_state_handler(Body& player_body,
 
     float dot_vel = player_body.get_real_dot_y_velocity();
     // not sure if we want to ignore this when dashing
-    if (dot_vel >= jump_speed_cap && !player_state.dashing) {
+    if (dot_vel >= JUMP_SPEED_CAP && !player_state.dashing) {
         player_body.velocity =
             FumoVec2Normalize(player_body.get_real_y_velocity())
-                * jump_speed_cap
+                * JUMP_SPEED_CAP
             + player_body.get_real_x_velocity();
     }
 

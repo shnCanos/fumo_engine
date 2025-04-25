@@ -16,6 +16,7 @@ extern std::unique_ptr<GlobalState> global;
     FumoDrawLineV(BottomLeft, BottomRight, FUMO_GREEN);
 
 void ObjectRenderer::draw_planets() {
+    DrawFPS(10, 10);
     BeginMode2D(*global->camera);
 
     EntityQuery circle_query {.component_mask =

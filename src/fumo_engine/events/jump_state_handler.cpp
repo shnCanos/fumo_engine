@@ -26,11 +26,11 @@ void StateHandler::jump_and_gravity_state_handler(
         bool going_up = jump_amount < 0;
 
         if (going_up) {
-            float jump_progress = 1 + jump_amount / jump_scaling;
+            float jump_progress = 1 + jump_amount / JUMP_SCALING;
             // PRINT("jumping up");
             // PRINT(jump_progress);
         } else {
-            float jump_progress = jump_amount / jump_speed_cap;
+            float jump_progress = jump_amount / JUMP_SPEED_CAP;
             // PRINT("jumping down");
             // PRINT(jump_progress);
 

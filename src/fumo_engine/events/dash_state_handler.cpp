@@ -31,7 +31,7 @@ void StateHandler::dash_state_handler(Body& player_body,
         player_state.jumping = false;
 
         player_state.dash_time += global->frametime;
-        float pos_progress = player_state.dash_time / dash_duration;
+        float pos_progress = player_state.dash_time / DASH_DURATION;
 
         if (pos_progress > 1) pos_progress = 1;
 
@@ -69,7 +69,7 @@ void StateHandler::dash_state_handler(Body& player_body,
         //                FUMO_PINK);
         // EndMode2D();
 
-        if (player_state.dash_time > dash_duration)
+        if (player_state.dash_time > DASH_DURATION)
             player_state.dashing = false;
 
         if (player_animation.frame_progress

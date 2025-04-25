@@ -125,14 +125,14 @@ void weird_debug_print(std::pair<float, FumoVec2> closest_pair,
     if (closest_pair.first == 0.0f) {
     } else if (closest_pair.first == bottom_pair.first) {
         DrawCircleV(bottom_pair.second.to_raylib_vec2(),
-                    default_radius,
+                    CIRCLE_RADIUS,
                     MAGENTA);
     } else if (closest_pair.first == left_pair.first) {
-        DrawCircleV(left_pair.second.to_raylib_vec2(), default_radius, ORANGE);
+        DrawCircleV(left_pair.second.to_raylib_vec2(), CIRCLE_RADIUS, ORANGE);
     } else if (closest_pair.first == right_pair.first) {
-        DrawCircleV(right_pair.second.to_raylib_vec2(), default_radius, PURPLE);
+        DrawCircleV(right_pair.second.to_raylib_vec2(), CIRCLE_RADIUS, PURPLE);
     } else if (closest_pair.first == top_pair.first) {
-        DrawCircleV(top_pair.second.to_raylib_vec2(), default_radius, SKYBLUE);
+        DrawCircleV(top_pair.second.to_raylib_vec2(), CIRCLE_RADIUS, SKYBLUE);
     }
     EndMode2D();
 }

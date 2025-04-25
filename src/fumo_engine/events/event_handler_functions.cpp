@@ -2,6 +2,7 @@
 
 #include "constants/movement_constants.hpp"
 #include "fumo_engine/core/global_state.hpp"
+#include "objects/generic_systems/systems.hpp"
 
 extern std::unique_ptr<GlobalState> global;
 
@@ -97,10 +98,10 @@ void dashed(const Event& event) {
         // for easing
         player_state.dash_start = player_body.position;
         player_state.dash_end =
-            player_state.dash_start + direction * dash_length;
+            player_state.dash_start + direction * DASH_LENGTH;
 
         player_state.fixed_dash_end =
-            player_body.position + direction * dash_length;
+            player_body.position + direction * DASH_LENGTH;
         player_state.dash_time = 0;
         player_state.dashes_left--;
     }

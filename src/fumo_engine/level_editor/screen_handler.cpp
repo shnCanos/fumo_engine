@@ -1,4 +1,4 @@
-#include "fumo_engine/level_systems/screen_handler.hpp"
+#include "fumo_engine/level_editor/screen_handler.hpp"
 
 #include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/core/global_state.hpp"
@@ -28,9 +28,9 @@ void ScreenTransitionHandler::check_for_screen_transition() {
 
         const auto& collision =
             Collisions::CapsuleToRectCollision(player_capsule,
-                                              player_body,
-                                              transition_rect.transition_rect,
-                                              body);
+                                               player_body,
+                                               transition_rect.transition_rect,
+                                               body);
         if (collision.overlap) {
             // if overlap != 0, then there was a collision
             global->event_handler->add_event(

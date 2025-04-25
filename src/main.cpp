@@ -43,7 +43,6 @@ int main(void) {
             level_serializer->deserialize_levels();
         }
 
-        DrawFPS(10, 10);
         EndDrawing();
     }
     //--------------------------------------------------------------------------------------
