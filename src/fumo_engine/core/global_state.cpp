@@ -8,8 +8,9 @@ void initialize_directories();
 }
 
 void FumoEngine::setup_game_state() {
-    Initialization::initialize_directories();
+    SetTargetFPS(60);
 
+    Initialization::initialize_directories();
     player_id = PlayerInitializer::initialize_player();
 
     camera = std::make_unique<Camera2D>();

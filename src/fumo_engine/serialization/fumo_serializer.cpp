@@ -172,9 +172,7 @@ void deserialize_entity(cereal::JSONInputArchive& in_archive) {
     }
 }
 
-} // namespace FumoSerializer
-
-void LevelSerializer::deserialize_levels() {
+void deserialize_levels() {
     // assumes we are in the serialized_data/ directory
 
     // entities are deserialized with new entity_ids that are
@@ -212,3 +210,5 @@ void LevelSerializer::deserialize_levels() {
         }
     }
 }
+
+} // namespace FumoSerializer

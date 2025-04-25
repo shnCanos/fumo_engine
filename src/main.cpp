@@ -1,5 +1,6 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/serialization/fumo_serializer.hpp"
+#include "initialization.hpp"
 #include "raylib.h"
 
 std::unique_ptr<FumoEngine> fumo_engine;
@@ -7,32 +8,29 @@ std::unique_ptr<FumoEngine> fumo_engine;
 ALL_COMPONENTS_X_MACRO()
 #undef XMACRO
 
-void register_all_to_ECS();
-void initialize_all_textures();
 void debug_spawn_level_objects();
 
 int main(void) {
-    InitWindow(screenWidth, screenHeight, "THIS... is a BUCKET.");
+    int count = 0;
 
+    Initialization::initialize_window();
+
+    //--------------------------------------------------------------------------------------
     fumo_engine = std::make_unique<FumoEngine>();
     fumo_engine->initialize();
     //--------------------------------------------------------------------------------------
     // must be done before fumo_engine->setup_game_state();
-    initialize_all_textures();
-    // all components must be added to ALL_COMPONENTS_X_MACRO()
+    Initialization::initialize_all_textures();
+    // all components MUST be added to ALL_COMPONENTS_X_MACRO()
     // to be registered into fumo_engine
-    register_all_to_ECS();
+    Initialization::register_all_to_fumo_engine();
     //--------------------------------------------------------------------------------------
-
     fumo_engine->setup_game_state();
-
-    SetTargetFPS(60);
-    int count = 0;
-
+    FumoSerializer::deserialize_levels();
+    //--------------------------------------------------------------------------------------
     while (!WindowShouldClose()) {
         ClearBackground(BLACK);
         BeginDrawing();
-
         fumo_engine->frametime = GetFrameTime();
 
         fumo_engine->ECS->run_systems();
@@ -40,21 +38,16 @@ int main(void) {
         fumo_engine->handle_events();
 
         // here because we start with no planets right now (remove when we make levels)
-        if (!count) [[unlikely]] {
-            count++;
-            // debug_spawn_level_objects();
-            const auto& level_serializer =
-                fumo_engine->ECS->get_system<LevelSerializer>();
-            level_serializer->deserialize_levels();
-        }
-
+        // if (!count) [[unlikely]] {
+        //     count++;
+        //     debug_spawn_level_objects();
+        // }
         EndDrawing();
     }
     //--------------------------------------------------------------------------------------
     // unload textures before closing the OpenGL context
+    // Close window and OpenGL context
     fumo_engine->destroy_and_unload_game();
-
-    CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
     return 0;

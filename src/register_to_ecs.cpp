@@ -1,14 +1,15 @@
 #include "fumo_engine/all_components_macro.hpp"
 #include "fumo_engine/core/global_state.hpp"
 #include "include_systems.hpp"
+#include "initialization.hpp"
 extern std::unique_ptr<FumoEngine> fumo_engine;
+#define XMACRO(Type) extern EntityQuery Type##_query;
+ALL_COMPONENTS_X_MACRO()
+#undef XMACRO
 
-void register_components();
-void register_systems();
-void register_unregistered_systems_unscheduled();
-void register_systems_scheduled();
+namespace Initialization {
 
-void register_all_to_ECS() {
+void register_all_to_fumo_engine() {
     register_components();
     register_systems();
 }
@@ -17,7 +18,6 @@ void register_components() {
 
 // also creates the component's corresponding entity_query globally
 #define XMACRO(Type) \
-    extern EntityQuery Type##_query; \
     fumo_engine->ECS->register_component<Type>(); \
     Type##_query = {.component_mask = \
                         fumo_engine->ECS->make_component_mask<Type>(), \
@@ -110,3 +110,4 @@ void register_unregistered_systems_unscheduled() {
     // the popped event that contains it
     // fumo_engine->ECS->add_unregistered_system_unscheduled<MovedWrapper>();
 }
+} // namespace Initialization

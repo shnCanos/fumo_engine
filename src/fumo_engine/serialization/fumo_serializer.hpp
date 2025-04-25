@@ -6,6 +6,7 @@ namespace FumoSerializer {
 void serialize_entity(const EntityId& entity_id,
                       cereal::JSONOutputArchive& out_archive);
 void deserialize_entity(cereal::JSONInputArchive& in_archive);
+void deserialize_levels();
 
 namespace {
     void deserialize_component_by_id(const EntityId& entity_id,
@@ -13,9 +14,10 @@ namespace {
                                      cereal::JSONInputArchive& in_archive);
 
     template<typename T>
-    [[nodiscard]] T deserialize_component(const std::string& component_name,
-                                          const ComponentId& component_id,
-                                          cereal::JSONInputArchive& in_archive) {
+    [[nodiscard]] T
+    deserialize_component(const std::string& component_name,
+                          const ComponentId& component_id,
+                          cereal::JSONInputArchive& in_archive) {
         T component;
         in_archive(cereal ::make_nvp(component_name, component));
         return component;
@@ -35,5 +37,4 @@ struct LevelSerializer: public System {
     void serialize_levels();
     // goes through the serialized data and assigns ScreenId and LevelId
     // based on where stuff was stored (directory and file name)
-    void deserialize_levels();
 };

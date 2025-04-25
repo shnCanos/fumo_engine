@@ -7,7 +7,7 @@ void DebugLevelEditor::handle_input() {
     fumo_engine->camera->zoom += ((float)GetMouseWheelMove() * 0.05f);
     FumoVec2 mouse_position = to_fumo_vec2(
         GetScreenToWorld2D(GetMousePosition(), *fumo_engine->camera));
-    // DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
+    DrawCircleLinesV(GetMousePosition(), mouse_radius, GREEN);
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         if (IsKeyDown(KEY_R)) {
             drag_resizing(mouse_position);

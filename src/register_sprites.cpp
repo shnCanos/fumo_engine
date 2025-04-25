@@ -1,11 +1,12 @@
 #include "fumo_engine/core/global_state.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
+#include "initialization.hpp"
 #include "raylib.h"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;
 
 // specific segmentation of loads
-void load_player_textures();
+namespace Initialization {
 
 void initialize_all_textures() { load_player_textures(); }
 
@@ -58,6 +59,7 @@ void load_player_textures() {
                              .height = (float)back_sheet.height},
         .looping = true});
 }
+} // namespace Initialization
 
 // void func() {
 //     // AnimationInfo parameters are optional and we should only touch the
