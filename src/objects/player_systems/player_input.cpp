@@ -1,4 +1,4 @@
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/event_components.hpp"
 #include "fumo_raylib.hpp"
 #include "main_functions.hpp"

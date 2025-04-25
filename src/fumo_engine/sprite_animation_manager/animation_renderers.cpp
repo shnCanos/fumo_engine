@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/sprite_animation_manager/sprite_and_animation_systems.hpp"
 #include "raylib.h"
 #include "sprite_and_animation_systems.hpp"

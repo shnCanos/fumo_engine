@@ -1,5 +1,5 @@
 #include "constants/movement_constants.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;
 
@@ -26,6 +26,8 @@ void StateHandler::handle_state(const EntityId& entity_id,
         fumo_engine->ECS->get_component<EntityState>(entity_id);
     auto& moved_event_data =
         fumo_engine->ECS->get_component<MovedEventData>(entity_id);
+
+    // screen_transition_handler(player_state);
 
     // if we face left, then we invert the sprite
     player_body.inverse_direction =

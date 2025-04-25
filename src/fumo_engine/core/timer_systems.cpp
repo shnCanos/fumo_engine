@@ -1,5 +1,5 @@
 
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/core/scheduling_systems.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;

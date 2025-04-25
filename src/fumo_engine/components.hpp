@@ -16,6 +16,8 @@ struct Line {
     SERIALIZE(start, end)
 };
 
+// always run isnt used for fumo engine state, it used for registering systems
+
 struct Body {
 
     float rotation {}; // in degrees

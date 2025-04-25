@@ -1,6 +1,6 @@
 #include "component_renderer.hpp"
 #include "fumo_engine/core/entity_query.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/screen_components.hpp"
 #include "main_functions.hpp"
 

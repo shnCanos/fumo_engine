@@ -1,6 +1,6 @@
 #include "constants/fumo_raylib_constants.hpp"
 #include "constants/planet_constants.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "objects/factory_systems/factory_systems.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;

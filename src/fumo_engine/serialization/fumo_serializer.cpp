@@ -4,7 +4,7 @@
 
 #include "filesystem"
 #include "fumo_engine/all_components_macro.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/screen_components.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;
@@ -202,7 +202,7 @@ void deserialize_levels() {
             } catch (cereal::Exception) {
                 // finished going through file
                 PRINT_NO_NAME(std::format(
-                    "parsed {}.",
+                    "FUMO_SERIALIZER: parsed {}.",
                     (file_name.parent_path().filename() / file_name.filename())
                         .string()));
                 break;

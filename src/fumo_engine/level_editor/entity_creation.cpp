@@ -1,4 +1,4 @@
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/level_editor/level_editor.hpp"
 #include "objects/factory_systems/factory_systems.hpp"
 

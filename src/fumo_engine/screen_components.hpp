@@ -9,8 +9,8 @@ constexpr uint64_t MAX_SCREENS = 256;
 struct Screen {
     // tells us what screen an entity belongs to
     // (wrapping an int with type information)
-    uint64_t screen_id;
-    FumoVec2 screen_position; // screen top left position
+    uint64_t screen_id {0};
+    FumoVec2 screen_position {0.0f, 0.0f}; // screen top left position
     SERIALIZE(screen_id, screen_position);
 };
 

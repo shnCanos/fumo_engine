@@ -9,6 +9,21 @@
 using Priority = uint64_t;
 const Priority NO_PRIORITY = 42069;
 const Priority MAX_PRIORITY = MAX_SYSTEMS;
+enum struct EngineMode { GAMEPLAY, LEVEL_EDITING };
+enum struct SystemMode {
+    GAMEPLAY_RUNNING_ONLY,
+    GAMEPLAY_AND_PAUSED,
+    EDITING_ONLY,
+    ALWAYS_RUN,
+
+};
+enum struct EngineState {
+    GAMEPLAY_RUNNING,
+    GAMEPLAY_PAUSED,
+    EDITING,
+    RUN_ALL_DEBUG,
+    SHOULD_CLOSE
+};
 
 class System {
   public:
@@ -19,6 +34,7 @@ class System {
     // NOTE: new variable, used to disable and enable systems
     bool awake = true;
     Priority priority = NO_PRIORITY;
+    SystemMode system_mode;
     // virtual ~System();
 };
 

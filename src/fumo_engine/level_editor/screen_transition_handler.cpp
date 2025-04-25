@@ -1,7 +1,6 @@
-#include "fumo_engine/level_editor/screen_handler.hpp"
-
 #include "fumo_engine/collisions_and_physics/collision_functions.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
+#include "fumo_engine/level_editor/screen_handler.hpp"
 #include "fumo_engine/screen_components.hpp"
 #include "main_functions.hpp"
 
@@ -19,9 +18,14 @@ void ScreenTransitionHandler::check_for_screen_transition() {
     auto& player_state =
         fumo_engine->ECS->get_component<EntityState>(fumo_engine->player_id);
 
+    if (Vector2Equals(
+            fumo_engine->camera->target,
+            fumo_engine->current_screen.screen_position.to_raylib_vec2())) {
+        fumo_engine->engine_state = EngineState::GAMEPLAY_RUNNING;
+    }
+
     // go through all ScreenTransitionRect
     for (const auto& entity_id : sys_entities) {
-
         const auto& body = fumo_engine->ECS->get_component<Body>(entity_id);
         const auto& transition_rect =
             fumo_engine->ECS->get_component<ScreenTransitionRect>(entity_id);
@@ -62,6 +66,7 @@ void screen_transition(const Event& event) {
         Body {.position = new_screen.screen_position});
     // force the player to free in place until the camera is set
     // with a boolean or a disabling event
-    entity_state.is_changing_screens = true;
+    // entity_state.is_changing_screens = true;
+    fumo_engine->engine_state = EngineState::GAMEPLAY_PAUSED;
 }
 } // namespace FumoEvent

@@ -1,5 +1,5 @@
 #pragma once
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 // #include <libassert/assert.hpp>
 #include <string_view>
 #include <unordered_map>
@@ -12,7 +12,7 @@ class NamedComponentContainer {
     // NOTE: Associative container used for naming entity_ids which own a component
     // Example: naming SpriteSheet2D like "player_jump" or "player_run"
   private:
-    std::unordered_map<std::string_view, EntityId> named_entity_ids{};
+    std::unordered_map<std::string_view, EntityId> named_entity_ids {};
     std::string_view component_type_name = libassert::type_name<T>();
 
   public:
@@ -30,7 +30,8 @@ class NamedComponentContainer {
     // WARNING: this function wont destroy the associated entity_id!!!
     void remove_component_by_name(std::string_view entity_name) {
         size_t erased_count = named_entity_ids.erase(entity_name);
-        DEBUG_ASSERT(erased_count != 0, "this id wasn't in this container.",
+        DEBUG_ASSERT(erased_count != 0,
+                     "this id wasn't in this container.",
                      component_type_name);
     }
 
@@ -48,9 +49,11 @@ class NamedComponentContainer {
 
         DEBUG_ASSERT(named_entity_ids.contains(entity_name),
                      "this component name hasn't been added to this container.",
-                     entity_name, named_entity_ids);
+                     entity_name,
+                     named_entity_ids);
 
-        return fumo_engine->ECS->get_component<T>(named_entity_ids[entity_name]);
+        return fumo_engine->ECS->get_component<T>(
+            named_entity_ids[entity_name]);
     }
 
   private:

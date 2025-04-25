@@ -63,6 +63,7 @@ struct StateHandler: System {
                                         Capsule& player_capsule,
                                         AnimationInfo& player_animation,
                                         EntityState& player_state);
+
     void dash_state_handler(Body& player_body,
                             Capsule& player_capsule,
                             AnimationInfo& player_animation,
@@ -70,6 +71,7 @@ struct StateHandler: System {
     void movement_state_handler(Body& player_body,
                                 Capsule& player_shape,
                                 EntityState& player_state);
+    // void screen_transition_handler(EntityState& player_state);
 };
 
 struct MovedWrapper: System {

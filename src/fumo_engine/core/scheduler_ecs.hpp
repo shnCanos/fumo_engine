@@ -22,6 +22,8 @@ class SchedulerECS {
     std::multiset<std::shared_ptr<System>, SystemCompare> system_scheduler {};
     std::multiset<std::shared_ptr<System>, SystemCompare>
         unregistered_system_scheduler {};
+
+    std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler {};
     //------------------------------------------------------------------
     std::unique_ptr<ECS> ecs;
 
@@ -42,21 +44,49 @@ class SchedulerECS {
     }
 
     //------------------------------------------------------------------
-    void run_systems() {
+    void run_systems(EngineState engine_state) {
         // we copy every frame, so that changes to the
         // scheduler only apply on the next loop iteration
-        std::multiset<std::shared_ptr<System>, SystemCompare>
-            copy_unregistered_scheduler(unregistered_system_scheduler);
-        std::multiset<std::shared_ptr<System>, SystemCompare> copy_scheduler(
-            system_scheduler);
-
+        // unregistered systems go first right now
+        copy_scheduler = unregistered_system_scheduler;
+        copy_scheduler.insert(system_scheduler.begin(), system_scheduler.end());
         // run unregistered systems
-        for (const auto& system_ptr : copy_unregistered_scheduler) {
-            system_ptr->sys_call();
-        }
-        // run registered systems
-        for (const auto& system_ptr : copy_scheduler) {
-            system_ptr->sys_call();
+        // and run registered systems
+        switch (engine_state) {
+            case EngineState::GAMEPLAY_RUNNING:
+                for (const auto& system_ptr : copy_scheduler) {
+                    if (system_ptr->system_mode
+                            == SystemMode::GAMEPLAY_RUNNING_ONLY
+                        || system_ptr->system_mode
+                            == SystemMode::GAMEPLAY_AND_PAUSED
+                        || system_ptr->system_mode == SystemMode::ALWAYS_RUN)
+                        system_ptr->sys_call();
+                }
+                break;
+            case EngineState::GAMEPLAY_PAUSED:
+                for (const auto& system_ptr : copy_scheduler) {
+                    if (system_ptr->system_mode
+                            == SystemMode::GAMEPLAY_AND_PAUSED
+                        || system_ptr->system_mode == SystemMode::ALWAYS_RUN)
+                        system_ptr->sys_call();
+                }
+                break;
+            case EngineState::EDITING:
+                for (const auto& system_ptr : copy_scheduler) {
+                    if (system_ptr->system_mode == SystemMode::EDITING_ONLY
+                        || system_ptr->system_mode == SystemMode::ALWAYS_RUN)
+                        system_ptr->sys_call();
+                }
+                break;
+            case EngineState::RUN_ALL_DEBUG:
+                for (const auto& system_ptr : copy_scheduler) {
+                    system_ptr->sys_call();
+                }
+                break;
+            case EngineState::SHOULD_CLOSE:
+                PRINT_NO_NAME("FUMO: Window should close.")
+                PRINT_NO_NAME("FUMO: Closing Fumo Engine...");
+                break;
         }
     }
 
@@ -140,11 +170,15 @@ class SchedulerECS {
 
     // --------------------------------------------------------------------------------------
     // system stuff
-    template<typename T, Priority priority, typename... Types>
+    template<typename T,
+             Priority priority,
+             SystemMode system_mode,
+             typename... Types>
     void register_system(EntityQuery entity_query, Types&... args) {
         std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->register_system<T>(entity_query, system_ptr);
         system_ptr->priority = priority;
+        system_ptr->system_mode = system_mode;
 
         system_scheduler.insert(system_ptr);
 
@@ -154,22 +188,26 @@ class SchedulerECS {
     }
 
     // WARNING: this system wont be called in run_systems() call
-    template<typename T, typename... Types>
+    template<typename T, SystemMode system_mode, typename... Types>
     void register_system_unscheduled(EntityQuery entity_query, Types&... args) {
         const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->register_system<T>(entity_query, system_ptr);
+        system_ptr->system_mode = system_mode;
         // return system_ptr;
     }
 
     //------------------------------------------------------------------
     // WARNING: this system will get no updates to it's sys_entities
 
-    template<typename T, Priority priority, typename... Types>
+    template<typename T,
+             Priority priority,
+             SystemMode system_mode,
+             typename... Types>
     void add_unregistered_system(Types&... args) {
         const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
         ecs->add_unregistered_system(system_ptr);
         system_ptr->priority = priority;
-
+        system_ptr->system_mode = system_mode;
         // can be changed to be in the constructor or test this with
         // initializer list
         unregistered_system_scheduler.insert(system_ptr);
@@ -180,10 +218,10 @@ class SchedulerECS {
     }
 
     // this system wont be called in run_systems() call
-    template<typename T, typename... Types>
+    template<typename T, SystemMode system_mode, typename... Types>
     void add_unregistered_system_unscheduled(Types&... args) {
         const std::shared_ptr<T> system_ptr = std::make_shared<T>(args...);
-
+        system_ptr->system_mode = system_mode;
         ecs->add_unregistered_system(system_ptr);
 
         // unregistered_system_scheduler.insert(system_ptr);

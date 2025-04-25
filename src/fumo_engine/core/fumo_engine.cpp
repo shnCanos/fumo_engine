@@ -1,4 +1,4 @@
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 
 #include "objects/player_systems/player_general_systems.hpp"
 
@@ -7,7 +7,7 @@ void initialize_directories();
 
 }
 
-void FumoEngine::setup_game_state() {
+void FumoEngine::setup_game() {
     SetTargetFPS(60);
 
     Initialization::initialize_directories();

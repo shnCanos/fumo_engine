@@ -3,7 +3,7 @@
 #include <cerrno>
 
 #include "constants/movement_constants.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "objects/generic_systems/systems.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;

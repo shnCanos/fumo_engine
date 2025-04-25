@@ -1,7 +1,7 @@
 #include "constants/movement_constants.hpp"
 #include "fumo_engine/collisions_and_physics/collision_functions.hpp"
 #include "fumo_engine/collisions_and_physics/collision_runner.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;
 

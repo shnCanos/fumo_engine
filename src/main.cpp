@@ -1,23 +1,21 @@
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/serialization/fumo_serializer.hpp"
 #include "initialization.hpp"
-#include "raylib.h"
+void debug_spawn_level_objects();
 
-std::unique_ptr<FumoEngine> fumo_engine;
 #define XMACRO(Type) EntityQuery Type##_query {};
 ALL_COMPONENTS_X_MACRO()
 #undef XMACRO
 
-void debug_spawn_level_objects();
+// int count = 0;
+
+std::unique_ptr<FumoEngine> fumo_engine;
 
 int main(void) {
-    int count = 0;
-
     Initialization::initialize_window();
-
     //--------------------------------------------------------------------------------------
     fumo_engine = std::make_unique<FumoEngine>();
-    fumo_engine->initialize();
+    fumo_engine->initialize(EngineMode::GAMEPLAY, EngineState::RUN_ALL_DEBUG);
     //--------------------------------------------------------------------------------------
     // must be done before fumo_engine->setup_game_state();
     Initialization::initialize_all_textures();
@@ -25,24 +23,11 @@ int main(void) {
     // to be registered into fumo_engine
     Initialization::register_all_to_fumo_engine();
     //--------------------------------------------------------------------------------------
-    fumo_engine->setup_game_state();
+    fumo_engine->setup_game();
     FumoSerializer::deserialize_levels();
     //--------------------------------------------------------------------------------------
-    while (!WindowShouldClose()) {
-        ClearBackground(BLACK);
-        BeginDrawing();
-        fumo_engine->frametime = GetFrameTime();
-
-        fumo_engine->ECS->run_systems();
-        // events are handled after all systems are ran
-        fumo_engine->handle_events();
-
-        // here because we start with no planets right now (remove when we make levels)
-        // if (!count) [[unlikely]] {
-        //     count++;
-        //     debug_spawn_level_objects();
-        // }
-        EndDrawing();
+    while (fumo_engine->engine_state != EngineState::SHOULD_CLOSE) {
+        fumo_engine->frame_loop();
     }
     //--------------------------------------------------------------------------------------
     // unload textures before closing the OpenGL context
@@ -52,3 +37,9 @@ int main(void) {
 
     return 0;
 }
+
+// here because we start with no planets right now (remove when we make levels)
+// if (!count) [[unlikely]] {
+//     count++;
+//     debug_spawn_level_objects();
+// }

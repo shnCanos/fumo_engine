@@ -1,5 +1,5 @@
 #include "constants/planet_constants.hpp"
-#include "fumo_engine/core/global_state.hpp"
+#include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/level_editor/level_editor.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;
