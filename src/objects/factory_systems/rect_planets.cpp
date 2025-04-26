@@ -30,6 +30,27 @@ EntityId LevelEntityFactory::create_screen_transition(FumoVec2 position) {
     return entity_id;
 }
 
+EntityId LevelEntityFactory::create_outline_rect(FumoRect rect) {
+    EntityId entity_id = fumo_engine->ECS->create_entity();
+
+    fumo_engine->ECS->entity_add_component(entity_id,
+                                           OutlineRect {.outline_rect = rect});
+
+    fumo_engine->ECS->entity_add_component(entity_id,
+                                           Render {.color = FUMO_GREEN});
+
+    fumo_engine->ECS->entity_add_component(
+        entity_id,
+        Body {.position = {rect.x, rect.y}, .velocity = {0.0f, 0.0f}});
+
+    fumo_engine->ECS->entity_add_component(entity_id, Screen {0});
+    fumo_engine->ECS->entity_add_component(entity_id, LevelId {0});
+
+    sys_entities.insert(entity_id);
+
+    return entity_id;
+}
+
 EntityId LevelEntityFactory::create_outline_rect(FumoVec2 position) {
     EntityId entity_id = fumo_engine->ECS->create_entity();
 
@@ -147,41 +168,13 @@ EntityId LevelEntityFactory::create_rect_field(FumoVec2 position,
             .height = RECT_HEIGHT};
 }
 
-// TODO: remove these 2 functions later
+// TODO: remove this function later
 // --------------------------------------------------------------------
-EntityId LevelEntityFactory::create_rect_planet(FumoVec2 position) {
+EntityId
+LevelEntityFactory::debug__internal_create_rect_planet(FumoVec2 position) {
 
     EntityId entity_id = create_rect(position);
-    debug__internal__create_rect_field(
-        {.x = position.x, .y = position.y - RECT_HEIGHT});
-
-    return entity_id;
-}
-
-EntityId
-LevelEntityFactory::debug__internal__create_rect_field(FumoVec2 position) {
-    EntityId entity_id = fumo_engine->ECS->create_entity();
-
-    FumoRect grav_field_fumo_rect = make_default_field_rect(position);
-    fumo_engine->ECS->entity_add_component(
-        entity_id,
-        ParallelGravityField {
-            .field_fumo_rect = grav_field_fumo_rect,
-            .gravity_strength = GRAV_STRENGTH,
-        });
-
-    fumo_engine->ECS->entity_add_component(entity_id, GravFieldFlag {});
-    fumo_engine->ECS->entity_add_component(entity_id,
-                                           Render {.color = FUMO_ORANGE});
-    fumo_engine->ECS->entity_add_component(
-        entity_id,
-        Body {.position = {grav_field_fumo_rect.x, grav_field_fumo_rect.y},
-              .velocity = {0.0f, 0.0f}});
-
-    fumo_engine->ECS->entity_add_component(entity_id, Screen {0});
-    fumo_engine->ECS->entity_add_component(entity_id, LevelId {0});
-
-    sys_entities.insert(entity_id);
+    create_rect_field({.x = position.x, .y = position.y - RECT_HEIGHT});
 
     return entity_id;
 }

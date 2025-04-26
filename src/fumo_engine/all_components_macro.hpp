@@ -20,7 +20,8 @@
     XMACRO(LevelId) \
     XMACRO(ScreenTransitionRect) \
     XMACRO(Line) \
-    XMACRO(CollisionEventData)
+    XMACRO(CollisionEventData) \
+    XMACRO(EditorSelectedObject)
 
 #define XMACRO(Type) Type,
 enum struct AllComponentTypes { ALL_COMPONENTS_X_MACRO() };

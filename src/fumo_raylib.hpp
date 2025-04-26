@@ -45,6 +45,8 @@ struct FumoRect {
     void draw(const FumoColor& color, const FumoVec2& position) const;
     void draw_outline(const FumoColor& color, const FumoVec2& position) const;
 
+    // void resize(const FumoVec2& mouse_position, const FumoVec2& body_position);
+
     Rectangle to_raylib_rect() { return {x, y, width, height}; }
 };
 
@@ -158,6 +160,21 @@ inline float FumoVec2DotProduct(FumoVec2 v1, FumoVec2 v2) {
 
 inline float FumoVec2Distance(FumoVec2 v1, FumoVec2 v2) {
     return Vector2Distance(v1.to_raylib_vec2(), v2.to_raylib_vec2());
+}
+
+[[nodiscard]] inline FumoVec2
+FumoVec2MoveTowards(FumoVec2 v, FumoVec2 target, float max_distance) {
+    Vector2 ve = Vector2MoveTowards(v.to_raylib_vec2(),
+                                    target.to_raylib_vec2(),
+                                    max_distance);
+    return {ve.x, ve.y};
+}
+
+[[nodiscard]] inline FumoVec2
+FumoVec2SmoothMoveTowards(FumoVec2 v, FumoVec2 target, float smoothing_factor) {
+    return FumoVec2MoveTowards(v,
+                               target,
+                               FumoVec2Distance(v, target) / smoothing_factor);
 }
 
 inline float FumoVec2DistanceSqr(FumoVec2 v1, FumoVec2 v2) {

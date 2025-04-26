@@ -73,7 +73,7 @@ void StateHandler::movement_state_handler(Body& player_body,
     player_body.position += player_body.velocity * fumo_engine->frametime;
     player_capsule.update_capsule_positions(player_body);
 
-    debug_player_drawing(player_capsule, player_body);
+    // debug_player_drawing(player_capsule, player_body);
     //-----------------------------------------------------------------
     // scale down the velocity to prepare for
     // the calculations on the next frame

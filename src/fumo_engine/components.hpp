@@ -84,12 +84,14 @@ struct Body {
 struct Circle {
     float radius;
     void draw(const FumoColor& color, const FumoVec2& position) const;
+    // void resize(const FumoVec2& mouse_position, const FumoVec2& body_position);
     SERIALIZE(radius)
 };
 
 struct OutlineRect {
     FumoRect outline_rect;
     void draw(const FumoColor& color, const FumoVec2& position) const;
+    // void resize(const FumoVec2& mouse_position, const FumoVec2& body_position);
     SERIALIZE(outline_rect)
 };
 
@@ -161,6 +163,7 @@ struct ParallelGravityField {
     void update_gravity(Body& player_body);
 
     void draw(const FumoColor& color, const FumoVec2& position) const;
+    // void resize(const FumoVec2& mouse_position, const FumoVec2& body_position);
 
     SERIALIZE(field_fumo_rect, gravity_direction, gravity_strength, rotation)
 };
@@ -169,7 +172,7 @@ struct ParallelGravityField {
 struct CircularGravityField {
     // FIXME: save the push on the grav fields themselves later when refactoring
     // FumoVec2 push_direction;
-    double gravity_radius;
+    float radius;
     float gravity_strength;
     FumoVec2 position = screenCenter;
     FumoVec2 gravity_direction;
@@ -180,7 +183,8 @@ struct CircularGravityField {
     void update_gravity(Body& player_body, const Body& body_planet);
 
     void draw(const FumoColor& color, const FumoVec2& position) const;
-    SERIALIZE(gravity_radius, gravity_strength, position, gravity_direction)
+    // void resize(const FumoVec2& mouse_position, const FumoVec2& body_position);
+    SERIALIZE(radius, gravity_strength, position, gravity_direction)
 };
 
 // NOTE: to make a really modular and reusable timer class,

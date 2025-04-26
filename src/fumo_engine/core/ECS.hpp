@@ -22,7 +22,9 @@ class ECS {
 
     // ------------------------------------------------------------------------------
     // entity stuff
-    [[nodiscard]] EntityId create_entity() { return entity_manager->create_entity(); }
+    [[nodiscard]] EntityId create_entity() {
+        return entity_manager->create_entity();
+    }
 
     void destroy_entity(EntityId entity_id) {
         entity_manager->destroy_entity(entity_id);
@@ -33,7 +35,9 @@ class ECS {
     void serialize_component(const EntityId& entity_id,
                              ComponentId component_id,
                              cereal::JSONOutputArchive& out_archive) {
-        component_manager->serialize_component(entity_id, component_id, out_archive);
+        component_manager->serialize_component(entity_id,
+                                               component_id,
+                                               out_archive);
     }
 
     // --------------------------------------------------------------------------------------
@@ -57,24 +61,26 @@ class ECS {
 
         // NOTE: this is slightly slower for clarity, this method can be merged
         // so you dont have to call "get component mask" after the call
-        ComponentMask component_mask = entity_manager->get_component_mask(entity_id);
+        ComponentMask component_mask =
+            entity_manager->get_component_mask(entity_id);
 
         // notify the systems of the change
         // NOTE: change this so it wont notify systems until the end of the frame
-        system_manager->entity_component_mask_changed(entity_id, component_mask);
+        system_manager->entity_component_mask_changed(entity_id,
+                                                      component_mask);
     }
 
     template<typename T> // remove from entity
-    [[nodiscard]] ComponentMask entity_remove_component(EntityId entity_id) {
+    void entity_remove_component(EntityId entity_id) {
         auto component_id = component_manager->remove_component<T>(entity_id);
-
-        component_manager->get_component_id<T>();
 
         entity_manager->remove_from_component_mask(entity_id, component_id);
 
-        ComponentMask component_mask = entity_manager->get_component_mask(entity_id);
-        system_manager->entity_component_mask_changed(entity_id, component_mask);
-        return component_mask;
+        ComponentMask component_mask =
+            entity_manager->get_component_mask(entity_id);
+        system_manager->entity_component_mask_changed(entity_id,
+                                                      component_mask);
+        // return component_mask;
         // NOTE: change this so it wont notify systems until the end of the frame
     }
 
@@ -128,7 +134,8 @@ class ECS {
         system_manager->set_entity_query<T>(component_mask);
     }
 
-    [[nodiscard]] std::shared_ptr<System>& get_system(std::string_view type_name) {
+    [[nodiscard]] std::shared_ptr<System>&
+    get_system(std::string_view type_name) {
         return system_manager->get_system(type_name);
     }
 

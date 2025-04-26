@@ -1,5 +1,7 @@
+#include "constants/planet_constants.hpp"
 #include "fumo_engine/core/fumo_engine.hpp"
-
+#include "fumo_engine/level_editor/level_editor.hpp"
+#include "objects/factory_systems/factory_systems.hpp"
 #include "objects/player_systems/player_general_systems.hpp"
 
 namespace Initialization {
@@ -20,8 +22,27 @@ void FumoEngine::setup_game() {
     camera->rotation = 0.0f;
     camera->zoom = 0.8f;
     camera->offset = screenCenter.to_raylib_vec2();
+
     auto& player_animation = ECS->get_component<AnimationInfo>(player_id);
     AnimationPlayer::play(player_animation, "idle");
+
+    FumoRect collision_bounds {.x = player_body.position.x,
+                               .y = player_body.position.y,
+                               .width = RECT_WIDTH + MINIMUM_OBJECT_SIZE,
+                               .height = RECT_HEIGHT + MINIMUM_OBJECT_SIZE};
+
+    const auto& planet_factory = ECS->get_system<LevelEntityFactory>();
+    const auto& level_editor = ECS->get_system<DebugLevelEditor>();
+
+    EntityId selected_rect_id =
+        planet_factory->create_outline_rect(collision_bounds);
+    auto& selected_render = ECS->get_component<Render>(selected_rect_id);
+
+    selected_render.color = FUMO_GOLD;
+
+    ECS->entity_add_component(selected_rect_id, EditorSelectedObject {});
+
+    level_editor->selection_rectangle_id = selected_rect_id;
 }
 
 namespace fs = std::filesystem;

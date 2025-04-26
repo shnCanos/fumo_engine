@@ -18,7 +18,8 @@ void debug_spawn_level_objects() {
         fumo_engine->ECS->get_system<LevelEntityFactory>();
 
     {
-        EntityId id_planet = planet_factory->create_outline_rect({0.0f, 0.0f});
+        EntityId id_planet =
+            planet_factory->create_outline_rect(FumoVec2 {0.0f, 0.0f});
 
         OutlineRect& outline_rect =
             fumo_engine->ECS->get_component<OutlineRect>(id_planet);
@@ -29,7 +30,7 @@ void debug_spawn_level_objects() {
     }
     {
         // make first planet that owns the player
-        EntityId id_planet = planet_factory->create_rect_planet(
+        EntityId id_planet = planet_factory->debug__internal_create_rect_planet(
             {starter_position.x, starter_position.y});
 
         auto& player_state = fumo_engine->ECS->get_component<EntityState>(
@@ -167,19 +168,40 @@ void screen_border_lines() {
     }
     FumoVec2 screncentr = screenCenter;
     screncentr.x -= screenWidth / 3.0f;
-    { EntityId rect_planet = planet_factory->create_rect_planet(screncentr); }
+    {
+        EntityId rect_planet =
+            planet_factory->debug__internal_create_rect_planet(screncentr);
+    }
     screncentr.x -= screenWidth / 3.0f;
-    { EntityId rect_planet = planet_factory->create_rect_planet(screncentr); }
+    {
+        EntityId rect_planet =
+            planet_factory->debug__internal_create_rect_planet(screncentr);
+    }
     screncentr.x -= screenWidth / 3.0f;
-    { EntityId rect_planet = planet_factory->create_rect_planet(screncentr); }
+    {
+        EntityId rect_planet =
+            planet_factory->debug__internal_create_rect_planet(screncentr);
+    }
     screncentr.x -= screenWidth / 3.0f;
-    { EntityId rect_planet = planet_factory->create_rect_planet(screncentr); }
+    {
+        EntityId rect_planet =
+            planet_factory->debug__internal_create_rect_planet(screncentr);
+    }
     screncentr.x -= screenWidth / 3.0f;
-    { EntityId rect_planet = planet_factory->create_rect_planet(screncentr); }
+    {
+        EntityId rect_planet =
+            planet_factory->debug__internal_create_rect_planet(screncentr);
+    }
     screncentr.x -= screenWidth / 3.0f;
-    { EntityId rect_planet = planet_factory->create_rect_planet(screncentr); }
+    {
+        EntityId rect_planet =
+            planet_factory->debug__internal_create_rect_planet(screncentr);
+    }
     screncentr.x -= screenWidth / 3.0f;
-    { EntityId rect_planet = planet_factory->create_rect_planet(screncentr); }
+    {
+        EntityId rect_planet =
+            planet_factory->debug__internal_create_rect_planet(screncentr);
+    }
 }
 
 void make_some_rects() {

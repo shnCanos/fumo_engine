@@ -20,7 +20,7 @@ EntityId LevelEntityFactory::create_circular_planet(FumoVec2 position) {
         Circle {.radius = CIRCLE_RADIUS * 4});
     fumo_engine->ECS->entity_add_component(
         entity_id,
-        CircularGravityField {.gravity_radius = GRAV_REACH * 3,
+        CircularGravityField {.radius = GRAV_REACH * 3,
                               .gravity_strength = GRAV_STRENGTH,
                               .position = position});
 

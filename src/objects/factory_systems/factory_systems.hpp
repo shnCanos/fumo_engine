@@ -16,14 +16,14 @@ class LevelEntityFactory: public System {
     EntityId create_circular_planet(FumoVec2 position);
 
     EntityId create_rect(FumoVec2 position);
+
     EntityId create_outline_rect(FumoVec2 position);
+    EntityId create_outline_rect(FumoRect rect);
     EntityId create_rect_field(FumoVec2 position);
     EntityId create_rect_field(FumoVec2 position, FumoVec2 grav_direction);
 
     //remove later (used for hardcoded level0)
-    EntityId create_rect_planet(FumoVec2 position);
+    EntityId debug__internal_create_rect_planet(FumoVec2 position);
 
     EntityId create_screen_transition(FumoVec2 position);
-
-    EntityId debug__internal__create_rect_field(FumoVec2 position);
 };

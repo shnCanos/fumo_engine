@@ -6,6 +6,7 @@
 #include "fumo_engine/all_components_macro.hpp"
 #include "fumo_engine/core/fumo_engine.hpp"
 #include "fumo_engine/screen_components.hpp"
+#include "objects/factory_systems/factory_systems.hpp"
 
 extern std::unique_ptr<FumoEngine> fumo_engine;
 

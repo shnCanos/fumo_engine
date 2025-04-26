@@ -15,9 +15,9 @@ int main(void) {
     Initialization::initialize_window();
     //--------------------------------------------------------------------------------------
     fumo_engine = std::make_unique<FumoEngine>();
-    fumo_engine->initialize(EngineMode::GAMEPLAY, EngineState::RUN_ALL_DEBUG);
+    fumo_engine->initialize(EngineMode::LEVEL_EDITING, EngineState::EDITING);
     //--------------------------------------------------------------------------------------
-    // must be done before fumo_engine->setup_game_state();
+    // must be done before fumo_engine->setup_game();
     Initialization::initialize_all_textures();
     // all components MUST be added to ALL_COMPONENTS_X_MACRO()
     // to be registered into fumo_engine

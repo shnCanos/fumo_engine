@@ -45,7 +45,6 @@ class FumoEngine {
 
     void destroy_and_unload_game() {
         // TODO: unload our textures and also destroy all dynamic memory in global
-        // (so far we have no memory to clear so this is not necessary)
         CloseWindow();
         PRINT_NO_NAME("FUMO: Fumo Engine successfully terminated.");
     }

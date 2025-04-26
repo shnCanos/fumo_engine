@@ -143,3 +143,10 @@ struct NormalRectFlag {
   private:
     char satisfy_cereal;
 };
+
+// tells the editor which object was selected
+struct EditorSelectedObject {
+    SERIALIZE(satisfy_cereal)
+  private:
+    char satisfy_cereal;
+};

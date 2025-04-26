@@ -33,7 +33,8 @@ class ComponentManager {
         component_id_to_name.insert({current_component_id, t_name});
 
         // use the t_name also for creating a new array of this component
-        component_arrays.insert({t_name, std::make_shared<ComponentArray<T>>()});
+        component_arrays.insert(
+            {t_name, std::make_shared<ComponentArray<T>>()});
 
         current_component_id++;
     }
@@ -57,7 +58,8 @@ class ComponentManager {
                      component_ids,
                      t_name);
         std::shared_ptr<ComponentArray<T>> cast_component_array =
-            std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
+            std::static_pointer_cast<ComponentArray<T>>(
+                component_arrays[t_name]);
         return cast_component_array->get_component_data(entity_id);
     }
 
@@ -69,7 +71,8 @@ class ComponentManager {
                      component_ids,
                      t_name);
         std::shared_ptr<ComponentArray<T>> cast_component_array =
-            std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
+            std::static_pointer_cast<ComponentArray<T>>(
+                component_arrays[t_name]);
         cast_component_array->replace_component_data(entity_id, new_component);
     }
 
@@ -108,21 +111,24 @@ class ComponentManager {
                      component_ids);
 
         std::shared_ptr<ComponentArray<T>> cast_component_array =
-            std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
+            std::static_pointer_cast<ComponentArray<T>>(
+                component_arrays[t_name]);
 
         cast_component_array->add_component_data(entity_id, component);
     }
 
     // responsible for changing the component mask of the entity
     template<typename T>
-    void remove_component(EntityId entity_id) {
+    [[nodiscard]] ComponentId remove_component(EntityId entity_id) {
         std::string_view t_name = libassert::type_name<T>();
         DEBUG_ASSERT(component_ids.contains(t_name),
                      "forgot to register component",
                      component_ids);
-        ComponentArray<T> cast_component_array =
-            std::static_pointer_cast<ComponentArray<T>>(component_arrays[t_name]);
+        std::shared_ptr<ComponentArray<T>> cast_component_array =
+            std::static_pointer_cast<ComponentArray<T>>(
+                component_arrays[t_name]);
         cast_component_array->remove_component_data(entity_id);
+        return component_ids[t_name];
     }
 
     void notify_destroyed_entity(EntityId entity_id) {

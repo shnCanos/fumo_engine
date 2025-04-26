@@ -98,7 +98,7 @@ bool CircularGravityField::is_inside_field(const Body& player_body,
     // -------------------------------------------------------------------------------
     // check for collisions with capsule
     // -------------------------------------------------------------------------------
-    float radius_sum = player_capsule.radius + gravity_radius;
+    float radius_sum = player_capsule.radius + radius;
 
     // -------------------------------------------------------------------------------
     // top circle collision check

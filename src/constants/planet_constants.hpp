@@ -6,6 +6,6 @@ constexpr static int RECT_HEIGHT = 200.0f;
 
 constexpr static float CIRCLE_RADIUS = 50.0f;
 
-constexpr static float MINIMUM_OBJECT_SIZE = 10.0f;
+constexpr static float MINIMUM_OBJECT_SIZE = 40.0f;
 
-constexpr float LINE_THICKNESS = 3.0f;
+constexpr float LINE_THICKNESS = 5.0f;
