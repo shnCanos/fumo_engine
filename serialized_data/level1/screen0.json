@@ -1,75 +1,11 @@
 {
     "entity_id": 5,
-    "component_mask": 575251,
-    "Body": {
-        "value0": 0.0,
-        "value1": {
-            "value0": 1315.4464111328126,
-            "value1": 210.77780151367188
-        },
-        "value2": {
-            "value0": 0.0,
-            "value1": 0.0
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 1.0
-        },
-        "value4": {
-            "value0": -1.0,
-            "value1": 0.0
-        },
-        "value5": false
-    },
-    "Circle": {
-        "value0": 232.24612426757813
-    },
-    "Render": {
-        "value0": {
-            "value0": 0,
-            "value1": 121,
-            "value2": 241,
-            "value3": 255
-        }
-    },
-    "CircularGravityField": {
-        "value0": 450.0,
-        "value1": 900.0,
-        "value2": {
-            "value0": 213.74998474121095,
-            "value1": 303.75
-        },
-        "value3": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "ColliderObjectFlag": {
-        "value0": 0
-    },
-    "GravFieldFlag": {
-        "value0": 0
-    },
-    "Screen": {
-        "value0": 0,
-        "value1": {
-            "value0": 0.0,
-            "value1": 0.0
-        }
-    },
-    "LevelId": {
-        "value0": 1
-    },
-    "EditorSelectedObject": {
-        "value0": 0
-    },
-    "entity_id": 6,
     "component_mask": 50963,
     "Body": {
         "value0": 0.0,
         "value1": {
-            "value0": 1625.9124755859376,
-            "value1": 607.9998779296875
+            "value0": 301.4515380859375,
+            "value1": 310.7505798339844
         },
         "value2": {
             "value0": 0.0,
@@ -86,7 +22,7 @@
         "value5": false
     },
     "Circle": {
-        "value0": 113.69029998779297
+        "value0": 252.3080291748047
     },
     "Render": {
         "value0": {
@@ -100,8 +36,8 @@
         "value0": 450.0,
         "value1": 900.0,
         "value2": {
-            "value0": 212.30767822265626,
-            "value1": 520.0
+            "value0": 564.9999389648438,
+            "value1": 286.25
         },
         "value3": {
             "value0": 0.0,

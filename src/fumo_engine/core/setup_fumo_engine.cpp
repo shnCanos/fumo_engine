@@ -30,19 +30,19 @@ void FumoEngine::setup_game() {
                                .y = player_body.position.y,
                                .width = RECT_WIDTH + MINIMUM_OBJECT_SIZE,
                                .height = RECT_HEIGHT + MINIMUM_OBJECT_SIZE};
-
-    const auto& planet_factory = ECS->get_system<LevelEntityFactory>();
-    const auto& level_editor = ECS->get_system<DebugLevelEditor>();
-
-    EntityId selected_rect_id =
-        planet_factory->create_outline_rect(collision_bounds);
-    auto& selected_render = ECS->get_component<Render>(selected_rect_id);
-
-    selected_render.color = FUMO_GOLD;
-
-    ECS->entity_add_component(selected_rect_id, EditorSelectedObject {});
-
-    level_editor->selection_rectangle_id = selected_rect_id;
+    //
+    // const auto& planet_factory = ECS->get_system<LevelEntityFactory>();
+    // const auto& level_editor = ECS->get_system<DebugLevelEditor>();
+    //
+    // EntityId selected_rect_id =
+    //     planet_factory->create_outline_rect(collision_bounds);
+    // auto& selected_render = ECS->get_component<Render>(selected_rect_id);
+    //
+    // selected_render.color = FUMO_GOLD;
+    //
+    // ECS->entity_add_component(selected_rect_id, EditorSelectedObject {});
+    //
+    // level_editor->selection_rectangle_id = selected_rect_id;
 }
 
 namespace fs = std::filesystem;

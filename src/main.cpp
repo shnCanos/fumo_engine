@@ -7,7 +7,7 @@ void debug_spawn_level_objects();
 ALL_COMPONENTS_X_MACRO()
 #undef XMACRO
 
-// int count = 0;
+int count = 0;
 
 std::unique_ptr<FumoEngine> fumo_engine;
 
@@ -26,6 +26,11 @@ int main(void) {
     fumo_engine->setup_game();
     FumoSerializer::deserialize_levels();
     //--------------------------------------------------------------------------------------
+
+    // if (!count) [[unlikely]] {
+    //     count++;
+    //     debug_spawn_level_objects();
+    // }
     while (fumo_engine->engine_state != EngineState::SHOULD_CLOSE) {
         fumo_engine->frame_loop();
     }
@@ -39,7 +44,3 @@ int main(void) {
 }
 
 // here because we start with no planets right now (remove when we make levels)
-// if (!count) [[unlikely]] {
-//     count++;
-//     debug_spawn_level_objects();
-// }
