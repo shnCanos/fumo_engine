@@ -1,5 +1,48 @@
 const std = @import("std");
 
+fn addSourcesFromDep(
+    b: *std.Build,
+    step: *std.Build.Step.Compile,
+    dep: anytype,
+    extension: []const u8,
+    comptime include: anytype,
+) !void {
+    inline for (include) |prefix| {
+        try addSourcesFromDepRec(b, step, prefix, dep.path(".").getPath(b), dep, extension);
+    }
+}
+
+fn addSourcesFromDepRec(
+    b: *std.Build,
+    step: *std.Build.Step.Compile,
+    current_dir: []const u8,
+    dir_path: []const u8,
+    dep: anytype,
+    extension: []const u8,
+) !void {
+    const fs = std.fs;
+    const allocator = b.allocator;
+    const full_dir_path = try std.fs.path.join(allocator, &[_][]const u8{ dir_path, current_dir });
+    defer allocator.free(full_dir_path);
+    var dir = try fs.cwd().openDir(full_dir_path, .{ .iterate = true });
+    defer dir.close();
+
+    var it = dir.iterate();
+    while (try it.next()) |entry| {
+        const full_file_path = try std.fs.path.join(allocator, &[_][]const u8{ current_dir, entry.name });
+        // This memoy cannot be freed.
+        // defer allocator.free(full_file_path);
+
+        if (entry.kind == .directory) {
+            try addSourcesFromDepRec(b, step, full_file_path, dir_path, dep, extension);
+        }
+        if (entry.kind == .file and std.mem.endsWith(u8, entry.name, extension)) {
+            std.debug.print("Adding File to compile for {s}: {s}\n", .{ step.name, full_file_path });
+            step.addCSourceFile(.{ .file = dep.path(full_file_path), .language = .cpp, .flags = &.{"-std=c++23"} });
+        }
+    }
+}
+
 const flags = .{
     "-O0",
     //"-DDEBUG",
@@ -70,56 +113,8 @@ pub fn build_cpptrace(b: *std.Build, target: std.Build.ResolvedTarget, optimize:
 
     // Compilation
     cpptrace_lib.addIncludePath(cpptrace_dep.path("src"));
-    cpptrace_lib.addCSourceFiles(.{
-        .language = .cpp,
-        .root = cpptrace_dep.path("src"),
-        .flags = &flags,
-        .files = &.{
-            "binary/elf.cpp",
-            "binary/mach-o.cpp",
-            "binary/module_base.cpp",
-            "binary/object.cpp",
-            "binary/pe.cpp",
-            "binary/safe_dl.cpp",
-            "cpptrace.cpp",
-            "ctrace.cpp",
-            "demangle/demangle_with_cxxabi.cpp",
-            "demangle/demangle_with_nothing.cpp",
-            "demangle/demangle_with_winapi.cpp",
-            "exceptions.cpp",
-            "formatting.cpp",
-            "from_current.cpp",
-            "jit/jit_objects.cpp",
-            "options.cpp",
-            "platform/dbghelp_utils.cpp",
-            "snippets/snippet.cpp",
-            "symbols/dwarf/debug_map_resolver.cpp",
-            "symbols/dwarf/dwarf_options.cpp",
-            "symbols/dwarf/dwarf_resolver.cpp",
-            "symbols/symbols_core.cpp",
-            "symbols/symbols_with_addr2line.cpp",
-            "symbols/symbols_with_dbghelp.cpp",
-            "symbols/symbols_with_dl.cpp",
-            "symbols/symbols_with_libbacktrace.cpp",
-            "symbols/symbols_with_libdwarf.cpp",
-            "symbols/symbols_with_nothing.cpp",
-            "unwind/unwind_with_dbghelp.cpp",
-            "unwind/unwind_with_execinfo.cpp",
-            "unwind/unwind_with_libunwind.cpp",
-            "unwind/unwind_with_nothing.cpp",
-            "unwind/unwind_with_unwind.cpp",
-            "unwind/unwind_with_winapi.cpp",
-            "utils.cpp",
-            "utils/error.cpp",
-            "utils/io/file.cpp",
-            "utils/io/memory_file_view.cpp",
-            "utils/microfmt.cpp",
-            "utils/string_view.cpp",
-            "utils/utils.cpp",
-        },
-    });
-
     cpptrace_lib.addIncludePath(cpptrace_dep.path("include"));
+    try addSourcesFromDep(b, cpptrace_lib, cpptrace_dep, ".cpp", .{"src"});
 
     return .{
         .lib = cpptrace_lib,
@@ -153,21 +148,7 @@ pub fn build_libassert(b: *std.Build, target: std.Build.ResolvedTarget, optimize
     // Compilation
     libassert_lib.addIncludePath(libassert_dep.path("src"));
     libassert_lib.addIncludePath(libassert_dep.path("include"));
-    libassert_lib.addCSourceFiles(.{
-        .root = libassert_dep.path("src"),
-        .language = .cpp,
-        .flags = &flags,
-        .files = &.{
-            "analysis.cpp",
-            "assert.cpp",
-            "paths.cpp",
-            "platform.cpp",
-            "printing.cpp",
-            "stringification.cpp",
-            "tokenizer.cpp",
-            "utils.cpp",
-        },
-    });
+    try addSourcesFromDep(b, libassert_lib, libassert_dep, ".cpp", .{"src"});
 
     return .{ .lib = libassert_lib, .includepath = libassert_dep.path("include") };
 }
@@ -217,55 +198,7 @@ pub fn build_fumo_engine(b: *std.Build, target: std.Build.ResolvedTarget, optimi
     // Compilation
     fumo_exe.addIncludePath(b.path("src"));
     fumo_exe.addIncludePath(b.path("cereal"));
-    fumo_exe.addCSourceFiles(.{
-        .language = .cpp,
-        .root = b.path("src"),
-        .flags = &flags,
-        .files = &.{
-            "fumo_engine/collisions_and_physics/bad_unused_circle_collisions.cpp",
-            "fumo_engine/collisions_and_physics/collision_runner.cpp",
-            "fumo_engine/collisions_and_physics/continous_collisions.cpp",
-            "fumo_engine/collisions_and_physics/gravity_field_systems.cpp",
-            "fumo_engine/collisions_and_physics/gravity_update.cpp",
-            "fumo_engine/collisions_and_physics/line_circle_collisions.cpp",
-            "fumo_engine/collisions_and_physics/line_rect_collisions.cpp",
-            "fumo_engine/collisions_and_physics/point_line_collisions.cpp",
-            "fumo_engine/collisions_and_physics/rect_circle_collisions.cpp",
-            "fumo_engine/core/scheduler_ecs.cpp",
-            "fumo_engine/core/setup_fumo_engine.cpp",
-            "fumo_engine/core/timer_systems.cpp",
-            "fumo_engine/events/collided_event.cpp",
-            "fumo_engine/events/dash_state_handler.cpp",
-            "fumo_engine/events/event_handler_functions.cpp",
-            "fumo_engine/events/event_handlers.cpp",
-            "fumo_engine/events/jump_state_handler.cpp",
-            "fumo_engine/events/movement_state_handler.cpp",
-            "fumo_engine/events/state_handlers.cpp",
-            "fumo_engine/level_editor/entity_creation.cpp",
-            "fumo_engine/level_editor/hardcoded_level0.cpp",
-            "fumo_engine/level_editor/parse_input.cpp",
-            "fumo_engine/level_editor/screen_transition_handler.cpp",
-            "fumo_engine/level_editor/selection_handling.cpp",
-            "fumo_engine/serialization/fumo_serializer.cpp",
-            "fumo_engine/sprite_animation_manager/animation_player.cpp",
-            "fumo_engine/sprite_animation_manager/animation_renderers.cpp",
-            "fumo_raylib.cpp",
-            "initialization.cpp",
-            "main_functions.cpp",
-            "objects/factory_systems/circular_planets.cpp",
-            "objects/factory_systems/planet_factory.cpp",
-            "objects/factory_systems/rect_planets.cpp",
-            "objects/generic_systems/utility_systems.cpp",
-            "objects/player_systems/body_movement.cpp",
-            "objects/player_systems/player_initializer.cpp",
-            "objects/player_systems/player_input.cpp",
-            "objects/rendering_systems/all_components_renderer.cpp",
-            "objects/rendering_systems/draw_components.cpp",
-            "register_sprites.cpp",
-            "register_to_ecs.cpp",
-            "main.cpp",
-        },
-    });
+    try addSourcesFromDep(b, fumo_exe, b, ".cpp", .{"src"});
 
     return fumo_exe;
 }
