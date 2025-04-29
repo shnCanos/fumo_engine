@@ -1,0 +1,31 @@
+.{
+    .name = .fumo_engine,
+    .version = "1.0.0",
+    .fingerprint = 0xeb9655df1bf4e91b, // Changing this has security and trust implications.
+    // .minimum_zig_version = "0.15.0-dev.300+9e21ba12d",
+
+    .dependencies = .{
+        .raylib = .{
+            .url = "git+https://github.com/raysan5/raylib#1ec281e86fa518dd8d8d85271e42cf8db4340f41",
+            .hash = "raylib-5.5.0-whq8uAuuNAQ-0MUuGiSrVkjyCHc4qgfCL-XsDkHff2Fr",
+        },
+        .libassert = .{
+            .url = "git+https://github.com/jeremy-rifkin/libassert#60667829264ae01241257df7f1c7d6dba668eb9d",
+            .hash = "N-V-__8AAD-wCgCFeQXrYQBIosoq-YYXDXzXlIxMCdxaQ1jB",
+        },
+        .cpptrace = .{
+            .url = "git+https://github.com/jeremy-rifkin/cpptrace#a354f410bf98d9b57714672fdd5d4995921f0beb",
+            .hash = "N-V-__8AAOD3EABW81kGWV-9nzRa8SSsmPxkp6xG1ncKnz4N",
+        },
+        .cereal = .{
+            .url = "git+https://github.com/USCiLab/cereal#a56bad8bbb770ee266e930c95d37fff2a5be7fea",
+            .hash = "N-V-__8AAAsTIgBfi-YU8n-zjA4S-ZZX-E-WCEAJPA0NHeqV",
+        },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

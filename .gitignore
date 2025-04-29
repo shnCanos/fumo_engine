@@ -2,3 +2,5 @@
 build
 release_build
 build.ninja
+.zig-cache
+zig-out
