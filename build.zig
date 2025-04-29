@@ -55,6 +55,7 @@ const flags = .{
     "-std=c++23",
     // It's a little odd that I have to use this flag...
     "-Wno-uninitialized",
+    "-DCPPTRACE_STATIC_DEFINE",
 };
 
 pub fn linkSystemLibraries(lib: *std.Build.Step.Compile) void {
