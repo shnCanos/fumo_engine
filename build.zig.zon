@@ -17,10 +17,6 @@
             .url = "git+https://github.com/jeremy-rifkin/cpptrace#a354f410bf98d9b57714672fdd5d4995921f0beb",
             .hash = "N-V-__8AAOD3EABW81kGWV-9nzRa8SSsmPxkp6xG1ncKnz4N",
         },
-        .cereal = .{
-            .url = "git+https://github.com/USCiLab/cereal#a56bad8bbb770ee266e930c95d37fff2a5be7fea",
-            .hash = "N-V-__8AAAsTIgBfi-YU8n-zjA4S-ZZX-E-WCEAJPA0NHeqV",
-        },
     },
 
     .paths = .{

@@ -67,7 +67,7 @@ pub fn linkSystemLibraries(lib: *std.Build.Step.Compile) void {
     lib.linkSystemLibrary("dl");
     lib.linkSystemLibrary("stdc++");
     lib.linkSystemLibrary("dwarf");
-    lib.linkSystemLibrary("libdwarf");
+    // lib.linkSystemLibrary("libdwarf");
 }
 
 pub const CppLib = struct {
@@ -154,15 +154,6 @@ pub fn build_libassert(b: *std.Build, target: std.Build.ResolvedTarget, optimize
     return .{ .lib = libassert_lib, .includepath = libassert_dep.path("include") };
 }
 
-pub fn cereal_include_path(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) std.Build.LazyPath {
-    const cereal_dep = b.dependency("cereal", .{
-        .target = target,
-        .optimize = optimize,
-    });
-
-    return cereal_dep.path("include");
-}
-
 pub fn build_fumo_engine(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) !*std.Build.Step.Compile {
     const fumo_mod = b.createModule(.{
         .target = target,
@@ -193,8 +184,6 @@ pub fn build_fumo_engine(b: *std.Build, target: std.Build.ResolvedTarget, optimi
     const libassert = try build_libassert(b, target, optimize);
     fumo_exe.linkLibrary(libassert.lib);
     fumo_exe.addIncludePath(libassert.includepath);
-
-    fumo_mod.addIncludePath(cereal_include_path(b, target, optimize));
 
     // Compilation
     fumo_exe.addIncludePath(b.path("src"));
